@@ -1,3 +1,4 @@
+// import Dashboard from "@/components/Dashboard";
 import Dashboard from "@/components/dashboard";
 import { db } from "@/db";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
