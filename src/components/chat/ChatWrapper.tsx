@@ -3,13 +3,16 @@
 import { trpc } from "@/app/_trpc/client";
 import ChatInput from "./ChatInput";
 import Messages from "./Messages";
-import { Loader2, XCircle } from "lucide-react";
+import { ChevronLeft, Loader2, XCircle } from "lucide-react";
+import Link from "next/link";
+import { buttonVariants } from "../ui/button";
 
 interface ChatWrapperProps {
   fileId: string;
 }
 
 const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
+  console.log("fileID", fileId);
   const { data, isLoading } = trpc.getFileUploadStatus.useQuery(
     {
       fileId,
@@ -50,7 +53,7 @@ const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
       </div>
     );
 
-  if (data?.status === "FAILED" || true)
+  if (data?.status === "FAILED")
     return (
       <div className="relative min-h-full bg-zinc-50 flex divide-y divide-zinc-200 flex-col justify-between gap-2">
         <div className="flex-1 flex justify-center items-center flex-col mb-28">
@@ -61,8 +64,19 @@ const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
               Your <span className="font-mediun">Free</span> plan supports up to
               5 pages per PDF.
             </p>
+            <Link
+              href="/dashboard"
+              className={buttonVariants({
+                variant: "secondary",
+                className: "mt-4",
+              })}
+            >
+              <ChevronLeft className="h-3 w-3 mr-1.5" />
+              Back to Dashboard
+            </Link>
           </div>
         </div>
+
         <ChatInput isDisabled />
       </div>
     );
