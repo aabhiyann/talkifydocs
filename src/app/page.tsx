@@ -21,8 +21,7 @@ export default function Home() {
           Introducing TalkifyDocs - Elevate your document experience : simply
           upload, ask away, and dive into interactive reading.
           <span className="text-green-500">
-            {" "}
-            Who said reading can't be fun ?
+            Who said reading can&apos;t be fun ?
           </span>
         </p>
         <Link
