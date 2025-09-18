@@ -7,12 +7,13 @@ import { ChevronLeft, Loader2, XCircle } from "lucide-react";
 import Link from "next/link";
 import { buttonVariants } from "../ui/button";
 import { ChatContextProvider } from "./ChatContext";
+import { memo } from "react";
 
 interface ChatWrapperProps {
   fileId: string;
 }
 
-const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
+const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
   console.log("fileID", fileId);
   const { data, isLoading } = trpc.getFileUploadStatus.useQuery(
     {
@@ -93,6 +94,8 @@ const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
       </div>
     </ChatContextProvider>
   );
-};
+});
+
+ChatWrapper.displayName = "ChatWrapper";
 
 export default ChatWrapper;

@@ -7,9 +7,9 @@ import Skeketon from "react-loading-skeleton";
 import Link from "next/link";
 import { format } from "date-fns";
 import { Button } from "./ui/button";
-import { useState } from "react";
+import { useState, memo, useCallback } from "react";
 
-const Dashboard = () => {
+const Dashboard = memo(() => {
   const [currentlyDeletingFile, setCurrentlyDeletingFile] = useState<
     string | null
   >(null);
@@ -29,6 +29,10 @@ const Dashboard = () => {
       setCurrentlyDeletingFile(null);
     },
   });
+
+  const handleDeleteFile = useCallback((id: string) => {
+    deleteFile({ id });
+  }, [deleteFile]);
 
   return (
     <main className="mx-auto max-w-7xl md:p-10">
@@ -78,9 +82,7 @@ const Dashboard = () => {
                   </div>
 
                   <Button
-                    onClick={() => {
-                      deleteFile({ id: file.id });
-                    }}
+                    onClick={() => handleDeleteFile(file.id)}
                     size="sm"
                     className="w-full"
                     variant="destructive"
@@ -106,6 +108,8 @@ const Dashboard = () => {
       )}
     </main>
   );
-};
+});
+
+Dashboard.displayName = "Dashboard";
 
 export default Dashboard;

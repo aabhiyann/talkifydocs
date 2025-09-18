@@ -58,7 +58,8 @@ export default function Home() {
                     alt="Product Preview"
                     width={1364}
                     height={866}
-                    quality={100}
+                    quality={85}
+                    priority
                     className="rounded-md bg-white p-2 sm:p-8 shadow-2xl ring-1 ring-gray-900/10"
                   />
                 </div>
@@ -149,7 +150,8 @@ export default function Home() {
                 alt="Uploading Preview"
                 width={1419}
                 height={732}
-                quality={100}
+                quality={85}
+                loading="lazy"
                 className="rounded-md bg-white p-2 sm:p-8 shadow-2xl ring-1 ring-gray-900/10"
               />
             </div>
