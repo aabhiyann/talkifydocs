@@ -1,10 +1,11 @@
 import { PineconeClient } from "@pinecone-database/pinecone";
+import { env } from "./env";
 
 export const getPineconeClient = async () => {
   const client = new PineconeClient();
 
   await client.init({
-    apiKey: process.env.PINECONE_API_KEY!,
+    apiKey: env.PINECONE_API_KEY,
     environment: "gcp-starter",
   });
 
