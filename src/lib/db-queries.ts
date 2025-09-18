@@ -4,7 +4,7 @@ import { loggers } from "./logger";
 // Optimized file queries
 export async function getFilesByUserId(userId: string) {
   const startTime = Date.now();
-  
+
   try {
     const files = await db.file.findMany({
       where: { userId },
@@ -19,21 +19,21 @@ export async function getFilesByUserId(userId: string) {
         },
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
     });
-    
+
     loggers.db.info({
-      operation: 'getFilesByUserId',
+      operation: "getFilesByUserId",
       userId,
       count: files.length,
       duration: Date.now() - startTime,
     });
-    
+
     return files;
   } catch (error) {
     loggers.db.error({
-      operation: 'getFilesByUserId',
+      operation: "getFilesByUserId",
       userId,
       error,
       duration: Date.now() - startTime,
@@ -44,7 +44,7 @@ export async function getFilesByUserId(userId: string) {
 
 export async function getFileById(fileId: string, userId: string) {
   const startTime = Date.now();
-  
+
   try {
     const file = await db.file.findFirst({
       where: {
@@ -64,19 +64,19 @@ export async function getFileById(fileId: string, userId: string) {
         },
       },
     });
-    
+
     loggers.db.info({
-      operation: 'getFileById',
+      operation: "getFileById",
       fileId,
       userId,
       found: !!file,
       duration: Date.now() - startTime,
     });
-    
+
     return file;
   } catch (error) {
     loggers.db.error({
-      operation: 'getFileById',
+      operation: "getFileById",
       fileId,
       userId,
       error,
@@ -86,9 +86,14 @@ export async function getFileById(fileId: string, userId: string) {
   }
 }
 
-export async function getMessagesByFileId(fileId: string, userId: string, limit = 10, offset = 0) {
+export async function getMessagesByFileId(
+  fileId: string,
+  userId: string,
+  limit = 10,
+  offset = 0
+) {
   const startTime = Date.now();
-  
+
   try {
     const messages = await db.message.findMany({
       where: {
@@ -102,14 +107,14 @@ export async function getMessagesByFileId(fileId: string, userId: string, limit 
         createdAt: true,
       },
       orderBy: {
-        createdAt: 'asc',
+        createdAt: "asc",
       },
       take: limit,
       skip: offset,
     });
-    
+
     loggers.db.info({
-      operation: 'getMessagesByFileId',
+      operation: "getMessagesByFileId",
       fileId,
       userId,
       limit,
@@ -117,11 +122,11 @@ export async function getMessagesByFileId(fileId: string, userId: string, limit 
       count: messages.length,
       duration: Date.now() - startTime,
     });
-    
+
     return messages;
   } catch (error) {
     loggers.db.error({
-      operation: 'getMessagesByFileId',
+      operation: "getMessagesByFileId",
       fileId,
       userId,
       error,
@@ -138,7 +143,7 @@ export async function createMessage(data: {
   userId: string;
 }) {
   const startTime = Date.now();
-  
+
   try {
     const message = await db.message.create({
       data,
@@ -149,19 +154,19 @@ export async function createMessage(data: {
         createdAt: true,
       },
     });
-    
+
     loggers.db.info({
-      operation: 'createMessage',
+      operation: "createMessage",
       fileId: data.fileId,
       userId: data.userId,
       isUserMessage: data.isUserMessage,
       duration: Date.now() - startTime,
     });
-    
+
     return message;
   } catch (error) {
     loggers.db.error({
-      operation: 'createMessage',
+      operation: "createMessage",
       fileId: data.fileId,
       userId: data.userId,
       error,
@@ -171,9 +176,12 @@ export async function createMessage(data: {
   }
 }
 
-export async function updateFileStatus(fileId: string, status: 'PENDING' | 'PROCESSING' | 'FAILED' | 'SUCCESS') {
+export async function updateFileStatus(
+  fileId: string,
+  status: "PENDING" | "PROCESSING" | "FAILED" | "SUCCESS"
+) {
   const startTime = Date.now();
-  
+
   try {
     const file = await db.file.update({
       where: { id: fileId },
@@ -183,18 +191,18 @@ export async function updateFileStatus(fileId: string, status: 'PENDING' | 'PROC
         uploadStatus: true,
       },
     });
-    
+
     loggers.db.info({
-      operation: 'updateFileStatus',
+      operation: "updateFileStatus",
       fileId,
       status,
       duration: Date.now() - startTime,
     });
-    
+
     return file;
   } catch (error) {
     loggers.db.error({
-      operation: 'updateFileStatus',
+      operation: "updateFileStatus",
       fileId,
       status,
       error,
@@ -205,30 +213,32 @@ export async function updateFileStatus(fileId: string, status: 'PENDING' | 'PROC
 }
 
 // Batch operations for better performance
-export async function createMessagesBatch(messages: Array<{
-  text: string;
-  isUserMessage: boolean;
-  fileId: string;
-  userId: string;
-}>) {
+export async function createMessagesBatch(
+  messages: Array<{
+    text: string;
+    isUserMessage: boolean;
+    fileId: string;
+    userId: string;
+  }>
+) {
   const startTime = Date.now();
-  
+
   try {
     const result = await db.message.createMany({
       data: messages,
     });
-    
+
     loggers.db.info({
-      operation: 'createMessagesBatch',
+      operation: "createMessagesBatch",
       count: messages.length,
       created: result.count,
       duration: Date.now() - startTime,
     });
-    
+
     return result;
   } catch (error) {
     loggers.db.error({
-      operation: 'createMessagesBatch',
+      operation: "createMessagesBatch",
       count: messages.length,
       error,
       duration: Date.now() - startTime,

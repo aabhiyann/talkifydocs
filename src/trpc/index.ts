@@ -18,7 +18,8 @@ export const appRouter = router({
     const { getUser } = getKindeServerSession();
     const user = await getUser();
 
-    if (!user || !user.id || !user.email) throw new TRPCError({ code: "UNAUTHORIZED" });
+    if (!user || !user.id || !user.email)
+      throw new TRPCError({ code: "UNAUTHORIZED" });
 
     // check if the user is in the database
     const dbUser = await db.user.findFirst({
@@ -68,7 +69,10 @@ export const appRouter = router({
     const subscriptionPlan = await getUserSubscriptionPlan();
 
     if (!stripe) {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Stripe not configured" });
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Stripe not configured",
+      });
     }
 
     if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {

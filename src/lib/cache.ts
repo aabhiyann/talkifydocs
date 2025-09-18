@@ -1,10 +1,10 @@
-import Redis from 'ioredis';
-import { loggers } from './logger';
+import Redis from "ioredis";
+import { loggers } from "./logger";
 
 // Redis client configuration
 const redis = new Redis({
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379'),
+  host: process.env.REDIS_HOST || "localhost",
+  port: parseInt(process.env.REDIS_PORT || "6379"),
   password: process.env.REDIS_PASSWORD,
   maxRetriesPerRequest: 3,
   lazyConnect: true,
@@ -22,10 +22,10 @@ const CACHE_TTL = {
 const cacheKeys = {
   userFiles: (userId: string) => `user:${userId}:files`,
   file: (fileId: string) => `file:${fileId}`,
-  messages: (fileId: string, offset: number, limit: number) => 
+  messages: (fileId: string, offset: number, limit: number) =>
     `messages:${fileId}:${offset}:${limit}`,
   user: (userId: string) => `user:${userId}`,
-  health: () => 'health:check',
+  health: () => "health:check",
 };
 
 // Cache interface
@@ -42,11 +42,11 @@ class RedisCacheService implements CacheService {
     try {
       const value = await redis.get(key);
       if (!value) return null;
-      
-      loggers.api.debug({ operation: 'cache_get', key });
+
+      loggers.api.debug({ operation: "cache_get", key });
       return JSON.parse(value);
     } catch (error) {
-      loggers.api.error({ operation: 'cache_get', key, error });
+      loggers.api.error({ operation: "cache_get", key, error });
       return null;
     }
   }
@@ -59,19 +59,19 @@ class RedisCacheService implements CacheService {
       } else {
         await redis.set(key, serialized);
       }
-      
-      loggers.api.debug({ operation: 'cache_set', key, ttl });
+
+      loggers.api.debug({ operation: "cache_set", key, ttl });
     } catch (error) {
-      loggers.api.error({ operation: 'cache_set', key, error });
+      loggers.api.error({ operation: "cache_set", key, error });
     }
   }
 
   async del(key: string): Promise<void> {
     try {
       await redis.del(key);
-      loggers.api.debug({ operation: 'cache_del', key });
+      loggers.api.debug({ operation: "cache_del", key });
     } catch (error) {
-      loggers.api.error({ operation: 'cache_del', key, error });
+      loggers.api.error({ operation: "cache_del", key, error });
     }
   }
 
@@ -80,10 +80,14 @@ class RedisCacheService implements CacheService {
       const keys = await redis.keys(pattern);
       if (keys.length > 0) {
         await redis.del(...keys);
-        loggers.api.debug({ operation: 'cache_del_pattern', pattern, count: keys.length });
+        loggers.api.debug({
+          operation: "cache_del_pattern",
+          pattern,
+          count: keys.length,
+        });
       }
     } catch (error) {
-      loggers.api.error({ operation: 'cache_del_pattern', pattern, error });
+      loggers.api.error({ operation: "cache_del_pattern", pattern, error });
     }
   }
 
@@ -92,7 +96,7 @@ class RedisCacheService implements CacheService {
       const result = await redis.exists(key);
       return result === 1;
     } catch (error) {
-      loggers.api.error({ operation: 'cache_exists', key, error });
+      loggers.api.error({ operation: "cache_exists", key, error });
       return false;
     }
   }
@@ -105,17 +109,17 @@ class MemoryCacheService implements CacheService {
   async get<T>(key: string): Promise<T | null> {
     const item = this.cache.get(key);
     if (!item) return null;
-    
+
     if (item.expires && Date.now() > item.expires) {
       this.cache.delete(key);
       return null;
     }
-    
+
     return item.value;
   }
 
   async set(key: string, value: any, ttl?: number): Promise<void> {
-    const expires = ttl ? Date.now() + (ttl * 1000) : undefined;
+    const expires = ttl ? Date.now() + ttl * 1000 : undefined;
     this.cache.set(key, { value, expires });
   }
 
@@ -124,7 +128,7 @@ class MemoryCacheService implements CacheService {
   }
 
   async delPattern(pattern: string): Promise<void> {
-    const regex = new RegExp(pattern.replace(/\*/g, '.*'));
+    const regex = new RegExp(pattern.replace(/\*/g, ".*"));
     for (const key of this.cache.keys()) {
       if (regex.test(key)) {
         this.cache.delete(key);
@@ -144,11 +148,11 @@ try {
   // Try to connect to Redis
   await redis.ping();
   cacheService = new RedisCacheService();
-  loggers.api.info('Redis cache service initialized');
+  loggers.api.info("Redis cache service initialized");
 } catch (error) {
   // Fallback to memory cache
   cacheService = new MemoryCacheService();
-  loggers.api.warn('Redis not available, using memory cache');
+  loggers.api.warn("Redis not available, using memory cache");
 }
 
 export { cacheService, cacheKeys, CACHE_TTL };
@@ -161,17 +165,17 @@ export function withCache<T extends any[], R>(
 ) {
   return async (...args: T): Promise<R> => {
     const key = keyGenerator(...args);
-    
+
     // Try to get from cache
     const cached = await cacheService.get<R>(key);
     if (cached !== null) {
       return cached;
     }
-    
+
     // Execute function and cache result
     const result = await fn(...args);
     await cacheService.set(key, result, ttl);
-    
+
     return result;
   };
 }
@@ -179,11 +183,11 @@ export function withCache<T extends any[], R>(
 // Cache invalidation helpers
 export async function invalidateUserCache(userId: string) {
   await cacheService.delPattern(`user:${userId}:*`);
-  loggers.api.info({ operation: 'cache_invalidate_user', userId });
+  loggers.api.info({ operation: "cache_invalidate_user", userId });
 }
 
 export async function invalidateFileCache(fileId: string) {
   await cacheService.del(`file:${fileId}`);
   await cacheService.delPattern(`messages:${fileId}:*`);
-  loggers.api.info({ operation: 'cache_invalidate_file', fileId });
+  loggers.api.info({ operation: "cache_invalidate_file", fileId });
 }

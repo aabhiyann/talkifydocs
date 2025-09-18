@@ -4,6 +4,10 @@ import { headers } from "next/headers";
 import type Stripe from "stripe";
 
 export async function POST(request: Request) {
+  if (!stripe) {
+    return new Response("Stripe not configured", { status: 500 });
+  }
+
   const body = await request.text();
   const signature = headers().get("Stripe-Signature") ?? "";
 
