@@ -4,7 +4,6 @@ import { trpc } from "@/app/_trpc/client";
 import UploadButton from "./UploadButton";
 import { Ghost, Loader2, MessagesSquare, Plus, Trash } from "lucide-react";
 import Skeketon from "react-loading-skeleton";
-import { link } from "fs";
 import Link from "next/link";
 import { format } from "date-fns";
 import { Button } from "./ui/button";
