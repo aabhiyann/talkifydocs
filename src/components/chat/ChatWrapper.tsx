@@ -14,7 +14,6 @@ interface ChatWrapperProps {
 }
 
 const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
-  console.log("fileID", fileId);
   const { data, isLoading } = trpc.getFileUploadStatus.useQuery(
     {
       fileId,

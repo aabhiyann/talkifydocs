@@ -20,7 +20,9 @@ export function withLazyLoading<T extends object>(
 ) {
   return function LazyComponent(props: T) {
     return (
-      <Suspense fallback={fallback ? React.createElement(fallback) : <LoadingSpinner />}>
+      <Suspense
+        fallback={fallback ? React.createElement(fallback) : <LoadingSpinner />}
+      >
         <Component {...props} />
       </Suspense>
     );

@@ -10,6 +10,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import "simplebar-react/dist/simplebar.min.css";
 
 import { Toaster } from "@/components/ui/toaster";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,8 +34,10 @@ export default function RootLayout({
           )}
         >
           <Toaster />
-          <Navbar />
-          {children}
+          <ErrorBoundary>
+            <Navbar />
+            {children}
+          </ErrorBoundary>
         </body>
       </Providers>
     </html>
