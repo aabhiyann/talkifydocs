@@ -76,13 +76,15 @@ const Page = async () => {
   return (
     <>
       <MaxWidthWrapper className="mb-8 mt-24 text-center max-w-5xl">
-        <div className="mx-auto mb-10 sm:max-w-lg">
-          <h1 className="text-6xl font-bold sm:text-7xl">Pricing Plans</h1>
-          <p className="mt-5 text-gray-600 sm:text-lg">
-            Choose the perfect plan for your document analysis needs.
-            Start with our free tier or upgrade for advanced features and higher limits.
-          </p>
-        </div>
+            <div className="mx-auto mb-12 sm:max-w-2xl text-center">
+              <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl lg:text-6xl">
+                Simple, transparent pricing
+              </h1>
+              <p className="mt-6 text-lg text-gray-600 leading-relaxed">
+                Choose the perfect plan for your document analysis needs.
+                Start with our free tier or upgrade for advanced features and higher limits.
+              </p>
+            </div>
 
         <div className="pt-12 grid grid-cols-1 gap-10 lg:grid-cols-2">
           <TooltipProvider>

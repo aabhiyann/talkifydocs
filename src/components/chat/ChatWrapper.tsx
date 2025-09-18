@@ -7,6 +7,7 @@ import { ChevronLeft, Loader2, XCircle } from "lucide-react";
 import Link from "next/link";
 import { buttonVariants } from "../ui/button";
 import { ChatContextProvider } from "./ChatContext";
+import { ChatMessageSkeleton, PdfViewerSkeleton } from "../ui/skeleton";
 import { memo } from "react";
 
 interface ChatWrapperProps {

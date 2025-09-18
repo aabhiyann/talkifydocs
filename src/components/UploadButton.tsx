@@ -83,20 +83,20 @@ const UploadDropzone = () => {
       {({ getRootProps, getInputProps, acceptedFiles }) => (
         <div
           {...getRootProps()}
-          className="border h-64 m-4 border-dashed border-gray-300 rounded-lg"
+          className="border h-64 m-4 border-dashed border-gray-300 rounded-lg transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/50"
         >
           <div className="flex items-center justify-center h-full w-full">
             <label
               htmlFor="dropzone-file"
-              className="flex flex-col items-center justify-center w-full h-full rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+              className="flex flex-col items-center justify-center w-full h-full rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all duration-200 group"
             >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <Cloud className="h-6 w-6 text-zinc-500 mb-2" />
-                <p className="mb-2 text-sm text-zinc-700">
+                <Cloud className="h-6 w-6 text-zinc-500 mb-2 group-hover:text-blue-500 transition-colors duration-200" />
+                <p className="mb-2 text-sm text-zinc-700 group-hover:text-blue-700 transition-colors duration-200">
                   <span className="font-semibold">Click to upload</span> or drag
                   & drop
                 </p>
-                <p className="text-xs text-zinc-500">PDF (up to 4MB)</p>
+                <p className="text-xs text-zinc-500 group-hover:text-blue-600 transition-colors duration-200">PDF (up to 4MB)</p>
               </div>
 
               {acceptedFiles && acceptedFiles[0] ? (

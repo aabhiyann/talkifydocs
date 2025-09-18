@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
-import { AlertTriangle, RefreshCw } from "lucide-react";
+import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import { Button } from "./ui/button";
+import Link from "next/link";
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -40,34 +41,60 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
       }
 
       return (
-        <div className="flex min-h-[400px] flex-col items-center justify-center space-y-4 p-8">
-          <div className="flex items-center space-x-2 text-red-500">
-            <AlertTriangle className="h-8 w-8" />
-            <h2 className="text-xl font-semibold">Something went wrong</h2>
-          </div>
-          
-          <p className="max-w-md text-center text-gray-600">
-            We encountered an unexpected error. Please try refreshing the page or contact support if the problem persists.
-          </p>
-          
-          {process.env.NODE_ENV === "development" && this.state.error && (
-            <details className="max-w-md rounded-md bg-gray-100 p-4 text-left">
-              <summary className="cursor-pointer font-medium">Error Details</summary>
-              <pre className="mt-2 text-sm text-red-600">
-                {this.state.error.message}
-                {this.state.error.stack}
-              </pre>
-            </details>
-          )}
-          
-          <div className="flex space-x-2">
-            <Button onClick={this.resetError} variant="outline">
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Try Again
-            </Button>
-            <Button onClick={() => window.location.reload()}>
-              Refresh Page
-            </Button>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+          <div className="max-w-lg w-full bg-white shadow-xl rounded-xl p-8 text-center">
+            <div className="flex flex-col items-center space-y-6">
+              <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center animate-pulse">
+                <AlertTriangle className="w-10 h-10 text-red-600" />
+              </div>
+              
+              <div className="space-y-3">
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Oops! Something went wrong
+                </h1>
+                <p className="text-gray-600 leading-relaxed">
+                  We're sorry, but something unexpected happened. Our team has been notified and we're working to fix it.
+                </p>
+                {process.env.NODE_ENV === "development" && this.state.error && (
+                  <details className="text-left text-sm text-gray-500 mt-4">
+                    <summary className="cursor-pointer hover:text-gray-700 font-medium">
+                      Technical Details
+                    </summary>
+                    <pre className="mt-3 p-3 bg-gray-50 rounded-lg text-xs overflow-auto border">
+                      {this.state.error.message}
+                      {this.state.error.stack}
+                    </pre>
+                  </details>
+                )}
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-3 w-full">
+                <Button
+                  onClick={this.resetError}
+                  variant="outline"
+                  className="flex items-center justify-center space-x-2 flex-1"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  <span>Try Again</span>
+                </Button>
+                <Button
+                  onClick={() => window.location.reload()}
+                  className="flex items-center justify-center space-x-2 flex-1"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  <span>Refresh Page</span>
+                </Button>
+                <Link href="/" className="flex-1">
+                  <Button
+                    variant="secondary"
+                    className="w-full flex items-center justify-center space-x-2"
+                  >
+                    <Home className="w-4 h-4" />
+                    <span>Go Home</span>
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       );

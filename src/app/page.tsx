@@ -8,11 +8,11 @@ export default function Home() {
   return (
     <>
       <MaxWidthWrapper className="mb-12 mt-28 sm:mt-40 flex flex-col items-center justify-center text-center">
-        <div className="mx-auto mb-4 flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full border border-gray-200 bg-white px-7 py-2 shadow-md backdrop-blur transition-all hover:border-gray-300 hover:bg-white/50">
-          <p className="text-sm font-semibold text-gray-700">
-            AI-Powered Document Analysis
-          </p>
-        </div>
+            <div className="mx-auto mb-4 flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full border border-gray-200 bg-white px-7 py-2 shadow-md backdrop-blur transition-all duration-300 hover:border-gray-300 hover:bg-white/50 hover:shadow-lg hover:scale-105">
+              <p className="text-sm font-semibold text-gray-700">
+                AI-Powered Document Analysis
+              </p>
+            </div>
         <h1 className="max-w-4xl text-5xl font-bold md:text-6xl lg:text-7xl">
           Transform your <span className="text-blue-600">documents</span> into
           intelligent conversations.
@@ -21,13 +21,13 @@ export default function Home() {
           TalkifyDocs revolutionizes document interaction through advanced AI technology.
           Upload your PDFs, ask questions, and get instant, accurate answers from your content.
         </p>
-        <Link
-          className={buttonVariants({ size: "lg", className: "mt-5" })}
-          href="/dashboard"
-          target="_blank"
-        >
-          Get Started <ArrowRight className="ml-2 h-5 w-5" />
-        </Link>
+            <Link
+              className={buttonVariants({ size: "lg", className: "mt-5 transition-all duration-300 hover:scale-105 hover:shadow-lg" })}
+              href="/dashboard"
+              target="_blank"
+            >
+              Get Started <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
       </MaxWidthWrapper>
 
       {/* value proposition section */}

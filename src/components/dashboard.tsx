@@ -4,7 +4,7 @@ import { trpc } from "@/app/_trpc/client";
 import { withCache, cacheKeys, CACHE_TTL } from "@/lib/cache";
 import UploadButton from "./UploadButton";
 import { Ghost, Loader2, MessagesSquare, Plus, Trash } from "lucide-react";
-import Skeketon from "react-loading-skeleton";
+import { DocumentCardSkeleton } from "./ui/skeleton";
 import Link from "next/link";
 import { format } from "date-fns";
 import { Button } from "./ui/button";
@@ -37,8 +37,11 @@ const Dashboard = memo(() => {
 
   return (
     <main className="mx-auto max-w-7xl md:p-10">
-      <div className="mt-8 flex flex-col items-start justify-between gap-4  border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:gap-0">
-        <h1 className="mb-3 font-bold text-5xl text-gray-900">Document Library</h1>
+      <div className="mt-8 flex flex-col items-start justify-between gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:gap-0">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl">Document Library</h1>
+          <p className="text-sm text-gray-600 sm:text-base">Manage and interact with your PDF documents</p>
+        </div>
         <UploadButton />
       </div>
 
@@ -54,7 +57,7 @@ const Dashboard = memo(() => {
             .map((file) => (
               <li
                 key={file.id}
-                className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow transition hover:shadow-lg"
+                className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow transition-all duration-200 hover:shadow-xl hover:scale-[1.02] group"
                 role="listitem"
               >
                 <Link
@@ -63,10 +66,10 @@ const Dashboard = memo(() => {
                   aria-label={`Open file ${file.name}`}
                 >
                   <div className="pt-6 px-6 flex w-full items-center justify-between space-x-6">
-                    <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-r from-cyan-500 to-green-500" />
+                    <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 group-hover:from-cyan-600 group-hover:to-green-600 transition-colors duration-200" />
                     <div className="flex-1 truncate">
                       <div className="flex items-center space-x-3">
-                        <h3 className="truncate text-lg font-medium text-zinc-900">
+                        <h3 className="truncate text-lg font-medium text-zinc-900 group-hover:text-blue-600 transition-colors duration-200">
                           {file.name}
                         </h3>
                       </div>
@@ -102,12 +105,25 @@ const Dashboard = memo(() => {
             ))}
         </ul>
       ) : isLoading ? (
-        <Skeketon height={100} className="my-2 " count={3} />
+        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <DocumentCardSkeleton />
+          <DocumentCardSkeleton />
+          <DocumentCardSkeleton />
+        </div>
       ) : (
-        <div className="mt-16 flex flex-col items-center gap-2">
-          <Ghost className="h-8 w-8 text-zinc-800" />
-          <h3 className="font-semibold text-xl">No documents found</h3>
-          <p>Upload your first PDF document to get started with AI-powered analysis.</p>
+        <div className="mt-16 flex flex-col items-center gap-4 text-center">
+          <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
+            <Ghost className="h-10 w-10 text-zinc-600" />
+          </div>
+          <div className="space-y-2">
+            <h3 className="font-semibold text-xl text-gray-900">No documents found</h3>
+            <p className="text-gray-600 max-w-md">
+              Upload your first PDF document to get started with AI-powered analysis and intelligent conversations.
+            </p>
+          </div>
+          <div className="mt-4">
+            <UploadButton />
+          </div>
         </div>
       )}
     </main>
