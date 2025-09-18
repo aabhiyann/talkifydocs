@@ -2,47 +2,47 @@ name: Deploy to Production
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: production
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Run tests
-      run: npm run test
-      
-    - name: Build application
-      run: npm run build
-      env:
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
-        STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        KINDE_CLIENT_ID: ${{ secrets.KINDE_CLIENT_ID }}
-        KINDE_CLIENT_SECRET: ${{ secrets.KINDE_CLIENT_SECRET }}
-        KINDE_ISSUER_URL: ${{ secrets.KINDE_ISSUER_URL }}
-        KINDE_SITE_URL: ${{ secrets.KINDE_SITE_URL }}
-        UPLOADTHING_SECRET: ${{ secrets.UPLOADTHING_SECRET }}
-        UPLOADTHING_APP_ID: ${{ secrets.UPLOADTHING_APP_ID }}
-        
-    - name: Deploy to Vercel
-      uses: amondnet/vercel-action@v25
-      with:
-        vercel-token: ${{ secrets.VERCEL_TOKEN }}
-        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-        vercel-args: '--prod'
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Build application
+        run: npm run build
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          KINDE_CLIENT_ID: ${{ secrets.KINDE_CLIENT_ID }}
+          KINDE_CLIENT_SECRET: ${{ secrets.KINDE_CLIENT_SECRET }}
+          KINDE_ISSUER_URL: ${{ secrets.KINDE_ISSUER_URL }}
+          KINDE_SITE_URL: ${{ secrets.KINDE_SITE_URL }}
+          UPLOADTHING_SECRET: ${{ secrets.UPLOADTHING_SECRET }}
+          UPLOADTHING_APP_ID: ${{ secrets.UPLOADTHING_APP_ID }}
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: "--prod"
