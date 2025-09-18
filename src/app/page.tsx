@@ -10,19 +10,16 @@ export default function Home() {
       <MaxWidthWrapper className="mb-12 mt-28 sm:mt-40 flex flex-col items-center justify-center text-center">
         <div className="mx-auto mb-4 flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full border border-gray-200 bg-white px-7 py-2 shadow-md backdrop-blur transition-all hover:border-gray-300 hover:bg-white/50">
           <p className="text-sm font-semibold text-gray-700">
-            Welcome to TalkifyDocs!
+            AI-Powered Document Analysis
           </p>
         </div>
         <h1 className="max-w-4xl text-5xl font-bold md:text-6xl lg:text-7xl">
-          Chat with your <span className="text-green-400">documents</span>{" "}
-          easily.
+          Transform your <span className="text-blue-600">documents</span> into
+          intelligent conversations.
         </h1>
         <p className="mt-5 max-w-prose text-zinc-700 sm:text-lg">
-          Introducing TalkifyDocs - Elevate your document experience : simply
-          upload, ask away, and dive into interactive reading.
-          <span className="text-green-500">
-            Who said reading can&apos;t be fun ?
-          </span>
+          TalkifyDocs revolutionizes document interaction through advanced AI technology.
+          Upload your PDFs, ask questions, and get instant, accurate answers from your content.
         </p>
         <Link
           className={buttonVariants({ size: "lg", className: "mt-5" })}
@@ -87,12 +84,11 @@ export default function Home() {
         <div className="mb-12 px-6 lg:px-8">
           <div className="mx-auto max-w-2xl sm:text-center">
             <h2 className="mt-2 font-bold text-4xl text-gray-900 sm:text-5xl">
-              Unlock instant conversations with TalkifyDocs. Get started in
-              minutes!
+              Advanced AI Technology for Document Analysis
             </h2>
             <p className="mt-4 text-lg text-gray-600">
-              Experience seamless conversations with your PDFs using
-              TalkifyDocs. Simple, efficient, and user-friendly
+              Leverage cutting-edge artificial intelligence to extract insights,
+              answer questions, and interact with your documents like never before.
             </p>
           </div>
         </div>
@@ -101,17 +97,17 @@ export default function Home() {
         <ol className="my-8 space-y-4 pt-8 md:flex md:space-x-12 md:space-y-0">
           <li className="md:flex-1">
             <div className="flex flex-col space-y-2 border-l-4 border-zinc-300 py-2 pl-4 md:border-l-0 md:border-t-2 md:pb-0 md:pl-0 md:pt-4">
-              <span className="text-sm font-medium text-green-600">Step 1</span>
+              <span className="text-sm font-medium text-blue-600">Step 1</span>
               <span className="text-xl font-semibold">
-                Sign up for an account
+                Create your account
               </span>
               <span className="mt-2 text-zinc-700">
-                Start with a free plan or select our{" "}
+                Register for a free account or upgrade to our{" "}
                 <Link
                   href="/pricing"
-                  className="text-green-500 underline underline-offset-2"
+                  className="text-blue-600 underline underline-offset-2"
                 >
-                  pro plan
+                  professional plan
                 </Link>
                 .
               </span>
@@ -120,23 +116,23 @@ export default function Home() {
 
           <li className="md:flex-1">
             <div className="flex flex-col space-y-2 border-l-4 border-zinc-300 py-2 pl-4 md:border-l-0 md:border-t-2 md:pb-0 md:pl-0 md:pt-4">
-              <span className="text-sm font-medium text-green-600">Step 2</span>
-              <span className="text-xl font-semibold">Upload PDF file</span>
+              <span className="text-sm font-medium text-blue-600">Step 2</span>
+              <span className="text-xl font-semibold">Upload your document</span>
               <span className="mt-2 text-zinc-700">
-                We&apos; process your file, making it chat-ready just for you.{" "}
+                Upload your PDF document and our AI will process it for intelligent analysis.
               </span>
             </div>
           </li>
 
           <li className="md:flex-1">
             <div className="flex flex-col space-y-2 border-l-4 border-zinc-300 py-2 pl-4 md:border-l-0 md:border-t-2 md:pb-0 md:pl-0 md:pt-4">
-              <span className="text-sm font-medium text-green-600">Step 3</span>
+              <span className="text-sm font-medium text-blue-600">Step 3</span>
               <span className="text-xl font-semibold">
-                Start asking questions
+                Ask questions and get answers
               </span>
               <span className="mt-2 text-zinc-700">
-                Simplicity at its best. Try TalkifyDocs today — it truly takes
-                less than a minute!
+                Interact with your document through natural language queries
+                and receive intelligent, contextual responses.
               </span>
             </div>
           </li>

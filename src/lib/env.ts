@@ -32,6 +32,9 @@ const envSchema = z.object({
   VERCEL_URL: z.string().optional(),
 });
 
-export const env = envSchema.parse(process.env);
+// Only validate environment variables at runtime, not during build
+export const env = process.env.NODE_ENV === 'production' 
+  ? envSchema.parse(process.env)
+  : envSchema.partial().parse(process.env) as any;
 
 export type Env = z.infer<typeof envSchema>;

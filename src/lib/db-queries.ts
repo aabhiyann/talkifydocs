@@ -171,7 +171,7 @@ export async function createMessage(data: {
   }
 }
 
-export async function updateFileStatus(fileId: string, status: string) {
+export async function updateFileStatus(fileId: string, status: 'PENDING' | 'PROCESSING' | 'FAILED' | 'SUCCESS') {
   const startTime = Date.now();
   
   try {

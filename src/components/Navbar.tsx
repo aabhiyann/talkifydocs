@@ -11,7 +11,7 @@ const Navbar = () => {
       <MaxWidthWrapper>
         <div className="flex h-14 items-center justify-between border-b border-zinc-200">
           <Link href="/" className="flex z-40 font-semibold">
-            <span>TalkifyDocs.</span>
+            <span className="text-xl">TalkifyDocs</span>
           </Link>
 
           {/* todo: add mobile navbar later */}
@@ -30,7 +30,7 @@ const Navbar = () => {
                 Sign in
               </LoginLink>
               <RegisterLink className={buttonVariants({ size: "sm" })}>
-                Get started <ArrowRight className="ml-1.5 h-5 w-5" />
+                Get Started <ArrowRight className="ml-1.5 h-5 w-5" />
               </RegisterLink>
             </>
           </div>

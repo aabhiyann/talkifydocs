@@ -46,8 +46,8 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
         <div className="flex-1 flex justify-center items-center flex-col mb-28">
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="h-8 w-8 text-green-500 animate-spin" aria-hidden="true" />
-            <h3 className="font-semibold text-xl">Processing your PDF...</h3>
-            <p className="text-zinc-500 text-sm">This won&apos;t take long.</p>
+            <h3 className="font-semibold text-xl">Processing document...</h3>
+            <p className="text-zinc-500 text-sm">Please wait while we analyze your document.</p>
           </div>
         </div>
         <ChatInput isDisabled />
@@ -60,10 +60,10 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
         <div className="flex-1 flex justify-center items-center flex-col mb-28">
           <div className="flex flex-col items-center gap-2">
             <XCircle className="h-8 w-8 text-red-500" aria-hidden="true" />
-            <h3 className="font-semibold text-xl">Too many pages in the PDF</h3>
+            <h3 className="font-semibold text-xl">Document processing failed</h3>
             <p className="text-zinc-500 text-sm">
-              Your <span className="font-medium">Free</span> plan supports up to
-              5 pages per PDF.
+              Your <span className="font-medium">Free</span> plan supports documents up to
+              5 pages. Please upgrade to process larger documents.
             </p>
             <Link
               href="/dashboard"

@@ -21,7 +21,7 @@ const Page = async () => {
   const pricingItems = [
     {
       plan: "Free",
-      tagline: "For small side projects.",
+      tagline: "Perfect for getting started.",
       quota: 10,
       features: [
         {
@@ -48,7 +48,7 @@ const Page = async () => {
     },
     {
       plan: "Pro",
-      tagline: "For larger projects with higher needs.",
+      tagline: "Ideal for professional use.",
       quota: PLANS.find((p) => p.slug === "pro")!.quota,
       features: [
         {
@@ -77,11 +77,10 @@ const Page = async () => {
     <>
       <MaxWidthWrapper className="mb-8 mt-24 text-center max-w-5xl">
         <div className="mx-auto mb-10 sm:max-w-lg">
-          <h1 className="text-6xl font-bold sm:text-7xl">Pricing</h1>
+          <h1 className="text-6xl font-bold sm:text-7xl">Pricing Plans</h1>
           <p className="mt-5 text-gray-600 sm:text-lg">
-            Whether you&apos;re just getting started with Talkify Docs or
-            craving more, we&apos;ve got your back with our friendly and
-            comprehensive range of plans!
+            Choose the perfect plan for your document analysis needs.
+            Start with our free tier or upgrade for advanced features and higher limits.
           </p>
         </div>
 

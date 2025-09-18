@@ -67,6 +67,10 @@ export const appRouter = router({
 
     const subscriptionPlan = await getUserSubscriptionPlan();
 
+    if (!stripe) {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Stripe not configured" });
+    }
+
     if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
       const stripeSession = await stripe.billingPortal.sessions.create({
         customer: dbUser.stripeCustomerId,

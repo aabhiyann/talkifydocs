@@ -4,10 +4,10 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import Stripe from "stripe";
 import { env } from "./env";
 
-export const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
+export const stripe = env.STRIPE_SECRET_KEY ? new Stripe(env.STRIPE_SECRET_KEY, {
   apiVersion: "2023-10-16",
   typescript: true,
-});
+}) : null;
 
 export async function getUserSubscriptionPlan() {
   const { getUser } = getKindeServerSession();
@@ -48,7 +48,7 @@ export async function getUserSubscriptionPlan() {
     : null;
 
   let isCanceled = false;
-  if (isSubscribed && dbUser.stripeSubscriptionId) {
+  if (isSubscribed && dbUser.stripeSubscriptionId && stripe) {
     const stripePlan = await stripe.subscriptions.retrieve(
       dbUser.stripeSubscriptionId
     );

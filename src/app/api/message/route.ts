@@ -11,7 +11,7 @@ import { OpenAIStream, StreamingTextResponse } from "ai";
 
 import { NextRequest } from "next/server";
 import { use } from "react";
-import { handleError, createErrorResponse, AuthenticationError, NotFoundError, ValidationError } from "@/lib/errors";
+import { handleError, createErrorResponse, AuthenticationError, NotFoundError, ValidationError, AppError } from "@/lib/errors";
 import { loggers, logPerformance, logError } from "@/lib/logger";
 import { checkRateLimit, validateRequest, getClientIP, getSecurityHeaders } from "@/lib/security";
 import { validateRequest as validateInput, messageSchema } from "@/lib/validation";
@@ -109,7 +109,7 @@ export const POST = async (req: NextRequest) => {
       content: msg.text,
     }));
 
-    const response = await openai.chat.completions.create({
+    const openaiResponse = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       temperature: 0,
       stream: true,
@@ -140,7 +140,7 @@ export const POST = async (req: NextRequest) => {
       ],
     });
 
-    const stream = OpenAIStream(response, {
+    const stream = OpenAIStream(openaiResponse, {
       async onCompletion(completion) {
         await db.message.create({
           data: {
@@ -167,13 +167,14 @@ export const POST = async (req: NextRequest) => {
   } catch (error) {
     logError(error as Error, { 
       operation: 'message_post',
-      fileId: body?.fileId,
-      userId: user?.id 
+      fileId: undefined,
+      userId: undefined 
     })
     
     const errorResponse = handleError(error);
+    const statusCode = error instanceof AppError ? error.statusCode : 500;
     return new Response(JSON.stringify(errorResponse), {
-      status: errorResponse.statusCode || 500,
+      status: statusCode,
       headers: { "Content-Type": "application/json" },
     });
   }
