@@ -12,11 +12,19 @@ import { OpenAIStream, StreamingTextResponse } from "ai";
 import { NextRequest } from "next/server";
 import { use } from "react";
 import { handleError, createErrorResponse, AuthenticationError, NotFoundError, ValidationError } from "@/lib/errors";
+import { loggers, logPerformance, logError } from "@/lib/logger";
 
 export const POST = async (req: NextRequest) => {
+  const startTime = Date.now()
+  
   try {
     // endpoint for asking a question to a pdf
     const body = await req.json();
+    
+    loggers.api.info({
+      operation: 'message_post',
+      userAgent: req.headers.get('user-agent'),
+    }, 'Message API request started')
 
     const { getUser } = getKindeServerSession();
     const user = await getUser();
@@ -122,9 +130,15 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
+    logPerformance('message_processing', startTime, { fileId, userId: user.id })
     return new StreamingTextResponse(stream);
   } catch (error) {
-    console.error("Message API error:", error);
+    logError(error as Error, { 
+      operation: 'message_post',
+      fileId: body?.fileId,
+      userId: user?.id 
+    })
+    
     const errorResponse = handleError(error);
     return new Response(JSON.stringify(errorResponse), {
       status: errorResponse.statusCode || 500,
