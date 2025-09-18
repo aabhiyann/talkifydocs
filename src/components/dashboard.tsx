@@ -41,9 +41,9 @@ const Dashboard = memo(() => {
         <UploadButton />
       </div>
 
-      {/* -- Display all the foles of the user here -- */}
+      {/* -- Display all the files of the user here -- */}
       {files && files.length !== 0 ? (
-        <ul className="mt-8 grid grid-cols-1 gap-6 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-8 grid grid-cols-1 gap-6 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3" role="list" aria-label="User files">
           {files
             .sort(
               (a, b) =>
@@ -54,10 +54,12 @@ const Dashboard = memo(() => {
               <li
                 key={file.id}
                 className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow transition hover:shadow-lg"
+                role="listitem"
               >
                 <Link
                   href={`/dashboard/${file.id}`}
                   className="flex flex-col gap-2"
+                  aria-label={`Open file ${file.name}`}
                 >
                   <div className="pt-6 px-6 flex w-full items-center justify-between space-x-6">
                     <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-r from-cyan-500 to-green-500" />
@@ -86,6 +88,7 @@ const Dashboard = memo(() => {
                     size="sm"
                     className="w-full"
                     variant="destructive"
+                    aria-label={`Delete file ${file.name}`}
                   >
                     {currentlyDeletingFile === file.id ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
