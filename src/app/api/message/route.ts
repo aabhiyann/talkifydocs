@@ -13,17 +13,40 @@ import { NextRequest } from "next/server";
 import { use } from "react";
 import { handleError, createErrorResponse, AuthenticationError, NotFoundError, ValidationError } from "@/lib/errors";
 import { loggers, logPerformance, logError } from "@/lib/logger";
+import { checkRateLimit, validateRequest, getClientIP, getSecurityHeaders } from "@/lib/security";
+import { validateRequest as validateInput, messageSchema } from "@/lib/validation";
 
 export const POST = async (req: NextRequest) => {
   const startTime = Date.now()
+  const clientIP = getClientIP(req);
   
   try {
+    // Validate request
+    const requestValidation = validateRequest(req);
+    if (!requestValidation.valid) {
+      throw new ValidationError(requestValidation.error || 'Invalid request');
+    }
+    
+    // Check rate limit
+    const rateLimit = checkRateLimit(clientIP, 'MESSAGE');
+    if (!rateLimit.allowed) {
+      throw new ValidationError('Rate limit exceeded. Please try again later.');
+    }
+    
     // endpoint for asking a question to a pdf
     const body = await req.json();
+    
+    // Validate input
+    const inputValidation = validateInput(messageSchema)(body);
+    if (!inputValidation.success) {
+      throw new ValidationError(inputValidation.error || 'Invalid input');
+    }
     
     loggers.api.info({
       operation: 'message_post',
       userAgent: req.headers.get('user-agent'),
+      clientIP,
+      rateLimitRemaining: rateLimit.remaining,
     }, 'Message API request started')
 
     const { getUser } = getKindeServerSession();
@@ -131,7 +154,16 @@ export const POST = async (req: NextRequest) => {
     });
 
     logPerformance('message_processing', startTime, { fileId, userId: user.id })
-    return new StreamingTextResponse(stream);
+    
+    const response = new StreamingTextResponse(stream);
+    
+    // Add security headers
+    const securityHeaders = getSecurityHeaders();
+    Object.entries(securityHeaders).forEach(([key, value]) => {
+      response.headers.set(key, value);
+    });
+    
+    return response;
   } catch (error) {
     logError(error as Error, { 
       operation: 'message_post',

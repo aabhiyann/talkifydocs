@@ -10,12 +10,22 @@ import { PineconeStore } from "langchain/vectorstores/pinecone";
 
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { getPineconeClient } from "@/lib/pinecone";
+import { checkRateLimit, getClientIP } from "@/lib/security";
+import { validateFileUpload } from "@/lib/validation";
 
 const f = createUploadthing();
 
 export const ourFileRouter = {
   pdfUploader: f({ pdf: { maxFileSize: "4MB" } })
     .middleware(async ({ req }) => {
+      const clientIP = getClientIP(req);
+      
+      // Check rate limit for uploads
+      const rateLimit = checkRateLimit(clientIP, 'UPLOAD');
+      if (!rateLimit.allowed) {
+        throw new Error("Upload rate limit exceeded. Please try again later.");
+      }
+      
       const { getUser } = getKindeServerSession();
       const user = await getUser();
 
