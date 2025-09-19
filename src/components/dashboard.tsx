@@ -255,7 +255,11 @@ const Dashboard = memo(() => {
             }
           >
             {Array.from({ length: 6 }).map((_, i) => (
-              <DocumentCardSkeleton key={i} />
+              <DocumentCardSkeleton
+                key={i}
+                className="animate-fade-in"
+                style={{ animationDelay: `${i * 100}ms` }}
+              />
             ))}
           </div>
         ) : filteredAndSortedFiles.length > 0 ? (
@@ -266,10 +270,11 @@ const Dashboard = memo(() => {
                 : "space-y-4"
             }
           >
-            {filteredAndSortedFiles.map((file) => (
+            {filteredAndSortedFiles.map((file, index) => (
               <Card
                 key={file.id}
-                className="group hover:shadow-lg transition-all duration-200 hover:scale-[1.02]"
+                className="group hover-lift hover-glow animate-scale-in transition-all duration-300"
+                style={{ animationDelay: `${index * 100}ms` }}
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
@@ -368,8 +373,8 @@ const Dashboard = memo(() => {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16">
-            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+          <div className="text-center py-16 animate-fade-in">
+            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center animate-bounce-in">
               <Ghost className="h-12 w-12 text-gray-400" />
             </div>
             <h3 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
