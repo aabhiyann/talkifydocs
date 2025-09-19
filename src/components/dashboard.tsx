@@ -124,7 +124,7 @@ const Dashboard = memo(() => {
             <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
               <FileText className="h-10 w-10 text-red-600 dark:text-red-400" />
             </div>
-            <h3 className="text-heading-md font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            <h3 className="text-heading-md font-semibold text-foreground mb-2">
               Something went wrong
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
@@ -382,7 +382,7 @@ const Dashboard = memo(() => {
             <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center animate-bounce-in">
               <Ghost className="h-12 w-12 text-gray-400" />
             </div>
-            <h3 className="text-heading-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            <h3 className="text-heading-lg font-semibold text-foreground mb-2">
               {searchQuery ? "No documents found" : "No documents yet"}
             </h3>
             <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mb-8">

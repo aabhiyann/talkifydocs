@@ -73,7 +73,9 @@ export function ThemeProvider({
   if (!mounted) {
     return (
       <ThemeProviderContext.Provider {...props} value={value}>
-        {children}
+        <div className="light">
+          {children}
+        </div>
       </ThemeProviderContext.Provider>
     );
   }

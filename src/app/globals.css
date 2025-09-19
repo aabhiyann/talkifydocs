@@ -61,6 +61,10 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  html {
+    @apply bg-background;
+  }
 }
 
 .grainy {
@@ -84,4 +88,20 @@
 
 .scrollbar-thumb-rounded::-webkit-scrollbar-thumb {
   border-radius: 7px;
+}
+
+/* Fix card text overflow */
+.card-title {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Ensure proper dark theme application */
+.dark {
+  color-scheme: dark;
+}
+
+.light {
+  color-scheme: light;
 }
