@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from "./ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription } from "./ui/dialog";
 import { Button } from "./ui/button";
 import Dropzone from "react-dropzone";
 import { Cloud, File, Loader2, Upload, X, CheckCircle2, AlertCircle } from "lucide-react";
@@ -297,6 +297,9 @@ const UploadButton = () => {
           <DialogTitle className="text-center text-xl font-semibold">
             Upload Document
           </DialogTitle>
+          <DialogDescription className="text-center text-muted-foreground">
+            Upload a PDF document to start chatting with AI-powered insights.
+          </DialogDescription>
         </DialogHeader>
         <UploadDropzone />
       </DialogContent>

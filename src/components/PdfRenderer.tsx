@@ -8,15 +8,12 @@ import {
   Search,
 } from "lucide-react";
 import { useToast } from "./ui/use-toast";
-
 import { useResizeDetector } from "react-resize-detector";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import dynamic from "next/dynamic";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import {
@@ -25,25 +22,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-
 import SimpleBar from "simplebar-react";
 import PdfFullscreen from "./PdfFullscreen";
-
-// Dynamically import PDF components to avoid SSR issues
-const Document = dynamic(() => import("react-pdf").then((mod) => mod.Document), {
-  ssr: false,
-  loading: () => (
-    <div className="flex flex-col items-center justify-center py-12">
-      <Loader2 className="h-8 w-8 animate-spin text-primary-600 mb-4" />
-      <p className="text-sm text-muted-foreground">Loading PDF viewer...</p>
-    </div>
-  ),
-});
-
-const Page = dynamic(() => import("react-pdf").then((mod) => mod.Page), {
-  ssr: false,
-});
-
 
 interface PdfRendererProps {
   url: string;
@@ -51,59 +31,64 @@ interface PdfRendererProps {
 
 const PdfRenderer = ({ url }: PdfRendererProps) => {
   const { toast } = useToast();
+  const { width, ref } = useResizeDetector();
 
   const [numPages, setNumPages] = useState<number>();
   const [currPage, setCurrPage] = useState<number>(1);
   const [scale, setScale] = useState<number>(1);
   const [rotation, setRotation] = useState<number>(0);
   const [renderedScale, setRenderedScale] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [pdfjsLib, setPdfjsLib] = useState<any>(null);
+  const [Document, setDocument] = useState<any>(null);
+  const [Page, setPage] = useState<any>(null);
+  const [mounted, setMounted] = useState(false);
 
-  const isLoading = renderedScale !== scale || !pdfjsLib;
+  const isLoadingPdf = isLoading || renderedScale !== scale || !pdfjsLib || !Document || !Page || !mounted;
 
-  // Load PDF.js library and CSS on client side
+  // Set mounted state to prevent hydration issues
   useEffect(() => {
-    const loadPdfjs = async () => {
+    setMounted(true);
+  }, []);
+
+  // Load PDF.js library and components on client side
+  useEffect(() => {
+    if (!mounted) return;
+
+    const loadPdfComponents = async () => {
       try {
+        setIsLoading(true);
+        
         // Import PDF.js library
         const pdfjs = await import('pdfjs-dist');
         setPdfjsLib(pdfjs);
         
-        // Configure worker with fallback options
-        const workerSources = [
-          `${window.location.origin}/pdf.worker.min.js`,
-          `https://unpkg.com/pdfjs-dist@5.3.93/build/pdf.worker.min.js`,
-          `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.3.93/pdf.worker.min.js`
-        ];
+        // Configure worker with a simple, reliable approach
+        pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
         
-        pdfjs.GlobalWorkerOptions.workerSrc = workerSources[0];
+        // Import react-pdf components
+        const { Document: DocumentComponent, Page: PageComponent } = await import('react-pdf');
+        setDocument(() => DocumentComponent);
+        setPage(() => PageComponent);
         
-        // Test worker availability
-        try {
-          const response = await fetch(workerSources[0], { method: 'HEAD' });
-          if (!response.ok) {
-            throw new Error('Local worker not available');
-          }
-        } catch (error) {
-          console.warn('Local worker failed, trying CDN fallback...');
-          pdfjs.GlobalWorkerOptions.workerSrc = workerSources[1];
-        }
-        
-        // Import CSS dynamically
+        // Import CSS
         await import('react-pdf/dist/Page/AnnotationLayer.css');
         await import('react-pdf/dist/Page/TextLayer.css');
+        
+        setIsLoading(false);
       } catch (error) {
-        console.error('Failed to load PDF.js:', error);
+        console.error('Failed to load PDF components:', error);
+        setIsLoading(false);
         toast({
           title: "Error loading PDF viewer",
-          description: "Failed to load PDF viewer library. Please refresh the page.",
+          description: "Failed to load PDF viewer. Please refresh the page.",
           variant: "destructive",
         });
       }
     };
 
-    loadPdfjs();
-  }, [toast]);
+    loadPdfComponents();
+  }, [mounted, toast]);
 
   const CustomPageValidator = z.object({
     page: z
@@ -125,28 +110,95 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
     resolver: zodResolver(CustomPageValidator),
   });
 
-  const { width, ref } = useResizeDetector();
-
   const handlePageSubmit = ({ page }: TCustomPageValidator) => {
     setCurrPage(Number(page));
     setValue("page", String(page));
   };
 
+  const handlePageChange = (direction: "up" | "down") => {
+    if (direction === "up") {
+      setCurrPage((prev) => (prev + 1 > numPages! ? numPages! : prev + 1));
+      setValue("page", String(currPage + 1));
+    } else {
+      setCurrPage((prev) => (prev - 1 > 1 ? prev - 1 : 1));
+      setValue("page", String(currPage - 1));
+    }
+  };
+
+  const handleScaleChange = (newScale: number) => {
+    setScale(newScale);
+    setRenderedScale(null);
+  };
+
+  const handleRotateChange = (newRotation: number) => {
+    setRotation(newRotation);
+  };
+
+  const onDocumentLoadSuccess = (pdf: any) => {
+    setNumPages(pdf.numPages);
+    setRenderedScale(scale);
+  };
+
+  const onDocumentLoadError = (error: any) => {
+    console.error('PDF document load error:', error);
+    toast({
+      title: "Error loading PDF",
+      description: "Failed to load PDF document. Please try again.",
+      variant: "destructive",
+    });
+  };
+
+  const onPageLoadSuccess = () => {
+    setRenderedScale(scale);
+  };
+
+  if (isLoadingPdf) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-[400px]">
+        <div className="flex flex-col items-center space-y-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+          <p className="text-sm text-muted-foreground">Loading PDF viewer...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!Document || !Page) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="text-destructive">
+            <svg className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-foreground">Failed to load PDF viewer</h3>
+          <p className="text-sm text-muted-foreground text-center">
+            There was an error loading the PDF viewer. Please refresh the page.
+          </p>
+          <Button onClick={() => window.location.reload()} variant="outline" size="sm">
+            Refresh Page
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full bg-white rounded-md shadow flex flex-col items-center">
-      <div className="h-14 w-full border-b border-gray-200 flex items-center justify-between px-2">
-        <div className="flex items-center gap-1.5">
+    <div className="flex flex-col w-full">
+      {/* PDF Controls */}
+      <div className="flex items-center justify-between border-b border-border bg-background px-2 py-2">
+        <div className="flex items-center gap-2">
           <Button
-            aria-label="previous page"
-            variant="ghost"
             disabled={currPage <= 1}
-            onClick={() => {
-              setCurrPage((prev) => (prev - 1 > 1 ? prev - 1 : 1));
-              setValue("page", String(currPage - 1));
-            }}
+            onClick={() => handlePageChange("down")}
+            variant="ghost"
+            size="sm"
+            aria-label="previous page"
           >
             <ChevronDown className="h-4 w-4" />
           </Button>
+
           <div className="flex items-center gap-1.5">
             <Input
               {...register("page")}
@@ -160,29 +212,24 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
                 }
               }}
             />
-
-            <p className="text-gray-700 text-sm space-x-1">
+            <p className="text-sm text-muted-foreground space-x-1">
               <span>/</span>
               <span>{numPages ?? "x"}</span>
             </p>
           </div>
 
           <Button
-            aria-label="next page"
+            disabled={numPages === undefined || currPage >= numPages}
+            onClick={() => handlePageChange("up")}
             variant="ghost"
-            disabled={numPages === undefined || currPage === numPages}
-            onClick={() => {
-              setCurrPage((prev) =>
-                prev + 1 > numPages! ? numPages! : prev + 1
-              );
-              setValue("page", String(currPage + 1));
-            }}
+            size="sm"
+            aria-label="next page"
           >
             <ChevronUp className="h-4 w-4" />
           </Button>
         </div>
 
-        <div className="space-x-2">
+        <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button className="gap-1.5" aria-label="zoom" variant="ghost">
@@ -191,45 +238,27 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
                 <ChevronDown className="h-3 w-3 opacity-50" />
               </Button>
             </DropdownMenuTrigger>
-
             <DropdownMenuContent>
-              <DropdownMenuItem
-                onSelect={() => {
-                  setScale(1);
-                }}
-              >
+              <DropdownMenuItem onSelect={() => handleScaleChange(1)}>
                 100%
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() => {
-                  setScale(1.5);
-                }}
-              >
+              <DropdownMenuItem onSelect={() => handleScaleChange(1.5)}>
                 150%
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() => {
-                  setScale(2);
-                }}
-              >
+              <DropdownMenuItem onSelect={() => handleScaleChange(2)}>
                 200%
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() => {
-                  setScale(2.5);
-                }}
-              >
-                250%
+              <DropdownMenuItem onSelect={() => handleScaleChange(0.5)}>
+                50%
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
           <Button
-            aria-label="Rotate 90 degrees"
+            onClick={() => handleRotateChange(rotation + 90)}
             variant="ghost"
-            onClick={() => {
-              setRotation((prev) => prev + 90);
-            }}
+            size="sm"
+            aria-label="rotate 90 degrees"
           >
             <RotateCw className="h-4 w-4" />
           </Button>
@@ -238,6 +267,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
         </div>
       </div>
 
+      {/* PDF Viewer */}
       <div className="flex-1 w-full max-h-screen">
         <SimpleBar autoHide={false} className="max-h-[calc(100vh-10rem)]">
           <div ref={ref}>
@@ -248,17 +278,8 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
                   <p className="text-sm text-muted-foreground">Loading PDF...</p>
                 </div>
               }
-              onLoadError={(error) => {
-                console.error('PDF loading error:', error);
-                toast({
-                  title: "Error loading PDF",
-                  description: "Failed to load PDF document. Please try refreshing the page.",
-                  variant: "destructive",
-                });
-              }}
-              onLoadSuccess={({ numPages }) => {
-                setNumPages(numPages);
-              }}
+              onLoadError={onDocumentLoadError}
+              onLoadSuccess={onDocumentLoadSuccess}
               file={url}
               className="max-h-full"
               error={
@@ -288,26 +309,10 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
                   pageNumber={currPage}
                   scale={scale}
                   rotate={rotation}
-                  key={"@" + renderedScale}
+                  key={`${currPage}-${scale}`}
+                  onLoadSuccess={onPageLoadSuccess}
                 />
               ) : null}
-
-              <Page
-                className={cn(isLoading ? "hidden" : "")}
-                width={width ? width : 1}
-                pageNumber={currPage}
-                scale={scale}
-                rotate={rotation}
-                key={"@" + scale}
-                loading={
-                  <div className="flex justify-center">
-                    <Loader2 className="my-24 h-6 w-6 animate-spin" />
-                  </div>
-                }
-                onRenderSuccess={() => {
-                  setRenderedScale(scale);
-                }}
-              />
             </Document>
           </div>
         </SimpleBar>
