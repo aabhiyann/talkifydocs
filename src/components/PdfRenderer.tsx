@@ -156,17 +156,6 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   };
 
   if (isLoadingPdf) {
-    console.log('PDF loading state:', {
-      isLoading,
-      renderedScale,
-      scale,
-      pdfjsLib: !!pdfjsLib,
-      Document: !!Document,
-      Page: !!Page,
-      mounted,
-      url
-    });
-    console.log('PDF loading details:', { isLoading, renderedScale, scale, pdfjsLib: !!pdfjsLib, Document: !!Document, Page: !!Page, mounted, url });
     
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">

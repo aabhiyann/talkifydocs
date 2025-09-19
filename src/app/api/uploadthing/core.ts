@@ -45,8 +45,6 @@ export const ourFileRouter = {
       });
 
       try {
-        console.log(`Starting PDF processing for file: ${file.name} (${file.key})`);
-        
         const response = await fetch(
           `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`
         );
@@ -56,16 +54,11 @@ export const ourFileRouter = {
         }
         
         const blob = await response.blob();
-        console.log(`File fetched successfully, size: ${blob.size} bytes`);
 
         const loader = new PDFLoader(blob);
         const pageLevelDocs = await loader.load();
-        console.log(`PDF loaded successfully, pages: ${pageLevelDocs.length}`);
-
-        const pagesAmt = pageLevelDocs.length;
 
         // vectorize and index entire document
-        console.log('Starting Pinecone indexing...');
         const pinecone = await getPineconeClient();
         const pineconeIndex = pinecone.Index("talkifydocs");
 
@@ -75,10 +68,7 @@ export const ourFileRouter = {
 
         await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
           pineconeIndex,
-          // namespace: createdFile.id,
         });
-        
-        console.log('Pinecone indexing completed successfully');
 
         await db.file.update({
           data: {
@@ -88,27 +78,8 @@ export const ourFileRouter = {
             id: createdFile.id,
           },
         });
-        
-        console.log(`File processing completed successfully for: ${file.name}`);
       } catch (err) {
         console.error(`File processing failed for ${file.name}:`, err);
-        
-        // Log specific error details
-        if (err instanceof Error) {
-          console.error(`Error message: ${err.message}`);
-          console.error(`Error stack: ${err.stack}`);
-        }
-        
-        // Check for specific error types
-        if (err instanceof Error) {
-          if (err.message.includes('OpenAI')) {
-            console.error('OpenAI API error - check OPENAI_API_KEY');
-          } else if (err.message.includes('Pinecone')) {
-            console.error('Pinecone error - check PINECONE_API_KEY and PINECONE_ENVIRONMENT');
-          } else if (err.message.includes('fetch')) {
-            console.error('Network error - check file URL and network connection');
-          }
-        }
         
         await db.file.update({
           data: {
