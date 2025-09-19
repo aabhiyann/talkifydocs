@@ -61,8 +61,8 @@ class ErrorBoundary extends React.Component<
                   Oops! Something went wrong
                 </h1>
                 <p className="text-gray-600 leading-relaxed">
-                  We're sorry, but something unexpected happened. Our team has
-                  been notified and we're working to fix it.
+                  We&apos;re sorry, but something unexpected happened. Our team has
+                  been notified and we&apos;re working to fix it.
                 </p>
                 {process.env.NODE_ENV === "development" && this.state.error && (
                   <details className="text-left text-sm text-gray-500 mt-4">
