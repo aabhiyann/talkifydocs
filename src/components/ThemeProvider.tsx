@@ -59,6 +59,25 @@ export function ThemeProvider({
     }
   }, [theme, mounted]);
 
+  // Apply theme class immediately on mount to prevent flash
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const root = window.document.documentElement;
+      const storedTheme = localStorage?.getItem(storageKey) as Theme;
+      const initialTheme = storedTheme || defaultTheme;
+      
+      if (initialTheme === "system") {
+        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+          .matches
+          ? "dark"
+          : "light";
+        root.classList.add(systemTheme);
+      } else {
+        root.classList.add(initialTheme);
+      }
+    }
+  }, []);
+
   const value = {
     theme,
     setTheme: (theme: Theme) => {
@@ -73,9 +92,7 @@ export function ThemeProvider({
   if (!mounted) {
     return (
       <ThemeProviderContext.Provider {...props} value={value}>
-        <div className="light">
-          {children}
-        </div>
+        {children}
       </ThemeProviderContext.Provider>
     );
   }

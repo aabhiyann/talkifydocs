@@ -288,7 +288,7 @@ const Dashboard = memo(() => {
                         <FileText className="w-5 h-5 text-white" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <CardTitle className="text-heading-sm truncate group-hover:text-primary-600 transition-colors duration-200">
+                        <CardTitle className="text-heading-sm card-title group-hover:text-primary-600 transition-colors duration-200">
                           {file.name}
                         </CardTitle>
                         <div className="flex items-center space-x-2 text-body-sm text-gray-500 dark:text-gray-400">
