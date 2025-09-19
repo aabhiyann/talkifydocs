@@ -75,6 +75,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
         await import('react-pdf/dist/Page/AnnotationLayer.css');
         await import('react-pdf/dist/Page/TextLayer.css');
         
+        console.log('PDF components loaded successfully');
         setIsLoading(false);
       } catch (error) {
         console.error('Failed to load PDF components:', error);
@@ -135,12 +136,14 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   };
 
   const onDocumentLoadSuccess = (pdf: any) => {
+    console.log('PDF document loaded successfully:', pdf);
     setNumPages(pdf.numPages);
     setRenderedScale(scale);
   };
 
   const onDocumentLoadError = (error: any) => {
     console.error('PDF document load error:', error);
+    console.error('PDF URL:', url);
     toast({
       title: "Error loading PDF",
       description: "Failed to load PDF document. Please try again.",
@@ -153,11 +156,29 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   };
 
   if (isLoadingPdf) {
+    console.log('PDF loading state:', {
+      isLoading,
+      renderedScale,
+      scale,
+      pdfjsLib: !!pdfjsLib,
+      Document: !!Document,
+      Page: !!Page,
+      mounted,
+      url
+    });
+    
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
         <div className="flex flex-col items-center space-y-4">
           <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
           <p className="text-sm text-muted-foreground">Loading PDF viewer...</p>
+          <p className="text-xs text-muted-foreground">
+            {!mounted && 'Initializing...'}
+            {mounted && !pdfjsLib && 'Loading PDF library...'}
+            {pdfjsLib && !Document && 'Loading PDF components...'}
+            {Document && !Page && 'Loading PDF renderer...'}
+            {Document && Page && 'Preparing PDF...'}
+          </p>
         </div>
       </div>
     );
