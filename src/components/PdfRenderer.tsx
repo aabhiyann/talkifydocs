@@ -42,11 +42,19 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   const [pdfjsLib, setPdfjsLib] = useState<any>(null);
   const [Document, setDocument] = useState<any>(null);
   const [Page, setPage] = useState<any>(null);
+  const [mounted, setMounted] = useState(false);
 
-  const isLoadingPdf = isLoading || renderedScale !== scale || !pdfjsLib || !Document || !Page;
+  const isLoadingPdf = isLoading || renderedScale !== scale || !pdfjsLib || !Document || !Page || !mounted;
+
+  // Set mounted state to prevent hydration issues
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Load PDF.js library and components on client side
   useEffect(() => {
+    if (!mounted) return;
+
     const loadPdfComponents = async () => {
       try {
         setIsLoading(true);
@@ -80,7 +88,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
     };
 
     loadPdfComponents();
-  }, [toast]);
+  }, [mounted, toast]);
 
   const CustomPageValidator = z.object({
     page: z
@@ -146,7 +154,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
 
   if (isLoadingPdf) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex items-center justify-center h-full min-h-[400px]">
         <div className="flex flex-col items-center space-y-4">
           <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
           <p className="text-sm text-muted-foreground">Loading PDF viewer...</p>
