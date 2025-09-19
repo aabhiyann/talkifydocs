@@ -92,6 +92,18 @@ const config = {
           600: "var(--error-600)",
           700: "var(--error-700)",
         },
+        info: {
+          50: "var(--info-50)",
+          500: "var(--info-500)",
+          600: "var(--info-600)",
+          700: "var(--info-700)",
+        },
+        danger: {
+          50: "var(--danger-50)",
+          500: "var(--danger-500)",
+          600: "var(--danger-600)",
+          700: "var(--danger-700)",
+        },
         // Legacy shadcn colors for compatibility
         border: "var(--secondary-200)",
         input: "var(--secondary-200)",
