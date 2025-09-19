@@ -32,7 +32,39 @@ import {
 import SimpleBar from "simplebar-react";
 import PdfFullscreen from "./PdfFullscreen";
 
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+// Configure PDF.js worker with reliable CDN and fallback
+const configurePdfWorker = () => {
+  const workerSources = [
+    `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`,
+    `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`,
+    `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`
+  ];
+  
+  pdfjs.GlobalWorkerOptions.workerSrc = workerSources[0];
+  
+  // Test worker availability and fallback if needed
+  if (typeof window !== 'undefined') {
+    const testWorker = async () => {
+      try {
+        const response = await fetch(pdfjs.GlobalWorkerOptions.workerSrc, { method: 'HEAD' });
+        if (!response.ok) {
+          throw new Error('Worker not available');
+        }
+      } catch (error) {
+        console.warn('Primary PDF worker failed, trying fallback...');
+        const currentIndex = workerSources.indexOf(pdfjs.GlobalWorkerOptions.workerSrc);
+        if (currentIndex < workerSources.length - 1) {
+          pdfjs.GlobalWorkerOptions.workerSrc = workerSources[currentIndex + 1];
+          testWorker();
+        }
+      }
+    };
+    
+    testWorker();
+  }
+};
+
+configurePdfWorker();
 
 interface PdfRendererProps {
   url: string;
@@ -187,14 +219,16 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
           <div ref={ref}>
             <Document
               loading={
-                <div className="flex justify-center">
-                  <Loader2 className="my-24 h-6 w-6 animate-spin" />
+                <div className="flex flex-col items-center justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary-600 mb-4" />
+                  <p className="text-sm text-muted-foreground">Loading PDF...</p>
                 </div>
               }
-              onLoadError={() => {
+              onLoadError={(error) => {
+                console.error('PDF loading error:', error);
                 toast({
-                  title: "Error in loading PDF",
-                  description: "Please try again to upload PDF",
+                  title: "Error loading PDF",
+                  description: "Failed to load PDF document. Please try refreshing the page.",
                   variant: "destructive",
                 });
               }}
@@ -203,6 +237,26 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
               }}
               file={url}
               className="max-h-full"
+              error={
+                <div className="flex flex-col items-center justify-center py-12">
+                  <div className="text-destructive mb-4">
+                    <svg className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">Failed to load PDF</h3>
+                  <p className="text-sm text-muted-foreground text-center mb-4">
+                    There was an error loading the PDF document. This might be due to a network issue or an unsupported file format.
+                  </p>
+                  <Button 
+                    onClick={() => window.location.reload()} 
+                    variant="outline"
+                    size="sm"
+                  >
+                    Refresh Page
+                  </Button>
+                </div>
+              }
             >
               {isLoading && renderedScale ? (
                 <Page
