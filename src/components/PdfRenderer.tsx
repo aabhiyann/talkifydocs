@@ -7,18 +7,15 @@ import {
   RotateCw,
   Search,
 } from "lucide-react";
-import { Document, Page, pdfjs } from "react-pdf";
-
-import "react-pdf/dist/Page/AnnotationLayer.css";
-import "react-pdf/dist/Page/TextLayer.css";
 import { useToast } from "./ui/use-toast";
 
 import { useResizeDetector } from "react-resize-detector";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import dynamic from "next/dynamic";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
@@ -32,39 +29,21 @@ import {
 import SimpleBar from "simplebar-react";
 import PdfFullscreen from "./PdfFullscreen";
 
-// Configure PDF.js worker with reliable CDN and fallback
-const configurePdfWorker = () => {
-  const workerSources = [
-    `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`,
-    `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`,
-    `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`
-  ];
-  
-  pdfjs.GlobalWorkerOptions.workerSrc = workerSources[0];
-  
-  // Test worker availability and fallback if needed
-  if (typeof window !== 'undefined') {
-    const testWorker = async () => {
-      try {
-        const response = await fetch(pdfjs.GlobalWorkerOptions.workerSrc, { method: 'HEAD' });
-        if (!response.ok) {
-          throw new Error('Worker not available');
-        }
-      } catch (error) {
-        console.warn('Primary PDF worker failed, trying fallback...');
-        const currentIndex = workerSources.indexOf(pdfjs.GlobalWorkerOptions.workerSrc);
-        if (currentIndex < workerSources.length - 1) {
-          pdfjs.GlobalWorkerOptions.workerSrc = workerSources[currentIndex + 1];
-          testWorker();
-        }
-      }
-    };
-    
-    testWorker();
-  }
-};
+// Dynamically import PDF components to avoid SSR issues
+const Document = dynamic(() => import("react-pdf").then((mod) => mod.Document), {
+  ssr: false,
+  loading: () => (
+    <div className="flex flex-col items-center justify-center py-12">
+      <Loader2 className="h-8 w-8 animate-spin text-primary-600 mb-4" />
+      <p className="text-sm text-muted-foreground">Loading PDF viewer...</p>
+    </div>
+  ),
+});
 
-configurePdfWorker();
+const Page = dynamic(() => import("react-pdf").then((mod) => mod.Page), {
+  ssr: false,
+});
+
 
 interface PdfRendererProps {
   url: string;
@@ -78,8 +57,53 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   const [scale, setScale] = useState<number>(1);
   const [rotation, setRotation] = useState<number>(0);
   const [renderedScale, setRenderedScale] = useState<number | null>(null);
+  const [pdfjsLib, setPdfjsLib] = useState<any>(null);
 
-  const isLoading = renderedScale !== scale;
+  const isLoading = renderedScale !== scale || !pdfjsLib;
+
+  // Load PDF.js library and CSS on client side
+  useEffect(() => {
+    const loadPdfjs = async () => {
+      try {
+        // Import PDF.js library
+        const pdfjs = await import('pdfjs-dist');
+        setPdfjsLib(pdfjs);
+        
+        // Configure worker with fallback options
+        const workerSources = [
+          `${window.location.origin}/pdf.worker.min.js`,
+          `https://unpkg.com/pdfjs-dist@5.3.93/build/pdf.worker.min.js`,
+          `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.3.93/pdf.worker.min.js`
+        ];
+        
+        pdfjs.GlobalWorkerOptions.workerSrc = workerSources[0];
+        
+        // Test worker availability
+        try {
+          const response = await fetch(workerSources[0], { method: 'HEAD' });
+          if (!response.ok) {
+            throw new Error('Local worker not available');
+          }
+        } catch (error) {
+          console.warn('Local worker failed, trying CDN fallback...');
+          pdfjs.GlobalWorkerOptions.workerSrc = workerSources[1];
+        }
+        
+        // Import CSS dynamically
+        await import('react-pdf/dist/Page/AnnotationLayer.css');
+        await import('react-pdf/dist/Page/TextLayer.css');
+      } catch (error) {
+        console.error('Failed to load PDF.js:', error);
+        toast({
+          title: "Error loading PDF viewer",
+          description: "Failed to load PDF viewer library. Please refresh the page.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    loadPdfjs();
+  }, [toast]);
 
   const CustomPageValidator = z.object({
     page: z
