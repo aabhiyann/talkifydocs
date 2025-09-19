@@ -95,14 +95,14 @@ const Messages = ({ fileId }: MessagesProps) => {
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center">
             <MessageSquare className="h-8 w-8 text-primary-600" />
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+          <h3 className="text-heading-md font-semibold text-gray-900 dark:text-gray-100 mb-2">
             Start a conversation
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
             Ask questions about your document to get AI-powered insights and answers.
           </p>
           <div className="space-y-2">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Try asking:</p>
+            <p className="text-body-sm text-gray-500 dark:text-gray-400">Try asking:</p>
             <div className="space-y-1">
               <Badge variant="outline" className="mr-1">&quot;What is this document about?&quot;</Badge>
               <Badge variant="outline" className="mr-1">&quot;Summarize the key points&quot;</Badge>

@@ -124,7 +124,7 @@ const Dashboard = memo(() => {
             <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
               <FileText className="h-10 w-10 text-red-600 dark:text-red-400" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            <h3 className="text-heading-md font-semibold text-gray-900 dark:text-gray-100 mb-2">
               Something went wrong
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
@@ -144,10 +144,10 @@ const Dashboard = memo(() => {
         <div className="mb-8">
           <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center sm:gap-0">
             <div className="space-y-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
+              <h1 className="text-display-lg font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
                 My Documents
               </h1>
-              <p className="text-lg text-gray-600 dark:text-gray-300">
+              <p className="text-body-lg text-gray-600 dark:text-gray-300">
                 Upload, manage, and chat with your PDF documents
               </p>
             </div>
@@ -235,7 +235,7 @@ const Dashboard = memo(() => {
 
             {/* Stats */}
             {files && (
-              <div className="flex items-center space-x-6 text-sm text-gray-600 dark:text-gray-400">
+              <div className="flex items-center space-x-6 text-body-sm text-gray-600 dark:text-gray-400">
                 <span>
                   {filteredAndSortedFiles.length} document
                   {filteredAndSortedFiles.length !== 1 ? "s" : ""}
@@ -288,10 +288,10 @@ const Dashboard = memo(() => {
                         <FileText className="w-5 h-5 text-white" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <CardTitle className="text-lg truncate group-hover:text-primary-600 transition-colors duration-200">
+                        <CardTitle className="text-heading-sm truncate group-hover:text-primary-600 transition-colors duration-200">
                           {file.name}
                         </CardTitle>
-                        <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+                        <div className="flex items-center space-x-2 text-body-sm text-gray-500 dark:text-gray-400">
                           <Calendar className="w-4 h-4" />
                           <span>
                             {format(new Date(file.createdAt), "MMM dd, yyyy")}
@@ -357,7 +357,7 @@ const Dashboard = memo(() => {
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+                    <div className="flex items-center space-x-4 text-body-sm text-gray-600 dark:text-gray-400">
                       <div className="flex items-center space-x-1">
                         <MessagesSquare className="w-4 h-4" />
                         <span>Ready to chat</span>
@@ -382,7 +382,7 @@ const Dashboard = memo(() => {
             <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center animate-bounce-in">
               <Ghost className="h-12 w-12 text-gray-400" />
             </div>
-            <h3 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            <h3 className="text-heading-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
               {searchQuery ? "No documents found" : "No documents yet"}
             </h3>
             <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mb-8">

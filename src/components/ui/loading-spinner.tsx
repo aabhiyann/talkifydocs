@@ -27,7 +27,7 @@ export function LoadingSpinner({
         className
       )} />
       {text && (
-        <span className="text-sm text-gray-600 dark:text-gray-400">
+        <span className="text-body-sm text-gray-600 dark:text-gray-400">
           {text}
         </span>
       )}
@@ -40,7 +40,7 @@ export function PageLoader() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="text-center">
         <LoadingSpinner size="xl" />
-        <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">
+        <p className="mt-4 text-body-lg text-gray-600 dark:text-gray-400">
           Loading...
         </p>
       </div>

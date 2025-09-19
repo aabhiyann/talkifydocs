@@ -61,7 +61,7 @@ const Navbar = () => {
     <nav
       className={`sticky top-0 z-50 w-full transition-all duration-200 ${
         isScrolled
-        ? "bg-white/95 backdrop-blur-md border-b border-secondary-200 shadow-sm" 
+          ? "bg-white/95 backdrop-blur-md border-b border-secondary-200 shadow-sm"
           : "bg-white/80 backdrop-blur-sm"
       }`}
     >
@@ -72,7 +72,7 @@ const Navbar = () => {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
               <FileText className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
+            <span className="text-heading-lg font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
               TalkifyDocs
             </span>
           </Link>
@@ -85,7 +85,7 @@ const Navbar = () => {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center space-x-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`flex items-center space-x-1 px-3 py-2 rounded-lg text-body-sm font-medium transition-all duration-200 ${
                     isActive(item.href)
                       ? "bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-300"
                       : "text-secondary-600 hover:text-secondary-900 hover:bg-secondary-50 dark:text-secondary-300 dark:hover:text-secondary-100 dark:hover:bg-secondary-800/50"
@@ -121,7 +121,9 @@ const Navbar = () => {
                       <p className="text-sm font-medium">
                         {user?.given_name} {user?.family_name}
                       </p>
-                      <p className="text-xs text-secondary-500">{user?.email}</p>
+                      <p className="text-xs text-secondary-500">
+                        {user?.email}
+                      </p>
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
@@ -184,7 +186,7 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Navigation */}
-          {isMobileMenuOpen && (
+        {isMobileMenuOpen && (
           <div className="md:hidden border-t border-secondary-200 bg-white/95 backdrop-blur-lg">
             <div className="flex flex-col space-y-1 p-4">
               {navItems.map((item) => {
@@ -220,7 +222,9 @@ const Navbar = () => {
                       <p className="text-sm font-medium">
                         {user?.given_name} {user?.family_name}
                       </p>
-                      <p className="text-xs text-secondary-500">{user?.email}</p>
+                      <p className="text-xs text-secondary-500">
+                        {user?.email}
+                      </p>
                     </div>
                     <Link
                       href="/dashboard"

@@ -37,7 +37,7 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
               <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center">
                 <Loader2 className="h-8 w-8 text-primary-600 animate-spin" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="text-heading-md font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 Loading your document
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
@@ -61,7 +61,7 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
               <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-yellow-100 dark:bg-yellow-900/20 flex items-center justify-center">
                 <Clock className="h-8 w-8 text-yellow-600 animate-pulse" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="text-heading-md font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 Processing your document
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
@@ -96,7 +96,7 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
               <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
                 <XCircle className="h-8 w-8 text-red-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="text-heading-md font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 Processing failed
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
