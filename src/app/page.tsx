@@ -1,166 +1,135 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles, Zap, Shield, CheckCircle } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
+import HeroSection from "@/components/HeroSection";
 
 export default function Home() {
   return (
     <>
-      <MaxWidthWrapper className="mb-12 mt-28 sm:mt-40 flex flex-col items-center justify-center text-center">
-        <div className="mx-auto mb-4 flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full border border-gray-200 bg-white px-7 py-2 shadow-md backdrop-blur transition-all duration-300 hover:border-gray-300 hover:bg-white/50 hover:shadow-lg hover:scale-105">
-          <p className="text-sm font-semibold text-gray-700">
-            AI-Powered Document Analysis
-          </p>
-        </div>
-        <h1 className="max-w-4xl text-5xl font-bold md:text-6xl lg:text-7xl">
-          Transform your <span className="text-blue-600">documents</span> into
-          intelligent conversations.
-        </h1>
-        <p className="mt-5 max-w-prose text-zinc-700 sm:text-lg">
-          TalkifyDocs revolutionizes document interaction through advanced AI
-          technology. Upload your PDFs, ask questions, and get instant, accurate
-          answers from your content.
-        </p>
-        <Link
-          className={buttonVariants({
-            size: "lg",
-            className:
-              "mt-5 transition-all duration-300 hover:scale-105 hover:shadow-lg",
-          })}
-          href="/dashboard"
-          target="_blank"
-        >
-          Get Started <ArrowRight className="ml-2 h-5 w-5" />
-        </Link>
-      </MaxWidthWrapper>
+      <HeroSection />
 
-      {/* value proposition section */}
-      <div>
-        <div className="relative isolate">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
-          >
-            <div
-              style={{
-                clipPath:
-                  "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
-              }}
-              className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#77f5ef] to-[#41ff41] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
-            ></div>
+      {/* Product Preview Section */}
+      <section className="py-24 relative overflow-hidden">
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-primary-400/20 to-accent-400/20 rounded-full blur-3xl" />
+        </div>
+        
+        <MaxWidthWrapper>
+          <div className="text-center mb-16">
+            <h2 className="text-display-lg mb-6 bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+              See TalkifyDocs in Action
+            </h2>
+            <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-2xl mx-auto">
+              Experience the power of AI-driven document analysis with our intuitive interface
+            </p>
           </div>
 
-          <div>
-            <div className="mx-auto max-w-6xl px-6 lg:px-8">
-              <div className="mt-16 flow-root sm:mt-24">
-                <div className="-m-2 rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4">
-                  <Image
-                    src="/dashboard-preview.jpg"
-                    alt="Product Preview"
-                    width={1364}
-                    height={866}
-                    quality={85}
-                    priority
-                    className="rounded-md bg-white p-2 sm:p-8 shadow-2xl ring-1 ring-gray-900/10"
-                  />
+          <div className="relative">
+            <div className="glass rounded-3xl p-2 shadow-dramatic">
+              <div className="rounded-2xl overflow-hidden bg-white dark:bg-secondary-800">
+                <Image
+                  src="/dashboard-preview.jpg"
+                  alt="TalkifyDocs Dashboard Preview"
+                  width={1364}
+                  height={866}
+                  quality={90}
+                  priority
+                  className="w-full h-auto"
+                />
+              </div>
+            </div>
+            
+            {/* Floating Elements */}
+            <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl rotate-12 opacity-80 animate-bounce-in delay-1000" />
+            <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-gradient-to-br from-accent-500 to-primary-500 rounded-xl -rotate-12 opacity-80 animate-bounce-in delay-1500" />
+          </div>
+        </MaxWidthWrapper>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="py-24 bg-gradient-to-b from-white to-primary-50/30 dark:from-secondary-900 dark:to-primary-950/30">
+        <MaxWidthWrapper>
+          <div className="text-center mb-16">
+            <h2 className="text-display-lg mb-6 bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+              How It Works
+            </h2>
+            <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-2xl mx-auto">
+              Get started with TalkifyDocs in three simple steps and unlock the power of AI-driven document analysis
+            </p>
+          </div>
+
+          {/* Steps */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            <div className="group relative">
+              <div className="glass rounded-2xl p-8 text-center hover:scale-105 transition-all duration-300">
+                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-2xl font-bold text-white">1</span>
                 </div>
+                <h3 className="text-heading-lg mb-4 text-secondary-900 dark:text-secondary-100">
+                  Create Account
+                </h3>
+                <p className="text-body-md text-secondary-600 dark:text-secondary-400 mb-4">
+                  Sign up for a free account or upgrade to our{" "}
+                  <Link
+                    href="/pricing"
+                    className="text-primary-600 hover:text-primary-700 font-medium underline underline-offset-2"
+                  >
+                    professional plan
+                  </Link>
+                  .
+                </p>
+              </div>
+            </div>
+
+            <div className="group relative">
+              <div className="glass rounded-2xl p-8 text-center hover:scale-105 transition-all duration-300">
+                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-2xl font-bold text-white">2</span>
+                </div>
+                <h3 className="text-heading-lg mb-4 text-secondary-900 dark:text-secondary-100">
+                  Upload Document
+                </h3>
+                <p className="text-body-md text-secondary-600 dark:text-secondary-400">
+                  Upload your PDF document and our AI will process it for intelligent analysis and understanding.
+                </p>
+              </div>
+            </div>
+
+            <div className="group relative">
+              <div className="glass rounded-2xl p-8 text-center hover:scale-105 transition-all duration-300">
+                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-secondary-500 to-secondary-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-2xl font-bold text-white">3</span>
+                </div>
+                <h3 className="text-heading-lg mb-4 text-secondary-900 dark:text-secondary-100">
+                  Ask & Get Answers
+                </h3>
+                <p className="text-body-md text-secondary-600 dark:text-secondary-400">
+                  Interact with your document through natural language queries and receive intelligent, contextual responses.
+                </p>
               </div>
             </div>
           </div>
 
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
-          >
-            <div
-              style={{
-                clipPath:
-                  "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
-              }}
-              className="relative left-[calc(50%-13rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#77f5ef] to-[#41ff41] opacity-30 sm:left-[calc(50%-36rem)] sm:w-[72.1875rem]"
-            ></div>
-          </div>
-        </div>
-      </div>
-
-      {/* Feature Section */}
-      <div className="mx-auto mb-32 mt-32 max-w-5xl sm:mt-56">
-        <div className="mb-12 px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl sm:text-center">
-            <h2 className="mt-2 font-bold text-4xl text-gray-900 sm:text-5xl">
-              Advanced AI Technology for Document Analysis
-            </h2>
-            <p className="mt-4 text-lg text-gray-600">
-              Leverage cutting-edge artificial intelligence to extract insights,
-              answer questions, and interact with your documents like never
-              before.
-            </p>
-          </div>
-        </div>
-
-        {/* steps */}
-        <ol className="my-8 space-y-4 pt-8 md:flex md:space-x-12 md:space-y-0">
-          <li className="md:flex-1">
-            <div className="flex flex-col space-y-2 border-l-4 border-zinc-300 py-2 pl-4 md:border-l-0 md:border-t-2 md:pb-0 md:pl-0 md:pt-4">
-              <span className="text-sm font-medium text-blue-600">Step 1</span>
-              <span className="text-xl font-semibold">Create your account</span>
-              <span className="mt-2 text-zinc-700">
-                Register for a free account or upgrade to our{" "}
-                <Link
-                  href="/pricing"
-                  className="text-blue-600 underline underline-offset-2"
-                >
-                  professional plan
-                </Link>
-                .
-              </span>
-            </div>
-          </li>
-
-          <li className="md:flex-1">
-            <div className="flex flex-col space-y-2 border-l-4 border-zinc-300 py-2 pl-4 md:border-l-0 md:border-t-2 md:pb-0 md:pl-0 md:pt-4">
-              <span className="text-sm font-medium text-blue-600">Step 2</span>
-              <span className="text-xl font-semibold">
-                Upload your document
-              </span>
-              <span className="mt-2 text-zinc-700">
-                Upload your PDF document and our AI will process it for
-                intelligent analysis.
-              </span>
-            </div>
-          </li>
-
-          <li className="md:flex-1">
-            <div className="flex flex-col space-y-2 border-l-4 border-zinc-300 py-2 pl-4 md:border-l-0 md:border-t-2 md:pb-0 md:pl-0 md:pt-4">
-              <span className="text-sm font-medium text-blue-600">Step 3</span>
-              <span className="text-xl font-semibold">
-                Ask questions and get answers
-              </span>
-              <span className="mt-2 text-zinc-700">
-                Interact with your document through natural language queries and
-                receive intelligent, contextual responses.
-              </span>
-            </div>
-          </li>
-        </ol>
-
-        <div className="mx-auto max-w-6xl px-6 lg:px-8">
-          <div className="mt-16 flow-root sm:mt-24">
-            <div className="-m-2 rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4">
-              <Image
-                src="/file-upload-preview.jpg"
-                alt="Uploading Preview"
-                width={1419}
-                height={732}
-                quality={85}
-                loading="lazy"
-                className="rounded-md bg-white p-2 sm:p-8 shadow-2xl ring-1 ring-gray-900/10"
-              />
+          {/* Upload Preview */}
+          <div className="relative">
+            <div className="glass rounded-3xl p-2 shadow-dramatic">
+              <div className="rounded-2xl overflow-hidden bg-white dark:bg-secondary-800">
+                <Image
+                  src="/file-upload-preview.jpg"
+                  alt="File Upload Preview"
+                  width={1419}
+                  height={732}
+                  quality={90}
+                  loading="lazy"
+                  className="w-full h-auto"
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </MaxWidthWrapper>
+      </section>
     </>
   );
 }

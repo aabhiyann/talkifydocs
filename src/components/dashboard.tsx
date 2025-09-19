@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { Button } from "./ui/button";
 import { useState, memo, useCallback, useMemo } from "react";
 import { SearchBar, SearchFilters } from "./SearchBar";
+import { ModernCard, ModernCardContent, ModernCardHeader, ModernCardTitle, ModernCardDescription } from "./ui/modern-card";
 
 const Dashboard = memo(() => {
   const [currentlyDeletingFile, setCurrentlyDeletingFile] = useState<
@@ -81,28 +82,32 @@ const Dashboard = memo(() => {
   }, [files, searchQuery, filters]);
 
   return (
-    <main className="mx-auto max-w-7xl md:p-10">
-      <div className="mt-8 flex flex-col items-start justify-between gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:gap-0">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl">
-            Document Library
-          </h1>
-          <p className="text-sm text-gray-600 sm:text-base">
-            Manage and interact with your PDF documents
-          </p>
-        </div>
-        <UploadButton />
-      </div>
+    <main className="min-h-screen bg-gradient-to-br from-primary-50/30 via-white to-accent-50/30 dark:from-secondary-900 dark:via-secondary-800 dark:to-primary-950/30">
+      <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center sm:gap-0">
+            <div className="space-y-2">
+              <h1 className="text-display-md bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+                Document Library
+              </h1>
+              <p className="text-body-lg text-secondary-600 dark:text-secondary-300">
+                Manage and interact with your PDF documents
+              </p>
+            </div>
+            <UploadButton />
+          </div>
 
-      {/* Search and Filter Bar */}
-      <div className="mt-6">
-        <SearchBar
-          onSearch={setSearchQuery}
-          onFiltersChange={setFilters}
-          placeholder="Search your documents..."
-          filters={filters}
-        />
-      </div>
+          {/* Search and Filter Bar */}
+          <div className="mt-8">
+            <SearchBar
+              onSearch={setSearchQuery}
+              onFiltersChange={setFilters}
+              placeholder="Search your documents..."
+              filters={filters}
+            />
+          </div>
+        </div>
 
       {/* -- Display all the files of the user here -- */}
       {filteredAndSortedFiles && filteredAndSortedFiles.length !== 0 ? (

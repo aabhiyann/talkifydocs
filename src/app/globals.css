@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import Modern Design System */
+@import '../styles/design-system.css';
+
 @layer base {
   :root {
     --background: 0 0% 100%;
