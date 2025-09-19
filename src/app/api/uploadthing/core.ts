@@ -45,18 +45,27 @@ export const ourFileRouter = {
       });
 
       try {
+        console.log(`Starting PDF processing for file: ${file.name} (${file.key})`);
+        
         const response = await fetch(
           `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`
         );
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch file from S3: ${response.status} ${response.statusText}`);
+        }
+        
         const blob = await response.blob();
+        console.log(`File fetched successfully, size: ${blob.size} bytes`);
 
         const loader = new PDFLoader(blob);
-
         const pageLevelDocs = await loader.load();
+        console.log(`PDF loaded successfully, pages: ${pageLevelDocs.length}`);
 
         const pagesAmt = pageLevelDocs.length;
 
         // vectorize and index entire document
+        console.log('Starting Pinecone indexing...');
         const pinecone = await getPineconeClient();
         const pineconeIndex = pinecone.Index("talkifydocs");
 
@@ -68,6 +77,8 @@ export const ourFileRouter = {
           pineconeIndex,
           // namespace: createdFile.id,
         });
+        
+        console.log('Pinecone indexing completed successfully');
 
         await db.file.update({
           data: {
@@ -77,7 +88,11 @@ export const ourFileRouter = {
             id: createdFile.id,
           },
         });
+        
+        console.log(`File processing completed successfully for: ${file.name}`);
       } catch (err) {
+        console.error(`File processing failed for ${file.name}:`, err);
+        
         await db.file.update({
           data: {
             uploadStatus: "FAILED",
