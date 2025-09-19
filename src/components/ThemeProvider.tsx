@@ -28,16 +28,24 @@ export function ThemeProvider({
   storageKey = "talkifydocs-ui-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window !== "undefined") {
-      return (localStorage?.getItem(storageKey) as Theme) || defaultTheme;
+  const [theme, setTheme] = useState<Theme>(defaultTheme);
+  const [mounted, setMounted] = useState(false);
+
+  // Only run on client side after mount
+  useEffect(() => {
+    setMounted(true);
+    
+    // Get theme from localStorage after mount
+    const storedTheme = localStorage?.getItem(storageKey) as Theme;
+    if (storedTheme) {
+      setTheme(storedTheme);
     }
-    return defaultTheme;
-  });
+  }, [storageKey]);
 
   useEffect(() => {
-    const root = window.document.documentElement;
+    if (!mounted) return;
 
+    const root = window.document.documentElement;
     root.classList.remove("light", "dark");
 
     if (theme === "system") {
@@ -45,13 +53,11 @@ export function ThemeProvider({
         .matches
         ? "dark"
         : "light";
-
       root.classList.add(systemTheme);
-      return;
+    } else {
+      root.classList.add(theme);
     }
-
-    root.classList.add(theme);
-  }, [theme]);
+  }, [theme, mounted]);
 
   const value = {
     theme,
@@ -62,6 +68,15 @@ export function ThemeProvider({
       setTheme(theme);
     },
   };
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return (
+      <ThemeProviderContext.Provider {...props} value={value}>
+        {children}
+      </ThemeProviderContext.Provider>
+    );
+  }
 
   return (
     <ThemeProviderContext.Provider {...props} value={value}>

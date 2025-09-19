@@ -3,6 +3,11 @@ const nextConfig = {
   // Performance optimizations
   compress: true,
   poweredByHeader: false,
+  
+  // Disable dev indicators
+  devIndicators: {
+    position: 'bottom-right',
+  },
 
   // Image optimization
   images: {

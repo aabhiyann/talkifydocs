@@ -7,48 +7,50 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 142.1 76.2% 36.3%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 96% 95%;
-    --destructive-foreground: 0 74% 50%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 142.1 76.2% 36.3%;
-    --radius: 0.5rem;
+    /* Design System Integration */
+    --background: var(--secondary-50);
+    --foreground: var(--secondary-900);
+    --card: var(--secondary-50);
+    --card-foreground: var(--secondary-900);
+    --popover: var(--secondary-50);
+    --popover-foreground: var(--secondary-900);
+    --primary: var(--primary-500);
+    --primary-foreground: var(--secondary-50);
+    --secondary: var(--secondary-500);
+    --secondary-foreground: var(--secondary-50);
+    --muted: var(--secondary-100);
+    --muted-foreground: var(--secondary-600);
+    --accent: var(--accent-500);
+    --accent-foreground: var(--secondary-50);
+    --destructive: var(--error-500);
+    --destructive-foreground: var(--secondary-50);
+    --border: var(--secondary-200);
+    --input: var(--secondary-200);
+    --ring: var(--primary-500);
+    --radius: var(--radius-lg);
   }
 
   .dark {
-    --background: 20 14.3% 4.1%;
-    --foreground: 0 0% 95%;
-    --card: 24 9.8% 10%;
-    --card-foreground: 0 0% 95%;
-    --popover: 0 0% 9%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 142.1 70.6% 45.3%;
-    --primary-foreground: 144.9 80.4% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 15%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 12 6.5% 15.1%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 85.7% 97.3%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 142.4 71.8% 29.2%;
+    /* Dark mode uses the same design system variables */
+    --background: var(--secondary-50);
+    --foreground: var(--secondary-900);
+    --card: var(--secondary-50);
+    --card-foreground: var(--secondary-900);
+    --popover: var(--secondary-50);
+    --popover-foreground: var(--secondary-900);
+    --primary: var(--primary-500);
+    --primary-foreground: var(--secondary-50);
+    --secondary: var(--secondary-500);
+    --secondary-foreground: var(--secondary-50);
+    --muted: var(--secondary-100);
+    --muted-foreground: var(--secondary-600);
+    --accent: var(--accent-500);
+    --accent-foreground: var(--secondary-50);
+    --destructive: var(--error-500);
+    --destructive-foreground: var(--secondary-50);
+    --border: var(--secondary-200);
+    --input: var(--secondary-200);
+    --ring: var(--primary-500);
   }
 }
 
