@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* Import Modern Design System */
-@import '../styles/design-system.css';
+@import "../styles/design-system.css";
 
 @layer base {
   :root {
