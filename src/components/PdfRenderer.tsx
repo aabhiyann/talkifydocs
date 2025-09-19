@@ -78,7 +78,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
 
   return (
     <div className="w-full bg-white rounded-md shadow flex flex-col items-center">
-      <div className="h-14 w-full border-b border-zinc-200 flex items-center justify-between px-2">
+      <div className="h-14 w-full border-b border-gray-200 flex items-center justify-between px-2">
         <div className="flex items-center gap-1.5">
           <Button
             aria-label="previous page"
@@ -105,7 +105,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
               }}
             />
 
-            <p className="text-zinc-700 text-sm space-x-1">
+            <p className="text-gray-700 text-sm space-x-1">
               <span>/</span>
               <span>{numPages ?? "x"}</span>
             </p>

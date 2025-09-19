@@ -128,7 +128,7 @@ const UploadDropzone = () => {
                 : uploadStatus === "error"
                 ? "border-red-300 bg-red-50 dark:bg-red-900/10"
                 : uploadStatus === "success"
-                ? "border-green-300 bg-green-50 dark:bg-green-900/10"
+                ? "border-primary-300 bg-primary-50 dark:bg-primary-900/10"
                 : "border-gray-300 hover:border-primary-400 hover:bg-gray-50 dark:border-gray-600 dark:hover:border-primary-500 dark:hover:bg-gray-800/50"
             }`}
           >
@@ -143,7 +143,7 @@ const UploadDropzone = () => {
                     : "bg-primary-100 dark:bg-primary-900/20"
                 }`}>
                   {uploadStatus === "success" ? (
-                    <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
+                    <CheckCircle2 className="h-8 w-8 text-primary-600 dark:text-primary-400" />
                   ) : uploadStatus === "error" ? (
                     <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
                   ) : isUploading ? (
@@ -157,10 +157,10 @@ const UploadDropzone = () => {
                 <div className="text-center space-y-2">
                   {uploadStatus === "success" ? (
                     <>
-                      <h3 className="text-lg font-semibold text-green-700 dark:text-green-300">
+                      <h3 className="text-lg font-semibold text-primary-700 dark:text-primary-300">
                         Upload Successful!
                       </h3>
-                      <p className="text-sm text-green-600 dark:text-green-400">
+                      <p className="text-sm text-primary-600 dark:text-primary-400">
                         Redirecting to your document...
                       </p>
                     </>

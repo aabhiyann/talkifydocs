@@ -263,7 +263,7 @@ export default function FeaturesPage() {
                   <tr className="border-b border-secondary-100 dark:border-secondary-800">
                     <td className="py-4 px-6 text-body-md text-secondary-900 dark:text-secondary-100">AI-Powered Analysis</td>
                     <td className="py-4 px-6 text-center">
-                      <div className="w-6 h-6 mx-auto rounded-full bg-green-500 flex items-center justify-center">
+                      <div className="w-6 h-6 mx-auto rounded-full bg-primary-500 flex items-center justify-center">
                         <span className="text-white text-sm">✓</span>
                       </div>
                     </td>
@@ -276,7 +276,7 @@ export default function FeaturesPage() {
                   <tr className="border-b border-secondary-100 dark:border-secondary-800">
                     <td className="py-4 px-6 text-body-md text-secondary-900 dark:text-secondary-100">Conversational Interface</td>
                     <td className="py-4 px-6 text-center">
-                      <div className="w-6 h-6 mx-auto rounded-full bg-green-500 flex items-center justify-center">
+                      <div className="w-6 h-6 mx-auto rounded-full bg-primary-500 flex items-center justify-center">
                         <span className="text-white text-sm">✓</span>
                       </div>
                     </td>
@@ -289,7 +289,7 @@ export default function FeaturesPage() {
                   <tr className="border-b border-secondary-100 dark:border-secondary-800">
                     <td className="py-4 px-6 text-body-md text-secondary-900 dark:text-secondary-100">Real-time Processing</td>
                     <td className="py-4 px-6 text-center">
-                      <div className="w-6 h-6 mx-auto rounded-full bg-green-500 flex items-center justify-center">
+                      <div className="w-6 h-6 mx-auto rounded-full bg-primary-500 flex items-center justify-center">
                         <span className="text-white text-sm">✓</span>
                       </div>
                     </td>
@@ -302,12 +302,12 @@ export default function FeaturesPage() {
                   <tr className="border-b border-secondary-100 dark:border-secondary-800">
                     <td className="py-4 px-6 text-body-md text-secondary-900 dark:text-secondary-100">Document Search</td>
                     <td className="py-4 px-6 text-center">
-                      <div className="w-6 h-6 mx-auto rounded-full bg-green-500 flex items-center justify-center">
+                      <div className="w-6 h-6 mx-auto rounded-full bg-primary-500 flex items-center justify-center">
                         <span className="text-white text-sm">✓</span>
                       </div>
                     </td>
                     <td className="py-4 px-6 text-center">
-                      <div className="w-6 h-6 mx-auto rounded-full bg-green-500 flex items-center justify-center">
+                      <div className="w-6 h-6 mx-auto rounded-full bg-primary-500 flex items-center justify-center">
                         <span className="text-white text-sm">✓</span>
                       </div>
                     </td>
@@ -315,7 +315,7 @@ export default function FeaturesPage() {
                   <tr>
                     <td className="py-4 px-6 text-body-md text-secondary-900 dark:text-secondary-100">Team Collaboration</td>
                     <td className="py-4 px-6 text-center">
-                      <div className="w-6 h-6 mx-auto rounded-full bg-green-500 flex items-center justify-center">
+                      <div className="w-6 h-6 mx-auto rounded-full bg-primary-500 flex items-center justify-center">
                         <span className="text-white text-sm">✓</span>
                       </div>
                     </td>

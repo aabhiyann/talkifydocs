@@ -9,7 +9,7 @@ export const LazyBillingForm = lazy(() => import("./BillingForm"));
 // Loading component
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center p-8">
-    <Loader2 className="h-8 w-8 animate-spin text-green-500" />
+    <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
   </div>
 );
 
