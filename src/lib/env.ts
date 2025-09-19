@@ -9,6 +9,7 @@ const envSchema = z.object({
 
   // Pinecone
   PINECONE_API_KEY: z.string().min(1, "Pinecone API key is required"),
+  PINECONE_ENVIRONMENT: z.string().min(1, "Pinecone environment is required"),
 
   // Stripe
   STRIPE_SECRET_KEY: z.string().min(1, "Stripe secret key is required"),
@@ -49,6 +50,7 @@ try {
       process.env.DATABASE_URL || "postgresql://localhost:5432/talkifydocs",
     OPENAI_API_KEY: process.env.OPENAI_API_KEY || "",
     PINECONE_API_KEY: process.env.PINECONE_API_KEY || "",
+    PINECONE_ENVIRONMENT: process.env.PINECONE_ENVIRONMENT || "gcp-starter",
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || "",
     UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET || "",

@@ -93,6 +93,23 @@ export const ourFileRouter = {
       } catch (err) {
         console.error(`File processing failed for ${file.name}:`, err);
         
+        // Log specific error details
+        if (err instanceof Error) {
+          console.error(`Error message: ${err.message}`);
+          console.error(`Error stack: ${err.stack}`);
+        }
+        
+        // Check for specific error types
+        if (err instanceof Error) {
+          if (err.message.includes('OpenAI')) {
+            console.error('OpenAI API error - check OPENAI_API_KEY');
+          } else if (err.message.includes('Pinecone')) {
+            console.error('Pinecone error - check PINECONE_API_KEY and PINECONE_ENVIRONMENT');
+          } else if (err.message.includes('fetch')) {
+            console.error('Network error - check file URL and network connection');
+          }
+        }
+        
         await db.file.update({
           data: {
             uploadStatus: "FAILED",
