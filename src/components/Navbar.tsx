@@ -4,7 +4,18 @@ import React, { useState, useEffect } from "react";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import Link from "next/link";
 import { buttonVariants } from "./ui/button";
-import { ArrowRight, Menu, X, FileText, MessageSquare, Settings, User, LogOut, Home, Zap } from "lucide-react";
+import {
+  ArrowRight,
+  Menu,
+  X,
+  FileText,
+  MessageSquare,
+  Settings,
+  User,
+  LogOut,
+  Home,
+  Zap,
+} from "lucide-react";
 import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./ThemeToggle";
@@ -47,11 +58,13 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className={`sticky top-0 z-50 w-full transition-all duration-200 ${
-      isScrolled 
-        ? "bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm" 
-        : "bg-white/80 backdrop-blur-sm"
-    }`}>
+    <nav
+      className={`sticky top-0 z-50 w-full transition-all duration-200 ${
+        isScrolled
+          ? "bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm"
+          : "bg-white/80 backdrop-blur-sm"
+      }`}
+    >
       <MaxWidthWrapper>
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -83,40 +96,57 @@ const Navbar = () => {
                 </Link>
               );
             })}
-            
+
             <div className="flex items-center space-x-2 ml-4 pl-4 border-l border-gray-200">
               <ThemeToggle />
-              
+
               {isAuthenticated ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex items-center space-x-2"
+                    >
                       <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
                         <User className="w-4 h-4 text-white" />
                       </div>
-                      <span className="hidden sm:inline">{user?.given_name || "User"}</span>
+                      <span className="hidden sm:inline">
+                        {user?.given_name || "User"}
+                      </span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
                     <div className="px-3 py-2">
-                      <p className="text-sm font-medium">{user?.given_name} {user?.family_name}</p>
+                      <p className="text-sm font-medium">
+                        {user?.given_name} {user?.family_name}
+                      </p>
                       <p className="text-xs text-gray-500">{user?.email}</p>
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link href="/dashboard" className="flex items-center space-x-2">
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center space-x-2"
+                      >
                         <Home className="w-4 h-4" />
                         <span>Dashboard</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/dashboard/billing" className="flex items-center space-x-2">
+                      <Link
+                        href="/dashboard/billing"
+                        className="flex items-center space-x-2"
+                      >
                         <Settings className="w-4 h-4" />
                         <span>Billing</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
+                    <DropdownMenuItem
+                      onClick={handleSignOut}
+                      className="text-red-600"
+                    >
                       <LogOut className="w-4 h-4 mr-2" />
                       Sign out
                     </DropdownMenuItem>
@@ -124,7 +154,9 @@ const Navbar = () => {
                 </DropdownMenu>
               ) : (
                 <>
-                  <LoginLink className={buttonVariants({ variant: "ghost", size: "sm" })}>
+                  <LoginLink
+                    className={buttonVariants({ variant: "ghost", size: "sm" })}
+                  >
                     Sign in
                   </LoginLink>
                   <RegisterLink className={buttonVariants({ size: "sm" })}>
@@ -173,17 +205,21 @@ const Navbar = () => {
                   </Link>
                 );
               })}
-              
+
               <div className="pt-4 border-t border-gray-200">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Theme</span>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Theme
+                  </span>
                   <ThemeToggle />
                 </div>
-                
+
                 {isAuthenticated ? (
                   <div className="space-y-2">
                     <div className="px-3 py-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                      <p className="text-sm font-medium">{user?.given_name} {user?.family_name}</p>
+                      <p className="text-sm font-medium">
+                        {user?.given_name} {user?.family_name}
+                      </p>
                       <p className="text-xs text-gray-500">{user?.email}</p>
                     </div>
                     <Link
@@ -217,13 +253,16 @@ const Navbar = () => {
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <LoginLink 
-                      className={buttonVariants({ variant: "ghost", size: "sm" })}
+                    <LoginLink
+                      className={buttonVariants({
+                        variant: "ghost",
+                        size: "sm",
+                      })}
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Sign in
                     </LoginLink>
-                    <RegisterLink 
+                    <RegisterLink
                       className={buttonVariants({ size: "sm" })}
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
