@@ -104,9 +104,9 @@ const Messages = ({ fileId }: MessagesProps) => {
           <div className="space-y-2">
             <p className="text-sm text-gray-500 dark:text-gray-400">Try asking:</p>
             <div className="space-y-1">
-              <Badge variant="outline" className="mr-1">"What is this document about?"</Badge>
-              <Badge variant="outline" className="mr-1">"Summarize the key points"</Badge>
-              <Badge variant="outline" className="mr-1">"Find information about..."</Badge>
+              <Badge variant="outline" className="mr-1">&quot;What is this document about?&quot;</Badge>
+              <Badge variant="outline" className="mr-1">&quot;Summarize the key points&quot;</Badge>
+              <Badge variant="outline" className="mr-1">&quot;Find information about...&quot;</Badge>
             </div>
           </div>
         </div>
@@ -167,7 +167,7 @@ const Messages = ({ fileId }: MessagesProps) => {
                     <div className={`${
                       message.isUserMessage ? 'text-white' : 'text-gray-900 dark:text-gray-100'
                     }`}>
-                      <Message message={message} />
+                      <Message message={message} isNextMessageSamePerson={false} />
                     </div>
                     <div className={`text-xs opacity-60 ${
                       message.isUserMessage ? 'text-white' : 'text-gray-500 dark:text-gray-400'

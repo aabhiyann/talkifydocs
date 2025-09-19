@@ -5,7 +5,7 @@ import ChatInput from "./ChatInput";
 import Messages from "./Messages";
 import { ChevronLeft, Loader2, XCircle, FileText, AlertCircle, CheckCircle2, Clock } from "lucide-react";
 import Link from "next/link";
-import { buttonVariants } from "../ui/button";
+import { buttonVariants, Button } from "../ui/button";
 import { ChatContextProvider } from "./ChatContext";
 import { ChatMessageSkeleton, PdfViewerSkeleton } from "../ui/skeleton";
 import { memo } from "react";
@@ -41,7 +41,7 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
                 Loading your document
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
-                We're preparing your PDF for analysis...
+                We&apos;re preparing your PDF for analysis...
               </p>
             </CardContent>
           </Card>
@@ -100,7 +100,7 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
                 Processing failed
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                We couldn't process your PDF. Please try uploading again.
+                We couldn&apos;t process your PDF. Please try uploading again.
               </p>
               <div className="space-y-3">
                 <Link href="/dashboard" className={buttonVariants({ className: "w-full" })}>
@@ -136,7 +136,7 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
                   </div>
                   <div>
                     <h1 className="font-semibold text-gray-900 dark:text-gray-100">
-                      {data?.name || "Document"}
+                      Document
                     </h1>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       Ready to chat

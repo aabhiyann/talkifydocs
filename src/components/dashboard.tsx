@@ -20,6 +20,7 @@ import {
   Share2,
   Star,
   Clock,
+  MessageSquare,
 } from "lucide-react";
 import { DocumentCardSkeleton } from "./ui/skeleton";
 import Link from "next/link";
@@ -127,7 +128,7 @@ const Dashboard = memo(() => {
               Something went wrong
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              We couldn't load your documents. Please try again.
+              We couldn&apos;t load your documents. Please try again.
             </p>
             <Button onClick={() => window.location.reload()}>Try Again</Button>
           </div>
@@ -239,7 +240,9 @@ const Dashboard = memo(() => {
                   {filteredAndSortedFiles.length} document
                   {filteredAndSortedFiles.length !== 1 ? "s" : ""}
                 </span>
-                {searchQuery && <span>Filtered by "{searchQuery}"</span>}
+                {searchQuery && (
+                  <span>Filtered by &quot;{searchQuery}&quot;</span>
+                )}
               </div>
             )}
           </div>
@@ -382,7 +385,7 @@ const Dashboard = memo(() => {
             </h3>
             <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mb-8">
               {searchQuery
-                ? `No documents match "${searchQuery}". Try adjusting your search.`
+                ? `No documents match &quot;${searchQuery}&quot;. Try adjusting your search.`
                 : "Upload your first PDF document to get started with AI-powered analysis and intelligent conversations."}
             </p>
             <div className="space-y-4">
