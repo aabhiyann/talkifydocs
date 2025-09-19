@@ -62,7 +62,7 @@ export function SearchBar({
     const newFilters = {
       ...filters,
       sortOrder: filters.sortOrder === "asc" ? "desc" : "asc",
-    };
+    } as SearchFilters;
     onFiltersChange(newFilters);
   }, [filters, onFiltersChange]);
 
@@ -122,7 +122,9 @@ export function SearchBar({
                 {sortOptions.map((option) => (
                   <DropdownMenuItem
                     key={option.value}
-                    onClick={() => handleSortChange(option.value as SearchFilters["sortBy"])}
+                    onClick={() =>
+                      handleSortChange(option.value as SearchFilters["sortBy"])
+                    }
                   >
                     {option.label}
                   </DropdownMenuItem>

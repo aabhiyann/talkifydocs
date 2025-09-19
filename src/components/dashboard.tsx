@@ -1,7 +1,6 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
-import { withCache, cacheKeys, CACHE_TTL } from "@/lib/cache";
 import UploadButton from "./UploadButton";
 import { Ghost, Loader2, MessagesSquare, Plus, Trash } from "lucide-react";
 import { DocumentCardSkeleton } from "./ui/skeleton";
@@ -10,7 +9,6 @@ import { format } from "date-fns";
 import { Button } from "./ui/button";
 import { useState, memo, useCallback, useMemo } from "react";
 import { SearchBar, SearchFilters } from "./SearchBar";
-import { ModernCard, ModernCardContent, ModernCardHeader, ModernCardTitle, ModernCardDescription } from "./ui/modern-card";
 
 const Dashboard = memo(() => {
   const [currentlyDeletingFile, setCurrentlyDeletingFile] = useState<
@@ -61,17 +59,19 @@ const Dashboard = memo(() => {
     // Apply sorting
     filtered.sort((a, b) => {
       let comparison = 0;
-      
+
       switch (filters.sortBy) {
         case "name":
           comparison = a.name.localeCompare(b.name);
           break;
         case "date":
-          comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          comparison =
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
           break;
         case "size":
           // Note: File size not available in current schema, using date as fallback
-          comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          comparison =
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
           break;
       }
 
@@ -82,16 +82,16 @@ const Dashboard = memo(() => {
   }, [files, searchQuery, filters]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-primary-50/30 via-white to-accent-50/30 dark:from-secondary-900 dark:via-secondary-800 dark:to-primary-950/30">
+    <main className="min-h-screen bg-gradient-to-br from-blue-50/30 via-white to-purple-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-purple-950/30">
       <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center sm:gap-0">
             <div className="space-y-2">
-              <h1 className="text-display-md bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Document Library
               </h1>
-              <p className="text-body-lg text-secondary-600 dark:text-secondary-300">
+              <p className="text-lg text-gray-600 dark:text-gray-300">
                 Manage and interact with your PDF documents
               </p>
             </div>
@@ -109,88 +109,92 @@ const Dashboard = memo(() => {
           </div>
         </div>
 
-      {/* -- Display all the files of the user here -- */}
-      {filteredAndSortedFiles && filteredAndSortedFiles.length !== 0 ? (
-        <ul
-          className="mt-8 grid grid-cols-1 gap-6 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3"
-          role="list"
-          aria-label="User files"
-        >
-          {filteredAndSortedFiles.map((file) => (
-              <li
+        {/* Document Grid */}
+        {filteredAndSortedFiles && filteredAndSortedFiles.length !== 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredAndSortedFiles.map((file) => (
+              <div
                 key={file.id}
-                className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow transition-all duration-200 hover:shadow-xl hover:scale-[1.02] group"
-                role="listitem"
+                className="group cursor-pointer bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
                 <Link
                   href={`/dashboard/${file.id}`}
-                  className="flex flex-col gap-2"
+                  className="block h-full"
                   aria-label={`Open file ${file.name}`}
                 >
-                  <div className="pt-6 px-6 flex w-full items-center justify-between space-x-6">
-                    <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 group-hover:from-cyan-600 group-hover:to-green-600 transition-colors duration-200" />
-                    <div className="flex-1 truncate">
-                      <div className="flex items-center space-x-3">
-                        <h3 className="truncate text-lg font-medium text-zinc-900 group-hover:text-blue-600 transition-colors duration-200">
-                          {file.name}
-                        </h3>
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <MessagesSquare className="w-6 h-6 text-white" />
+                    </div>
+                    <Button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleDeleteFile(file.id);
+                      }}
+                      size="sm"
+                      variant="destructive"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                      aria-label={`Delete file ${file.name}`}
+                    >
+                      {currentlyDeletingFile === file.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Trash className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-blue-600 transition-colors duration-200">
+                        {file.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Uploaded on{" "}
+                        {format(new Date(file.createdAt), "MMM dd, yyyy")}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                        <Plus className="h-4 w-4" />
+                        <span>Ready to chat</span>
+                      </div>
+                      <div className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                        Click to open
                       </div>
                     </div>
                   </div>
                 </Link>
-
-                <div className="px-6 mt-4 grid grid-cols-3 place-items-center py-2 gap-6 text-xs text-zinc-500">
-                  <div className="flex items-center gap-2">
-                    <Plus className="h-4 w-4" />
-                    {format(new Date(file.createdAt), "MMM yyyy")}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MessagesSquare className="h-4 w-4" />
-                    Mocked
-                  </div>
-
-                  <Button
-                    onClick={() => handleDeleteFile(file.id)}
-                    size="sm"
-                    className="w-full"
-                    variant="destructive"
-                    aria-label={`Delete file ${file.name}`}
-                  >
-                    {currentlyDeletingFile === file.id ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Trash className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-              </li>
+              </div>
             ))}
-        </ul>
-      ) : isLoading ? (
-        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <DocumentCardSkeleton />
-          <DocumentCardSkeleton />
-          <DocumentCardSkeleton />
-        </div>
-      ) : (
-        <div className="mt-16 flex flex-col items-center gap-4 text-center">
-          <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
-            <Ghost className="h-10 w-10 text-zinc-600" />
           </div>
-          <div className="space-y-2">
-            <h3 className="font-semibold text-xl text-gray-900">
-              No documents found
-            </h3>
-            <p className="text-gray-600 max-w-md">
-              Upload your first PDF document to get started with AI-powered
-              analysis and intelligent conversations.
-            </p>
+        ) : isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <DocumentCardSkeleton />
+            <DocumentCardSkeleton />
+            <DocumentCardSkeleton />
           </div>
-          <div className="mt-4">
-            <UploadButton />
+        ) : (
+          <div className="mt-16 flex flex-col items-center gap-4 text-center">
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
+              <Ghost className="h-10 w-10 text-gray-600" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="font-semibold text-xl text-gray-900">
+                No documents found
+              </h3>
+              <p className="text-gray-600 max-w-md">
+                Upload your first PDF document to get started with AI-powered
+                analysis and intelligent conversations.
+              </p>
+            </div>
+            <div className="mt-4">
+              <UploadButton />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </main>
   );
 });
