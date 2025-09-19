@@ -59,13 +59,15 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              try {
-                const theme = localStorage.getItem('talkifydocs-ui-theme') || 'system';
-                const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-                document.documentElement.classList.add(isDark ? 'dark' : 'light');
-              } catch (e) {
-                document.documentElement.classList.add('light');
-              }
+              (function() {
+                try {
+                  const theme = localStorage.getItem('talkifydocs-ui-theme') || 'system';
+                  const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                  document.documentElement.className = isDark ? 'dark' : 'light';
+                } catch (e) {
+                  document.documentElement.className = 'light';
+                }
+              })();
             `,
           }}
         />
