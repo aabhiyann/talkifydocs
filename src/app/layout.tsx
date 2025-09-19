@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
+import ClientThemeProvider from "@/components/ClientThemeProvider";
 
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -57,23 +58,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  const theme = localStorage.getItem('talkifydocs-ui-theme') || 'system';
-                  const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-                  document.documentElement.classList.remove('light', 'dark');
-                  document.documentElement.classList.add(isDark ? 'dark' : 'light');
-                } catch (e) {
-                  document.documentElement.classList.remove('light', 'dark');
-                  document.documentElement.classList.add('light');
-                }
-              })();
-            `,
-          }}
-        />
       </head>
       <Providers>
         <body
@@ -81,15 +65,17 @@ export default function RootLayout({
             "min-h-screen font-sans antialiased grainy",
             inter.className
           )}
+          suppressHydrationWarning={true}
         >
+          <ClientThemeProvider />
           <Toaster />
-              <ErrorBoundary>
-                <Navbar />
-                <main className="flex-1">
-                  {children}
-                </main>
-                <Footer />
-              </ErrorBoundary>
+          <ErrorBoundary>
+            <Navbar />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </ErrorBoundary>
         </body>
       </Providers>
     </html>
