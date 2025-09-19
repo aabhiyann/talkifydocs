@@ -258,11 +258,13 @@ const Dashboard = memo(() => {
             }
           >
             {Array.from({ length: 6 }).map((_, i) => (
-              <DocumentCardSkeleton
+              <div
                 key={i}
                 className="animate-fade-in"
                 style={{ animationDelay: `${i * 100}ms` }}
-              />
+              >
+                <DocumentCardSkeleton />
+              </div>
             ))}
           </div>
         ) : filteredAndSortedFiles.length > 0 ? (
