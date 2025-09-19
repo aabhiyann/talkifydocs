@@ -26,7 +26,7 @@ interface ChatWrapperProps {
 }
 
 const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
-  const { data, isLoading } = trpc.getFileUploadStatus.useQuery(
+  const { data, isLoading, error } = trpc.getFileUploadStatus.useQuery(
     {
       fileId,
     },
@@ -35,6 +35,8 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
         data?.status === "SUCCESS" || data?.status === "FAILED" ? false : 500,
     }
   );
+
+  console.log('ChatWrapper - File status:', { fileId, data, isLoading, error });
 
   if (isLoading)
     return (
