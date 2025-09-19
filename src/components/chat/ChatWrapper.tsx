@@ -36,14 +36,6 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
     }
   );
 
-  console.log('ChatWrapper - File status:', { fileId, data, isLoading, error });
-  console.log('File status details:', { 
-    fileId, 
-    status: data?.status, 
-    isLoading, 
-    error: error?.message,
-    fullData: data 
-  });
 
   if (isLoading)
     return (

@@ -1,6 +1,5 @@
 import ChatWrapper from "@/components/chat/ChatWrapper";
 import PdfRenderer from "@/components/PdfRenderer";
-import DebugInfo from "@/components/DebugInfo";
 import { db } from "@/db";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { notFound, redirect } from "next/navigation";
@@ -57,9 +56,6 @@ const Page = async ({ params }: PageProps) => {
           <ChatWrapper fileId={file.id} />
         </div>
       </div>
-      
-      {/* Debug Info - Remove this in production */}
-      <DebugInfo fileId={file.id} />
     </div>
   );
 };
