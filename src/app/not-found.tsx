@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Button } from "@/components/ui/button";
@@ -25,21 +27,25 @@ export default function NotFound() {
               Page Not Found
             </h1>
             <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-2xl mx-auto leading-relaxed">
-              Oops! The page you're looking for seems to have wandered off into the digital void. 
-              Don't worry, even the best AI can't find everything!
+              Oops! The page you&apos;re looking for seems to have wandered off
+              into the digital void. Don&apos;t worry, even the best AI
+              can&apos;t find everything!
             </p>
           </div>
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Link href="/">
-              <Button size="lg" className="bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700">
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700"
+              >
                 <Home className="w-4 h-4 mr-2" />
                 Go Home
               </Button>
             </Link>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="lg"
               onClick={() => window.history.back()}
             >
@@ -131,7 +137,8 @@ export default function NotFound() {
           {/* Fun Message */}
           <div className="mt-8 text-center">
             <p className="text-body-sm text-secondary-500 dark:text-secondary-500">
-              Even our AI couldn't find this page. Maybe it's taking a coffee break? ☕
+              Even our AI couldn&apos;t find this page. Maybe it&apos;s taking a
+              coffee break? ☕
             </p>
           </div>
         </div>
