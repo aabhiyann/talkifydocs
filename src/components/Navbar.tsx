@@ -1,45 +1,73 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import Link from "next/link";
 import { buttonVariants } from "./ui/button";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight, Menu, X, FileText, MessageSquare, Settings, User, LogOut } from "lucide-react";
 import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./ThemeToggle";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const { user, isAuthenticated } = useKindeBrowserClient();
+  const router = useRouter();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleSignOut = () => {
+    // Kinde sign out logic
+    router.push("/api/auth/logout");
+  };
 
   return (
-    <nav className="sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
+    <nav className={`sticky top-0 z-50 w-full transition-all duration-200 ${
+      isScrolled 
+        ? "bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm" 
+        : "bg-white/80 backdrop-blur-sm"
+    }`}>
       <MaxWidthWrapper>
-        <div className="flex h-14 items-center justify-between border-b border-zinc-200">
-          <Link href="/" className="flex z-40 font-semibold">
-            <span className="text-xl">TalkifyDocs</span>
+        <div className="flex h-16 items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center space-x-2 z-50">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
+              <FileText className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
+              TalkifyDocs
+            </span>
           </Link>
 
-              {/* Desktop Navigation */}
-              <div className="hidden items-center space-x-4 sm:flex">
-                <Link
-                  href="/features"
-                  className={buttonVariants({ variant: "ghost", size: "sm" })}
-                >
-                  Features
-                </Link>
-                <Link
-                  href="/about"
-                  className={buttonVariants({ variant: "ghost", size: "sm" })}
-                >
-                  About
-                </Link>
-                <Link
-                  href="/pricing"
-                  className={buttonVariants({ variant: "ghost", size: "sm" })}
-                >
-                  Pricing
-                </Link>
+          {/* Desktop Navigation */}
+          <div className="hidden items-center space-x-1 md:flex">
+            <Link
+              href="/features"
+              className={buttonVariants({ variant: "ghost", size: "sm" })}
+            >
+              Features
+            </Link>
+            <Link
+              href="/about"
+              className={buttonVariants({ variant: "ghost", size: "sm" })}
+            >
+              About
+            </Link>
+            <Link
+              href="/pricing"
+              className={buttonVariants({ variant: "ghost", size: "sm" })}
+            >
+              Pricing
+            </Link>
                 <Link
                   href="/contact"
                   className={buttonVariants({ variant: "ghost", size: "sm" })}

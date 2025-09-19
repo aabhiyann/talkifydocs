@@ -22,7 +22,8 @@ export default function Home() {
               See TalkifyDocs in Action
             </h2>
             <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-2xl mx-auto">
-              Experience the power of AI-driven document analysis with our intuitive interface
+              Experience the power of AI-driven document analysis with our intuitive interface. 
+              Upload, analyze, and interact with your documents like never before.
             </p>
           </div>
 
@@ -56,7 +57,8 @@ export default function Home() {
               How It Works
             </h2>
             <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-2xl mx-auto">
-              Get started with TalkifyDocs in three simple steps and unlock the power of AI-driven document analysis
+              Get started with TalkifyDocs in three simple steps and unlock the power of AI-driven document analysis. 
+              Transform your workflow in minutes, not hours.
             </p>
           </div>
 
@@ -71,14 +73,15 @@ export default function Home() {
                   Create Account
                 </h3>
                 <p className="text-body-md text-secondary-600 dark:text-secondary-400 mb-4">
-                  Sign up for a free account or upgrade to our{" "}
+                  Sign up for a free account and start analyzing documents immediately. 
+                  Upgrade to our{" "}
                   <Link
                     href="/pricing"
                     className="text-primary-600 hover:text-primary-700 font-medium underline underline-offset-2"
                   >
                     professional plan
-                  </Link>
-                  .
+                  </Link>{" "}
+                  for advanced features.
                 </p>
               </div>
             </div>
@@ -92,7 +95,8 @@ export default function Home() {
                   Upload Document
                 </h3>
                 <p className="text-body-md text-secondary-600 dark:text-secondary-400">
-                  Upload your PDF document and our AI will process it for intelligent analysis and understanding.
+                  Simply drag and drop your PDF document. Our advanced AI will instantly process and understand 
+                  your content for intelligent analysis.
                 </p>
               </div>
             </div>
@@ -106,7 +110,8 @@ export default function Home() {
                   Ask & Get Answers
                 </h3>
                 <p className="text-body-md text-secondary-600 dark:text-secondary-400">
-                  Interact with your document through natural language queries and receive intelligent, contextual responses.
+                  Ask questions in natural language and get instant, accurate answers. Our AI understands context 
+                  and provides intelligent, relevant responses from your documents.
                 </p>
               </div>
             </div>
