@@ -61,7 +61,7 @@ const Navbar = () => {
     <nav
       className={`sticky top-0 z-50 w-full transition-all duration-200 ${
         isScrolled
-          ? "bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm"
+        ? "bg-white/95 backdrop-blur-md border-b border-secondary-200 shadow-sm" 
           : "bg-white/80 backdrop-blur-sm"
       }`}
     >
@@ -88,7 +88,7 @@ const Navbar = () => {
                   className={`flex items-center space-x-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive(item.href)
                       ? "bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-300"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:bg-gray-800/50"
+                      : "text-secondary-600 hover:text-secondary-900 hover:bg-secondary-50 dark:text-secondary-300 dark:hover:text-secondary-100 dark:hover:bg-secondary-800/50"
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -97,7 +97,7 @@ const Navbar = () => {
               );
             })}
 
-            <div className="flex items-center space-x-2 ml-4 pl-4 border-l border-gray-200">
+            <div className="flex items-center space-x-2 ml-4 pl-4 border-l border-secondary-200">
               <ThemeToggle />
 
               {isAuthenticated ? (
@@ -121,7 +121,7 @@ const Navbar = () => {
                       <p className="text-sm font-medium">
                         {user?.given_name} {user?.family_name}
                       </p>
-                      <p className="text-xs text-gray-500">{user?.email}</p>
+                      <p className="text-xs text-secondary-500">{user?.email}</p>
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
@@ -184,8 +184,8 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 bg-white/95 backdrop-blur-lg">
+          {isMobileMenuOpen && (
+          <div className="md:hidden border-t border-secondary-200 bg-white/95 backdrop-blur-lg">
             <div className="flex flex-col space-y-1 p-4">
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -196,7 +196,7 @@ const Navbar = () => {
                     className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                       isActive(item.href)
                         ? "bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-300"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:bg-gray-800/50"
+                        : "text-secondary-600 hover:text-secondary-900 hover:bg-secondary-50 dark:text-secondary-300 dark:hover:text-secondary-100 dark:hover:bg-secondary-800/50"
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -206,9 +206,9 @@ const Navbar = () => {
                 );
               })}
 
-              <div className="pt-4 border-t border-gray-200">
+              <div className="pt-4 border-t border-secondary-200">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <span className="text-sm font-medium text-secondary-700 dark:text-secondary-300">
                     Theme
                   </span>
                   <ThemeToggle />
@@ -216,15 +216,15 @@ const Navbar = () => {
 
                 {isAuthenticated ? (
                   <div className="space-y-2">
-                    <div className="px-3 py-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <div className="px-3 py-2 bg-secondary-50 dark:bg-secondary-800 rounded-lg">
                       <p className="text-sm font-medium">
                         {user?.given_name} {user?.family_name}
                       </p>
-                      <p className="text-xs text-gray-500">{user?.email}</p>
+                      <p className="text-xs text-secondary-500">{user?.email}</p>
                     </div>
                     <Link
                       href="/dashboard"
-                      className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:bg-gray-800/50"
+                      className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-secondary-600 hover:text-secondary-900 hover:bg-secondary-50 dark:text-secondary-300 dark:hover:text-secondary-100 dark:hover:bg-secondary-800/50"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <Home className="w-4 h-4" />
@@ -232,7 +232,7 @@ const Navbar = () => {
                     </Link>
                     <Link
                       href="/dashboard/billing"
-                      className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:bg-gray-800/50"
+                      className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-secondary-600 hover:text-secondary-900 hover:bg-secondary-50 dark:text-secondary-300 dark:hover:text-secondary-100 dark:hover:bg-secondary-800/50"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <Settings className="w-4 h-4" />
