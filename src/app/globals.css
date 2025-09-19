@@ -31,25 +31,25 @@
   }
 
   .dark {
-    /* Dark mode uses the same design system variables */
-    --background: var(--secondary-50);
-    --foreground: var(--secondary-900);
-    --card: var(--secondary-50);
-    --card-foreground: var(--secondary-900);
-    --popover: var(--secondary-50);
-    --popover-foreground: var(--secondary-900);
+    /* Dark mode uses inverted design system variables */
+    --background: var(--secondary-900);
+    --foreground: var(--secondary-50);
+    --card: var(--secondary-800);
+    --card-foreground: var(--secondary-100);
+    --popover: var(--secondary-800);
+    --popover-foreground: var(--secondary-100);
     --primary: var(--primary-500);
-    --primary-foreground: var(--secondary-50);
-    --secondary: var(--secondary-500);
-    --secondary-foreground: var(--secondary-50);
-    --muted: var(--secondary-100);
-    --muted-foreground: var(--secondary-600);
+    --primary-foreground: var(--secondary-900);
+    --secondary: var(--secondary-700);
+    --secondary-foreground: var(--secondary-100);
+    --muted: var(--secondary-800);
+    --muted-foreground: var(--secondary-400);
     --accent: var(--accent-500);
-    --accent-foreground: var(--secondary-50);
+    --accent-foreground: var(--secondary-900);
     --destructive: var(--error-500);
-    --destructive-foreground: var(--secondary-50);
-    --border: var(--secondary-200);
-    --input: var(--secondary-200);
+    --destructive-foreground: var(--secondary-900);
+    --border: var(--secondary-700);
+    --input: var(--secondary-700);
     --ring: var(--primary-500);
   }
 }
