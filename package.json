@@ -11,6 +11,8 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "setup": "./scripts/setup.sh",
+    "setup:free": "./scripts/setup-free.sh",
+    "check:env": "node scripts/check-env.js",
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
     "db:studio": "prisma studio"
