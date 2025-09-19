@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import Link from "next/link";
@@ -68,7 +70,7 @@ const Navbar = () => {
               >
                 Sign in
               </LoginLink>
-              <RegisterLink 
+              <RegisterLink
                 className={buttonVariants({ size: "sm" })}
                 onClick={() => setIsMobileMenuOpen(false)}
               >

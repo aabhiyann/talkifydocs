@@ -8,26 +8,31 @@ export default function Home() {
   return (
     <>
       <MaxWidthWrapper className="mb-12 mt-28 sm:mt-40 flex flex-col items-center justify-center text-center">
-            <div className="mx-auto mb-4 flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full border border-gray-200 bg-white px-7 py-2 shadow-md backdrop-blur transition-all duration-300 hover:border-gray-300 hover:bg-white/50 hover:shadow-lg hover:scale-105">
-              <p className="text-sm font-semibold text-gray-700">
-                AI-Powered Document Analysis
-              </p>
-            </div>
+        <div className="mx-auto mb-4 flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full border border-gray-200 bg-white px-7 py-2 shadow-md backdrop-blur transition-all duration-300 hover:border-gray-300 hover:bg-white/50 hover:shadow-lg hover:scale-105">
+          <p className="text-sm font-semibold text-gray-700">
+            AI-Powered Document Analysis
+          </p>
+        </div>
         <h1 className="max-w-4xl text-5xl font-bold md:text-6xl lg:text-7xl">
           Transform your <span className="text-blue-600">documents</span> into
           intelligent conversations.
         </h1>
         <p className="mt-5 max-w-prose text-zinc-700 sm:text-lg">
-          TalkifyDocs revolutionizes document interaction through advanced AI technology.
-          Upload your PDFs, ask questions, and get instant, accurate answers from your content.
+          TalkifyDocs revolutionizes document interaction through advanced AI
+          technology. Upload your PDFs, ask questions, and get instant, accurate
+          answers from your content.
         </p>
-            <Link
-              className={buttonVariants({ size: "lg", className: "mt-5 transition-all duration-300 hover:scale-105 hover:shadow-lg" })}
-              href="/dashboard"
-              target="_blank"
-            >
-              Get Started <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
+        <Link
+          className={buttonVariants({
+            size: "lg",
+            className:
+              "mt-5 transition-all duration-300 hover:scale-105 hover:shadow-lg",
+          })}
+          href="/dashboard"
+          target="_blank"
+        >
+          Get Started <ArrowRight className="ml-2 h-5 w-5" />
+        </Link>
       </MaxWidthWrapper>
 
       {/* value proposition section */}
@@ -88,7 +93,8 @@ export default function Home() {
             </h2>
             <p className="mt-4 text-lg text-gray-600">
               Leverage cutting-edge artificial intelligence to extract insights,
-              answer questions, and interact with your documents like never before.
+              answer questions, and interact with your documents like never
+              before.
             </p>
           </div>
         </div>
@@ -98,9 +104,7 @@ export default function Home() {
           <li className="md:flex-1">
             <div className="flex flex-col space-y-2 border-l-4 border-zinc-300 py-2 pl-4 md:border-l-0 md:border-t-2 md:pb-0 md:pl-0 md:pt-4">
               <span className="text-sm font-medium text-blue-600">Step 1</span>
-              <span className="text-xl font-semibold">
-                Create your account
-              </span>
+              <span className="text-xl font-semibold">Create your account</span>
               <span className="mt-2 text-zinc-700">
                 Register for a free account or upgrade to our{" "}
                 <Link
@@ -117,9 +121,12 @@ export default function Home() {
           <li className="md:flex-1">
             <div className="flex flex-col space-y-2 border-l-4 border-zinc-300 py-2 pl-4 md:border-l-0 md:border-t-2 md:pb-0 md:pl-0 md:pt-4">
               <span className="text-sm font-medium text-blue-600">Step 2</span>
-              <span className="text-xl font-semibold">Upload your document</span>
+              <span className="text-xl font-semibold">
+                Upload your document
+              </span>
               <span className="mt-2 text-zinc-700">
-                Upload your PDF document and our AI will process it for intelligent analysis.
+                Upload your PDF document and our AI will process it for
+                intelligent analysis.
               </span>
             </div>
           </li>
@@ -131,8 +138,8 @@ export default function Home() {
                 Ask questions and get answers
               </span>
               <span className="mt-2 text-zinc-700">
-                Interact with your document through natural language queries
-                and receive intelligent, contextual responses.
+                Interact with your document through natural language queries and
+                receive intelligent, contextual responses.
               </span>
             </div>
           </li>

@@ -15,7 +15,10 @@ interface ErrorBoundaryProps {
   fallback?: React.ComponentType<{ error?: Error; resetError: () => void }>;
 }
 
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -37,7 +40,12 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     if (this.state.hasError) {
       if (this.props.fallback) {
         const FallbackComponent = this.props.fallback;
-        return <FallbackComponent error={this.state.error} resetError={this.resetError} />;
+        return (
+          <FallbackComponent
+            error={this.state.error}
+            resetError={this.resetError}
+          />
+        );
       }
 
       return (
@@ -47,13 +55,14 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
               <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center animate-pulse">
                 <AlertTriangle className="w-10 h-10 text-red-600" />
               </div>
-              
+
               <div className="space-y-3">
                 <h1 className="text-2xl font-bold text-gray-900">
                   Oops! Something went wrong
                 </h1>
                 <p className="text-gray-600 leading-relaxed">
-                  We're sorry, but something unexpected happened. Our team has been notified and we're working to fix it.
+                  We're sorry, but something unexpected happened. Our team has
+                  been notified and we're working to fix it.
                 </p>
                 {process.env.NODE_ENV === "development" && this.state.error && (
                   <details className="text-left text-sm text-gray-500 mt-4">
@@ -67,7 +76,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
                   </details>
                 )}
               </div>
-              
+
               <div className="flex flex-col sm:flex-row gap-3 w-full">
                 <Button
                   onClick={this.resetError}

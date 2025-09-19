@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 function Skeleton({
   className,
@@ -9,7 +9,7 @@ function Skeleton({
       className={cn("animate-pulse rounded-md bg-muted", className)}
       {...props}
     />
-  )
+  );
 }
 
 // Document card skeleton
@@ -29,7 +29,7 @@ function DocumentCardSkeleton() {
         <Skeleton className="h-8 w-16" />
       </div>
     </div>
-  )
+  );
 }
 
 // Chat message skeleton
@@ -43,7 +43,7 @@ function ChatMessageSkeleton() {
         <Skeleton className="h-4 w-3/4" />
       </div>
     </div>
-  )
+  );
 }
 
 // PDF viewer skeleton
@@ -58,12 +58,12 @@ function PdfViewerSkeleton() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export { 
-  Skeleton, 
-  DocumentCardSkeleton, 
-  ChatMessageSkeleton, 
-  PdfViewerSkeleton 
-}
+export {
+  Skeleton,
+  DocumentCardSkeleton,
+  ChatMessageSkeleton,
+  PdfViewerSkeleton,
+};

@@ -31,23 +31,34 @@ const Dashboard = memo(() => {
     },
   });
 
-  const handleDeleteFile = useCallback((id: string) => {
-    deleteFile({ id });
-  }, [deleteFile]);
+  const handleDeleteFile = useCallback(
+    (id: string) => {
+      deleteFile({ id });
+    },
+    [deleteFile]
+  );
 
   return (
     <main className="mx-auto max-w-7xl md:p-10">
       <div className="mt-8 flex flex-col items-start justify-between gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:gap-0">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl">Document Library</h1>
-          <p className="text-sm text-gray-600 sm:text-base">Manage and interact with your PDF documents</p>
+          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl">
+            Document Library
+          </h1>
+          <p className="text-sm text-gray-600 sm:text-base">
+            Manage and interact with your PDF documents
+          </p>
         </div>
         <UploadButton />
       </div>
 
       {/* -- Display all the files of the user here -- */}
       {files && files.length !== 0 ? (
-        <ul className="mt-8 grid grid-cols-1 gap-6 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3" role="list" aria-label="User files">
+        <ul
+          className="mt-8 grid grid-cols-1 gap-6 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3"
+          role="list"
+          aria-label="User files"
+        >
           {files
             .sort(
               (a, b) =>
@@ -116,9 +127,12 @@ const Dashboard = memo(() => {
             <Ghost className="h-10 w-10 text-zinc-600" />
           </div>
           <div className="space-y-2">
-            <h3 className="font-semibold text-xl text-gray-900">No documents found</h3>
+            <h3 className="font-semibold text-xl text-gray-900">
+              No documents found
+            </h3>
             <p className="text-gray-600 max-w-md">
-              Upload your first PDF document to get started with AI-powered analysis and intelligent conversations.
+              Upload your first PDF document to get started with AI-powered
+              analysis and intelligent conversations.
             </p>
           </div>
           <div className="mt-4">
