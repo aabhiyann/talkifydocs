@@ -7,6 +7,7 @@ import { buttonVariants } from "./ui/button";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Button } from "./ui/button";
+import { ThemeToggle } from "./ThemeToggle";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -19,23 +20,24 @@ const Navbar = () => {
             <span className="text-xl">TalkifyDocs</span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden items-center space-x-4 sm:flex">
-            <Link
-              href="/pricing"
-              className={buttonVariants({ variant: "ghost", size: "sm" })}
-            >
-              Pricing
-            </Link>
-            <LoginLink
-              className={buttonVariants({ variant: "ghost", size: "sm" })}
-            >
-              Sign in
-            </LoginLink>
-            <RegisterLink className={buttonVariants({ size: "sm" })}>
-              Get Started <ArrowRight className="ml-1.5 h-5 w-5" />
-            </RegisterLink>
-          </div>
+              {/* Desktop Navigation */}
+              <div className="hidden items-center space-x-4 sm:flex">
+                <Link
+                  href="/pricing"
+                  className={buttonVariants({ variant: "ghost", size: "sm" })}
+                >
+                  Pricing
+                </Link>
+                <ThemeToggle />
+                <LoginLink
+                  className={buttonVariants({ variant: "ghost", size: "sm" })}
+                >
+                  Sign in
+                </LoginLink>
+                <RegisterLink className={buttonVariants({ size: "sm" })}>
+                  Get Started <ArrowRight className="ml-1.5 h-5 w-5" />
+                </RegisterLink>
+              </div>
 
           {/* Mobile Menu Button */}
           <Button
@@ -53,32 +55,36 @@ const Navbar = () => {
           </Button>
         </div>
 
-        {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <div className="sm:hidden border-t border-zinc-200 bg-white/95 backdrop-blur-lg">
-            <div className="flex flex-col space-y-2 p-4">
-              <Link
-                href="/pricing"
-                className={buttonVariants({ variant: "ghost", size: "sm" })}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Pricing
-              </Link>
-              <LoginLink
-                className={buttonVariants({ variant: "ghost", size: "sm" })}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Sign in
-              </LoginLink>
-              <RegisterLink
-                className={buttonVariants({ size: "sm" })}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Get Started <ArrowRight className="ml-1.5 h-5 w-5" />
-              </RegisterLink>
-            </div>
-          </div>
-        )}
+            {/* Mobile Navigation */}
+            {isMobileMenuOpen && (
+              <div className="sm:hidden border-t border-zinc-200 bg-white/95 backdrop-blur-lg">
+                <div className="flex flex-col space-y-2 p-4">
+                  <Link
+                    href="/pricing"
+                    className={buttonVariants({ variant: "ghost", size: "sm" })}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Pricing
+                  </Link>
+                  <div className="flex items-center justify-between px-3 py-2">
+                    <span className="text-sm text-gray-600">Theme</span>
+                    <ThemeToggle />
+                  </div>
+                  <LoginLink
+                    className={buttonVariants({ variant: "ghost", size: "sm" })}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Sign in
+                  </LoginLink>
+                  <RegisterLink 
+                    className={buttonVariants({ size: "sm" })}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Get Started <ArrowRight className="ml-1.5 h-5 w-5" />
+                  </RegisterLink>
+                </div>
+              </div>
+            )}
       </MaxWidthWrapper>
     </nav>
   );

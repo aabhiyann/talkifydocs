@@ -8,12 +8,18 @@ import { DocumentCardSkeleton } from "./ui/skeleton";
 import Link from "next/link";
 import { format } from "date-fns";
 import { Button } from "./ui/button";
-import { useState, memo, useCallback } from "react";
+import { useState, memo, useCallback, useMemo } from "react";
+import { SearchBar, SearchFilters } from "./SearchBar";
 
 const Dashboard = memo(() => {
   const [currentlyDeletingFile, setCurrentlyDeletingFile] = useState<
     string | null
   >(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState<SearchFilters>({
+    sortBy: "date",
+    sortOrder: "desc",
+  });
 
   const utils = trpc.useUtils();
 
@@ -38,6 +44,42 @@ const Dashboard = memo(() => {
     [deleteFile]
   );
 
+  // Filter and sort files
+  const filteredAndSortedFiles = useMemo(() => {
+    if (!files) return [];
+
+    let filtered = files;
+
+    // Apply search filter
+    if (searchQuery) {
+      filtered = filtered.filter((file) =>
+        file.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Apply sorting
+    filtered.sort((a, b) => {
+      let comparison = 0;
+      
+      switch (filters.sortBy) {
+        case "name":
+          comparison = a.name.localeCompare(b.name);
+          break;
+        case "date":
+          comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          break;
+        case "size":
+          // Note: File size not available in current schema, using date as fallback
+          comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          break;
+      }
+
+      return filters.sortOrder === "asc" ? comparison : -comparison;
+    });
+
+    return filtered;
+  }, [files, searchQuery, filters]);
+
   return (
     <main className="mx-auto max-w-7xl md:p-10">
       <div className="mt-8 flex flex-col items-start justify-between gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:gap-0">
@@ -52,20 +94,24 @@ const Dashboard = memo(() => {
         <UploadButton />
       </div>
 
+      {/* Search and Filter Bar */}
+      <div className="mt-6">
+        <SearchBar
+          onSearch={setSearchQuery}
+          onFiltersChange={setFilters}
+          placeholder="Search your documents..."
+          filters={filters}
+        />
+      </div>
+
       {/* -- Display all the files of the user here -- */}
-      {files && files.length !== 0 ? (
+      {filteredAndSortedFiles && filteredAndSortedFiles.length !== 0 ? (
         <ul
           className="mt-8 grid grid-cols-1 gap-6 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3"
           role="list"
           aria-label="User files"
         >
-          {files
-            .sort(
-              (a, b) =>
-                new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime()
-            )
-            .map((file) => (
+          {filteredAndSortedFiles.map((file) => (
               <li
                 key={file.id}
                 className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow transition-all duration-200 hover:shadow-xl hover:scale-[1.02] group"

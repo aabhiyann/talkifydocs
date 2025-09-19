@@ -1,5 +1,5 @@
 import { db } from '@/db'
-import { logger } from './logger'
+import { loggers } from './logger'
 
 interface HealthCheck {
   name: string
@@ -23,7 +23,7 @@ export async function checkDatabaseHealth(): Promise<HealthCheck> {
     }
   } catch (error) {
     const duration = Date.now() - startTime
-    logger.error({ error }, 'Database health check failed')
+    loggers.db.error('Database health check failed', { error })
     
     return {
       name: 'database',
@@ -57,7 +57,7 @@ export async function checkOpenAIHealth(): Promise<HealthCheck> {
     }
   } catch (error) {
     const duration = Date.now() - startTime
-    logger.error({ error }, 'OpenAI health check failed')
+    loggers.api.error('OpenAI health check failed', { error })
     
     return {
       name: 'openai',
@@ -90,7 +90,7 @@ export async function checkPineconeHealth(): Promise<HealthCheck> {
     }
   } catch (error) {
     const duration = Date.now() - startTime
-    logger.error({ error }, 'Pinecone health check failed')
+    loggers.api.error('Pinecone health check failed', { error })
     
     return {
       name: 'pinecone',
