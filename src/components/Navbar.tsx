@@ -23,10 +23,28 @@ const Navbar = () => {
               {/* Desktop Navigation */}
               <div className="hidden items-center space-x-4 sm:flex">
                 <Link
+                  href="/features"
+                  className={buttonVariants({ variant: "ghost", size: "sm" })}
+                >
+                  Features
+                </Link>
+                <Link
+                  href="/about"
+                  className={buttonVariants({ variant: "ghost", size: "sm" })}
+                >
+                  About
+                </Link>
+                <Link
                   href="/pricing"
                   className={buttonVariants({ variant: "ghost", size: "sm" })}
                 >
                   Pricing
+                </Link>
+                <Link
+                  href="/contact"
+                  className={buttonVariants({ variant: "ghost", size: "sm" })}
+                >
+                  Contact
                 </Link>
                 <ThemeToggle />
                 <LoginLink
@@ -60,11 +78,32 @@ const Navbar = () => {
               <div className="sm:hidden border-t border-zinc-200 bg-white/95 backdrop-blur-lg">
                 <div className="flex flex-col space-y-2 p-4">
                   <Link
+                    href="/features"
+                    className={buttonVariants({ variant: "ghost", size: "sm" })}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Features
+                  </Link>
+                  <Link
+                    href="/about"
+                    className={buttonVariants({ variant: "ghost", size: "sm" })}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    About
+                  </Link>
+                  <Link
                     href="/pricing"
                     className={buttonVariants({ variant: "ghost", size: "sm" })}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Pricing
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className={buttonVariants({ variant: "ghost", size: "sm" })}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Contact
                   </Link>
                   <div className="flex items-center justify-between px-3 py-2">
                     <span className="text-sm text-gray-600">Theme</span>
@@ -76,7 +115,7 @@ const Navbar = () => {
                   >
                     Sign in
                   </LoginLink>
-                  <RegisterLink 
+                  <RegisterLink
                     className={buttonVariants({ size: "sm" })}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >

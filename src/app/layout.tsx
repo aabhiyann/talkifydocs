@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
 
 import "react-loading-skeleton/dist/skeleton.css";
@@ -52,10 +53,13 @@ export default function RootLayout({
           )}
         >
           <Toaster />
-          <ErrorBoundary>
-            <Navbar />
-            {children}
-          </ErrorBoundary>
+              <ErrorBoundary>
+                <Navbar />
+                <main className="flex-1">
+                  {children}
+                </main>
+                <Footer />
+              </ErrorBoundary>
         </body>
       </Providers>
     </html>
