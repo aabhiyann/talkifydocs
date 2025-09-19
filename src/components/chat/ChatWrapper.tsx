@@ -3,7 +3,15 @@
 import { trpc } from "@/app/_trpc/client";
 import ChatInput from "./ChatInput";
 import Messages from "./Messages";
-import { ChevronLeft, Loader2, XCircle, FileText, AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import {
+  ChevronLeft,
+  Loader2,
+  XCircle,
+  FileText,
+  AlertCircle,
+  CheckCircle2,
+  Clock,
+} from "lucide-react";
 import Link from "next/link";
 import { buttonVariants, Button } from "../ui/button";
 import { ChatContextProvider } from "./ChatContext";
@@ -72,7 +80,10 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
                   <span>Progress</span>
                   <span>~{Math.floor(Math.random() * 30) + 70}%</span>
                 </div>
-                <Progress value={Math.floor(Math.random() * 30) + 70} className="h-2" />
+                <Progress
+                  value={Math.floor(Math.random() * 30) + 70}
+                  className="h-2"
+                />
               </div>
               <Badge variant="secondary" className="mt-4">
                 <Clock className="w-3 h-3 mr-1" />
@@ -103,7 +114,10 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
                 We couldn&apos;t process your PDF. Please try uploading again.
               </p>
               <div className="space-y-3">
-                <Link href="/dashboard" className={buttonVariants({ className: "w-full" })}>
+                <Link
+                  href="/dashboard"
+                  className={buttonVariants({ className: "w-full" })}
+                >
                   <ChevronLeft className="w-4 h-4 mr-2" />
                   Back to Dashboard
                 </Link>
@@ -126,7 +140,10 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
           <div className="px-4 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <Link href="/dashboard" className={buttonVariants({ variant: "ghost", size: "sm" })}>
+                <Link
+                  href="/dashboard"
+                  className={buttonVariants({ variant: "ghost", size: "sm" })}
+                >
                   <ChevronLeft className="w-4 h-4 mr-2" />
                   Back
                 </Link>
@@ -144,9 +161,12 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-2">
-                <Badge variant="secondary" className="flex items-center space-x-1">
+                <Badge
+                  variant="secondary"
+                  className="flex items-center space-x-1"
+                >
                   <CheckCircle2 className="w-3 h-3" />
                   <span>Processed</span>
                 </Badge>
@@ -160,7 +180,7 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
           <div className="flex-1 overflow-hidden">
             <Messages fileId={fileId} />
           </div>
-          
+
           {/* Chat Input */}
           <div className="sticky bottom-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-700 p-4">
             <ChatInput />

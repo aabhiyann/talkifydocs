@@ -9,23 +9,25 @@ interface LoadingSpinnerProps {
 
 const sizeClasses = {
   sm: "h-4 w-4",
-  md: "h-6 w-6", 
+  md: "h-6 w-6",
   lg: "h-8 w-8",
   xl: "h-12 w-12",
 };
 
-export function LoadingSpinner({ 
-  size = "md", 
-  className, 
-  text 
+export function LoadingSpinner({
+  size = "md",
+  className,
+  text,
 }: LoadingSpinnerProps) {
   return (
     <div className="flex items-center justify-center space-x-2">
-      <Loader2 className={cn(
-        "animate-spin text-primary-600",
-        sizeClasses[size],
-        className
-      )} />
+      <Loader2
+        className={cn(
+          "animate-spin text-primary-600",
+          sizeClasses[size],
+          className
+        )}
+      />
       {text && (
         <span className="text-body-sm text-gray-600 dark:text-gray-400">
           {text}

@@ -99,14 +99,23 @@ const Messages = ({ fileId }: MessagesProps) => {
             Start a conversation
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Ask questions about your document to get AI-powered insights and answers.
+            Ask questions about your document to get AI-powered insights and
+            answers.
           </p>
           <div className="space-y-2">
-            <p className="text-body-sm text-gray-500 dark:text-gray-400">Try asking:</p>
+            <p className="text-body-sm text-gray-500 dark:text-gray-400">
+              Try asking:
+            </p>
             <div className="space-y-1">
-              <Badge variant="outline" className="mr-1">&quot;What is this document about?&quot;</Badge>
-              <Badge variant="outline" className="mr-1">&quot;Summarize the key points&quot;</Badge>
-              <Badge variant="outline" className="mr-1">&quot;Find information about...&quot;</Badge>
+              <Badge variant="outline" className="mr-1">
+                &quot;What is this document about?&quot;
+              </Badge>
+              <Badge variant="outline" className="mr-1">
+                &quot;Summarize the key points&quot;
+              </Badge>
+              <Badge variant="outline" className="mr-1">
+                &quot;Find information about...&quot;
+              </Badge>
             </div>
           </div>
         </div>
@@ -136,16 +145,26 @@ const Messages = ({ fileId }: MessagesProps) => {
         {combinedMessages.map((message, index) => (
           <div
             key={message.id}
-            ref={index === combinedMessages.length - 1 ? lastMessageRef : undefined}
-            className={`flex ${message.isUserMessage ? 'justify-end' : 'justify-start'}`}
+            ref={
+              index === combinedMessages.length - 1 ? lastMessageRef : undefined
+            }
+            className={`flex ${
+              message.isUserMessage ? "justify-end" : "justify-start"
+            }`}
           >
-            <div className={`flex items-start space-x-3 max-w-[80%] ${message.isUserMessage ? 'flex-row-reverse space-x-reverse' : ''}`}>
+            <div
+              className={`flex items-start space-x-3 max-w-[80%] ${
+                message.isUserMessage ? "flex-row-reverse space-x-reverse" : ""
+              }`}
+            >
               {/* Avatar */}
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                message.isUserMessage 
-                  ? 'bg-primary-600 text-white' 
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
-              }`}>
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  message.isUserMessage
+                    ? "bg-primary-600 text-white"
+                    : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+                }`}
+              >
                 {message.isUserMessage ? (
                   <User className="h-4 w-4" />
                 ) : (
@@ -154,24 +173,37 @@ const Messages = ({ fileId }: MessagesProps) => {
               </div>
 
               {/* Message Content */}
-              <Card className={`${
-                message.isUserMessage 
-                  ? 'bg-primary-600 text-white border-primary-600' 
-                  : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700'
-              }`}>
+              <Card
+                className={`${
+                  message.isUserMessage
+                    ? "bg-primary-600 text-white border-primary-600"
+                    : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                }`}
+              >
                 <CardContent className="p-4">
                   <div className="space-y-2">
                     <div className="text-sm font-medium opacity-70">
-                      {message.isUserMessage ? 'You' : 'AI Assistant'}
+                      {message.isUserMessage ? "You" : "AI Assistant"}
                     </div>
-                    <div className={`${
-                      message.isUserMessage ? 'text-white' : 'text-gray-900 dark:text-gray-100'
-                    }`}>
-                      <Message message={message} isNextMessageSamePerson={false} />
+                    <div
+                      className={`${
+                        message.isUserMessage
+                          ? "text-white"
+                          : "text-gray-900 dark:text-gray-100"
+                      }`}
+                    >
+                      <Message
+                        message={message}
+                        isNextMessageSamePerson={false}
+                      />
                     </div>
-                    <div className={`text-xs opacity-60 ${
-                      message.isUserMessage ? 'text-white' : 'text-gray-500 dark:text-gray-400'
-                    }`}>
+                    <div
+                      className={`text-xs opacity-60 ${
+                        message.isUserMessage
+                          ? "text-white"
+                          : "text-gray-500 dark:text-gray-400"
+                      }`}
+                    >
                       {new Date(message.createdAt).toLocaleTimeString()}
                     </div>
                   </div>
