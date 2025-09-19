@@ -77,10 +77,10 @@ const Page = async () => {
     <>
       <MaxWidthWrapper className="mb-8 mt-24 text-center max-w-5xl">
         <div className="mx-auto mb-12 sm:max-w-2xl text-center">
-          <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl lg:text-6xl">
+          <h1 className="text-display-lg font-extrabold text-secondary-900 dark:text-secondary-100">
             Simple, transparent pricing
           </h1>
-          <p className="mt-6 text-lg text-gray-600 leading-relaxed">
+          <p className="mt-6 text-body-lg text-secondary-600 dark:text-secondary-300 leading-relaxed">
             Choose the perfect plan for your document analysis needs. Start with
             our free tier or upgrade for advanced features and higher limits.
           </p>
@@ -96,36 +96,36 @@ const Page = async () => {
               return (
                 <div
                   key={plan}
-                  className={cn("relative rounded-2xl bg-white shadow-lg", {
-                    "border-2 border-green-600 shadow-green-200":
+                  className={cn("relative rounded-2xl glass shadow-medium hover:shadow-strong transition-all duration-300", {
+                    "border-2 border-primary-600 shadow-primary-200/50":
                       plan === "Pro",
-                    "border broder-gray-200": plan !== "Pro",
+                    "border border-secondary-200 dark:border-secondary-700": plan !== "Pro",
                   })}
                 >
                   {plan === "Pro" && (
-                    <div className="absolute -top-5 left-0 right-0 mx-auto w-32 rounded-full bg-gradient-to-r from-green-600 to-cyan-600 px-3 py-2 text-sm font-medium text-white">
+                    <div className="absolute -top-5 left-0 right-0 mx-auto w-32 rounded-full gradient-primary px-3 py-2 text-sm font-medium text-white">
                       Upgrade now
                     </div>
                   )}
 
                   <div className="p-5">
-                    <h3 className="my-3 text-center font-display text-3xl font-bold">
+                    <h3 className="my-3 text-center text-heading-xl font-bold text-secondary-900 dark:text-secondary-100">
                       {plan}
                     </h3>
-                    <p className="text-gray-500">{tagline}</p>
-                    <p className="my-5 font-display text-6xl font-semibold">
+                    <p className="text-secondary-600 dark:text-secondary-400">{tagline}</p>
+                    <p className="my-5 text-display-lg font-semibold text-primary-600">
                       ${price}
                     </p>
-                    <p className="text-gray-500">Per Month</p>
+                    <p className="text-secondary-600 dark:text-secondary-400">Per Month</p>
                   </div>
 
-                  <div className="flex h-20 items-center justify-center border-b border-t border-gray-200 bg-gray-50">
+                  <div className="flex h-20 items-center justify-center border-b border-t border-secondary-200 dark:border-secondary-700 bg-secondary-50 dark:bg-secondary-800">
                     <div className="flex items-center space-x-1">
-                      <p>{quota.toLocaleString()} PDFs/month included</p>
+                      <p className="text-secondary-700 dark:text-secondary-300">{quota.toLocaleString()} PDFs/month included</p>
 
                       <Tooltip delayDuration={300}>
                         <TooltipTrigger className="cursor-default ml-1.5">
-                          <HelpCircle className="h-4 w-4 text-zinc-500" />
+                          <HelpCircle className="h-4 w-4 text-secondary-500" />
                         </TooltipTrigger>
                         <TooltipContent className="w-80 p-2">
                           The number of PDFs you can upload per month.
@@ -139,23 +139,23 @@ const Page = async () => {
                       <li key={text} className="flex space-x5">
                         <div className="flex-shrink-0">
                           {negative ? (
-                            <Minus className="h-6 w-6 text-gray-300" />
+                            <Minus className="h-6 w-6 text-secondary-300" />
                           ) : (
-                            <Check className="h-6 w-6 text-green-500" />
+                            <Check className="h-6 w-6 text-primary-500" />
                           )}
                         </div>
                         {footnote ? (
                           <div className="flex items-center space-x-1">
                             <p
-                              className={cn("text-gray-400", {
-                                "text-gray-600": negative,
+                              className={cn("text-secondary-500 dark:text-secondary-400", {
+                                "text-secondary-600 dark:text-secondary-300": negative,
                               })}
                             >
                               {text}
                             </p>
                             <Tooltip delayDuration={300}>
                               <TooltipTrigger className="cursor-default ml-1.5">
-                                <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                <HelpCircle className="h-4 w-4 text-secondary-500" />
                               </TooltipTrigger>
                               <TooltipContent className="w-80 p-2">
                                 {footnote}
@@ -164,8 +164,8 @@ const Page = async () => {
                           </div>
                         ) : (
                           <p
-                            className={cn("text-gray-400", {
-                              "text-gray-600": negative,
+                            className={cn("text-secondary-500 dark:text-secondary-400", {
+                              "text-secondary-600 dark:text-secondary-300": negative,
                             })}
                           >
                             {text}
@@ -175,7 +175,7 @@ const Page = async () => {
                     ))}
                   </ul>
 
-                  <div className="border-t border-gray-200" />
+                  <div className="border-t border-secondary-200 dark:border-secondary-700" />
                   <div className="p-5">
                     {plan === "Free" ? (
                       <Link

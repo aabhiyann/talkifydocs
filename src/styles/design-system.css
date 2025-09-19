@@ -160,11 +160,178 @@
   --gradient-danger: linear-gradient(135deg, var(--danger-500) 0%, var(--danger-700) 100%);
   --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
 
-  /* Transitions */
+  /* Transitions & Animations */
   --transition-fast: 150ms ease-in-out;
   --transition-base: 250ms ease-in-out;
   --transition-slow: 350ms ease-in-out;
   --transition-bounce: 300ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --transition-spring: 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --transition-smooth: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-elastic: 500ms cubic-bezier(0.68, -0.6, 0.32, 1.6);
+  
+  /* Animation Keyframes */
+  --keyframes-fade-in: fadeIn 0.3s ease-out;
+  --keyframes-slide-up: slideUp 0.4s ease-out;
+  --keyframes-slide-down: slideDown 0.4s ease-out;
+  --keyframes-scale-in: scaleIn 0.3s ease-out;
+  --keyframes-bounce-in: bounceIn 0.6s ease-out;
+  --keyframes-pulse: pulse 2s infinite;
+  --keyframes-shimmer: shimmer 2s infinite;
+}
+
+/* Keyframe Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+/* Animation Utility Classes */
+.animate-fade-in {
+  animation: var(--keyframes-fade-in);
+}
+
+.animate-slide-up {
+  animation: var(--keyframes-slide-up);
+}
+
+.animate-slide-down {
+  animation: var(--keyframes-slide-down);
+}
+
+.animate-scale-in {
+  animation: var(--keyframes-scale-in);
+}
+
+.animate-bounce-in {
+  animation: var(--keyframes-bounce-in);
+}
+
+.animate-pulse {
+  animation: var(--keyframes-pulse);
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: var(--keyframes-shimmer);
+}
+
+/* Hover Effects */
+.hover-lift {
+  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.hover-scale {
+  transition: transform var(--transition-smooth);
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+.hover-glow {
+  transition: box-shadow var(--transition-smooth);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .mobile-touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .mobile-swipe {
+    touch-action: pan-x pan-y;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .mobile-safe-area {
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
 }
 
 /* Dark Mode Variables */

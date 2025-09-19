@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useRef, useState } from "react";
+import { ReactNode, createContext, useRef, useState, useCallback, useMemo } from "react";
 import { useToast } from "../ui/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { trpc } from "@/app/_trpc/client";
@@ -9,6 +9,9 @@ type StreamResponse = {
   message: string;
   handleInputChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   isLoading: boolean;
+  clearMessage: () => void;
+  canSendMessage: boolean;
+  messageCount: number;
 };
 
 export const ChatContext = createContext<StreamResponse>({
@@ -16,6 +19,9 @@ export const ChatContext = createContext<StreamResponse>({
   message: "",
   handleInputChange: () => {},
   isLoading: false,
+  clearMessage: () => {},
+  canSendMessage: false,
+  messageCount: 0,
 });
 
 interface Props {
@@ -28,10 +34,39 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const utils = trpc.useContext();
-
   const { toast } = useToast();
-
   const backupMessage = useRef("");
+
+  // Get message count for context
+  const { data: messagesData } = trpc.getFileMessages.useInfiniteQuery(
+    {
+      fileId,
+      limit: INFINITE_QUERY_LIMIT,
+    },
+    {
+      getNextPageParam: (lastPage) => lastPage?.nextCursor,
+      keepPreviousData: true,
+    }
+  );
+
+  const messageCount = useMemo(() => {
+    return messagesData?.pages.flatMap((page) => page.messages).length || 0;
+  }, [messagesData]);
+
+  const canSendMessage = useMemo(() => {
+    return message.trim().length > 0 && !isLoading && message.length <= 2000;
+  }, [message, isLoading]);
+
+  const clearMessage = useCallback(() => {
+    setMessage("");
+  }, []);
+
+  const handleInputChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = event.target.value;
+    if (value.length <= 2000) {
+      setMessage(value);
+    }
+  }, []);
 
   const { mutate: sendMessage } = useMutation({
     mutationFn: async ({ message }: { message: string }) => {
@@ -53,13 +88,13 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
       backupMessage.current = message;
       setMessage("");
 
-      // step 1
+      // Cancel any outgoing refetches
       await utils.getFileMessages.cancel();
 
-      // step 2
+      // Snapshot the previous value
       const previousMessages = utils.getFileMessages.getInfiniteData();
 
-      // step 3
+      // Optimistically update to the new value
       utils.getFileMessages.setInfiniteData(
         { fileId, limit: INFINITE_QUERY_LIMIT },
         (old) => {
@@ -71,7 +106,6 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
           }
 
           let newPages = [...old.pages];
-
           let latestPage = newPages[0]!;
 
           latestPage.messages = [
@@ -100,14 +134,13 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
           previousMessages?.pages.flatMap((page) => page.messages) ?? [],
       };
     },
-
     onSuccess: async (stream) => {
       setIsLoading(false);
 
       if (!stream) {
         return toast({
           title: "There was a problem sending this message",
-          description: "Please refresh this page and try again",
+          description: "Please refresh this page and try again.",
           variant: "destructive",
         });
       }
@@ -126,86 +159,104 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
 
         accResponse += chunkValue;
 
-        // append chunk to the actual message
+        // append chunk to the last message
         utils.getFileMessages.setInfiniteData(
           { fileId, limit: INFINITE_QUERY_LIMIT },
           (old) => {
             if (!old) return { pages: [], pageParams: [] };
 
-            let isAiResponseCreated = old.pages.some((page) =>
-              page.messages.some((message) => message.id === "ai-response")
-            );
+            let isAiResponseCreated = false;
+            const newPages = old.pages.map((page) => {
+              if (isAiResponseCreated) return page;
 
-            let updatedPages = old.pages.map((page) => {
-              if (page === old.pages[0]) {
-                let updatedMessages;
-
-                if (!isAiResponseCreated) {
-                  updatedMessages = [
-                    {
-                      createdAt: new Date().toISOString(),
-                      id: "ai-response",
-                      text: accResponse,
-                      isUserMessage: false,
-                    },
-                    ...page.messages,
-                  ];
-                } else {
-                  updatedMessages = page.messages.map((message) => {
-                    if (message.id === "ai-response") {
-                      return {
-                        ...message,
-                        text: accResponse,
-                      };
-                    }
-                    return message;
-                  });
+              let updatedMessages = page.messages.map((message) => {
+                if (message.id === "loading-message") {
+                  isAiResponseCreated = true;
+                  return {
+                    ...message,
+                    id: crypto.randomUUID(),
+                    text: accResponse,
+                    isUserMessage: false,
+                  };
                 }
+                return message;
+              });
 
-                return {
-                  ...page,
-                  messages: updatedMessages,
-                };
+              if (!isAiResponseCreated) {
+                isAiResponseCreated = true;
+                updatedMessages = [
+                  {
+                    createdAt: new Date().toISOString(),
+                    id: crypto.randomUUID(),
+                    text: accResponse,
+                    isUserMessage: false,
+                  },
+                  ...updatedMessages,
+                ];
               }
 
-              return page;
+              return {
+                ...page,
+                messages: updatedMessages,
+              };
             });
 
-            return { ...old, pages: updatedPages };
+            return { ...old, pages: newPages };
           }
         );
       }
     },
-
     onError: (_, __, context) => {
       setMessage(backupMessage.current);
-      utils.getFileMessages.setData(
-        { fileId },
-        { messages: context?.previousMessages ?? [] }
-      );
-    },
-    onSettled: async () => {
       setIsLoading(false);
 
-      await utils.getFileMessages.invalidate({ fileId });
+      // rollback to the previous value
+      if (context?.previousMessages) {
+        utils.getFileMessages.setInfiniteData(
+          { fileId, limit: INFINITE_QUERY_LIMIT },
+          (old) => {
+            if (!old) return { pages: [], pageParams: [] };
+
+            return {
+              ...old,
+              pages: [
+                {
+                  messages: context.previousMessages,
+                  nextCursor: undefined,
+                },
+                ...old.pages.slice(1),
+              ],
+            };
+          }
+        );
+      }
+
+      return toast({
+        title: "Error",
+        description: "There was an error sending your message. Please try again.",
+        variant: "destructive",
+      });
     },
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMessage(e.target.value);
-  };
+  const addMessage = useCallback(() => {
+    if (!canSendMessage) return;
+    
+    sendMessage({ message: message.trim() });
+  }, [sendMessage, message, canSendMessage]);
 
-  const addMessage = () => sendMessage({ message });
+  const value = useMemo(() => ({
+    addMessage,
+    message,
+    handleInputChange,
+    isLoading,
+    clearMessage,
+    canSendMessage,
+    messageCount,
+  }), [addMessage, message, handleInputChange, isLoading, clearMessage, canSendMessage, messageCount]);
 
   return (
-    <ChatContext.Provider
-      value={{
-        addMessage,
-        message,
-        handleInputChange,
-        isLoading,
-      }}
-    >
+    <ChatContext.Provider value={value}>
       {children}
     </ChatContext.Provider>
   );

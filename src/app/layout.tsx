@@ -25,6 +25,16 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico",
     apple: "/favicon.ico",
   },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#22c55e" },
+    { media: "(prefers-color-scheme: dark)", color: "#16a34a" },
+  ],
   openGraph: {
     title: "TalkifyDocs - AI-Powered Document Analysis",
     description: "Upload, analyze, and chat with your PDF documents using advanced AI technology.",

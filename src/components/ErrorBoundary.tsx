@@ -57,7 +57,7 @@ class ErrorBoundary extends React.Component<
               </div>
 
               <div className="space-y-3">
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-2xl font-bold text-foreground">
                   Oops! Something went wrong
                 </h1>
                 <p className="text-gray-600 leading-relaxed">

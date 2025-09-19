@@ -29,7 +29,7 @@ const AuthCallbackContent = () => {
   return (
     <div className="w-full mt-24 flex justify-center">
       <div className="flex flex-col items-center gap-2">
-        <Loader2 className="h-8 w-8 animate-spin text-zinc-800" />
+        <Loader2 className="h-8 w-8 animate-spin text-gray-800" />
         <h3 className="font-semibold text-xl">
           Setting up your new account...
         </h3>
@@ -45,7 +45,7 @@ const Page = () => {
       fallback={
         <div className="w-full mt-24 flex justify-center">
           <div className="flex flex-col items-center gap-2">
-            <Loader2 className="h-8 w-8 animate-spin text-zinc-800" />
+            <Loader2 className="h-8 w-8 animate-spin text-gray-800" />
             <h3 className="font-semibold text-xl">Loading...</h3>
           </div>
         </div>
