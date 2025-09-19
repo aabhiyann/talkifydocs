@@ -3,12 +3,24 @@ import PdfRenderer from "@/components/PdfRenderer";
 import { db } from "@/db";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { notFound, redirect } from "next/navigation";
+import { Metadata, Viewport } from "next";
 
 interface PageProps {
   params: Promise<{
     fileid: string;
   }>;
 }
+
+export const metadata: Metadata = {
+  title: "Document Viewer | TalkifyDocs",
+  description: "View and chat with your PDF documents using AI-powered insights.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#10b981",
+};
 
 const Page = async ({ params }: PageProps) => {
   // retrieve file id

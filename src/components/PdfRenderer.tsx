@@ -69,8 +69,25 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
         const pdfjs = await import('pdfjs-dist');
         setPdfjsLib(pdfjs);
         
-        // Configure worker with local file
-        pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+        // Configure worker with fallback options
+        const workerSources = [
+          `${window.location.origin}/pdf.worker.min.js`,
+          `https://unpkg.com/pdfjs-dist@5.3.93/build/pdf.worker.min.js`,
+          `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.3.93/pdf.worker.min.js`
+        ];
+        
+        pdfjs.GlobalWorkerOptions.workerSrc = workerSources[0];
+        
+        // Test worker availability
+        try {
+          const response = await fetch(workerSources[0], { method: 'HEAD' });
+          if (!response.ok) {
+            throw new Error('Local worker not available');
+          }
+        } catch (error) {
+          console.warn('Local worker failed, trying CDN fallback...');
+          pdfjs.GlobalWorkerOptions.workerSrc = workerSources[1];
+        }
         
         // Import CSS dynamically
         await import('react-pdf/dist/Page/AnnotationLayer.css');
