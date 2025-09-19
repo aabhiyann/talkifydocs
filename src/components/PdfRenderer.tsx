@@ -75,7 +75,6 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
         await import('react-pdf/dist/Page/AnnotationLayer.css');
         await import('react-pdf/dist/Page/TextLayer.css');
         
-        console.log('PDF components loaded successfully');
         setIsLoading(false);
       } catch (error) {
         console.error('Failed to load PDF components:', error);
@@ -136,7 +135,6 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   };
 
   const onDocumentLoadSuccess = (pdf: any) => {
-    console.log('PDF document loaded successfully:', pdf);
     setNumPages(pdf.numPages);
     setRenderedScale(scale);
   };
