@@ -38,14 +38,14 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
 
   if (isLoading)
     return (
-      <div className="relative min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex flex-col">
+      <div className="relative min-h-screen bg-gradient-to-br from-background via-background to-background flex flex-col">
         <div className="flex-1 flex justify-center items-center flex-col">
           <Card className="w-full max-w-md mx-4">
             <CardContent className="p-8 text-center">
               <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center">
                 <Loader2 className="h-8 w-8 text-primary-600 animate-spin" />
               </div>
-              <h3 className="text-heading-md font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="text-heading-md font-semibold text-foreground mb-2">
                 Loading your document
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
@@ -62,14 +62,14 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
 
   if (data?.status === "PROCESSING")
     return (
-      <div className="relative min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex flex-col">
+      <div className="relative min-h-screen bg-gradient-to-br from-background via-background to-background flex flex-col">
         <div className="flex-1 flex justify-center items-center flex-col">
           <Card className="w-full max-w-md mx-4">
             <CardContent className="p-8 text-center">
               <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-yellow-100 dark:bg-yellow-900/20 flex items-center justify-center">
                 <Clock className="h-8 w-8 text-yellow-600 animate-pulse" />
               </div>
-              <h3 className="text-heading-md font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="text-heading-md font-semibold text-foreground mb-2">
                 Processing your document
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
@@ -100,14 +100,14 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
 
   if (data?.status === "FAILED")
     return (
-      <div className="relative min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex flex-col">
+      <div className="relative min-h-screen bg-gradient-to-br from-background via-background to-background flex flex-col">
         <div className="flex-1 flex justify-center items-center flex-col">
           <Card className="w-full max-w-md mx-4">
             <CardContent className="p-8 text-center">
               <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
                 <XCircle className="h-8 w-8 text-red-600" />
               </div>
-              <h3 className="text-heading-md font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="text-heading-md font-semibold text-foreground mb-2">
                 Processing failed
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
@@ -134,9 +134,9 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
 
   return (
     <ChatContextProvider fileId={fileId}>
-      <div className="relative min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex flex-col">
+      <div className="relative min-h-screen bg-gradient-to-br from-background via-background to-background flex flex-col">
         {/* Header */}
-        <div className="sticky top-0 z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
+        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-md border-b border-border">
           <div className="px-4 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -152,7 +152,7 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
                     <FileText className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h1 className="font-semibold text-gray-900 dark:text-gray-100">
+                    <h1 className="font-semibold text-foreground">
                       Document
                     </h1>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -182,7 +182,7 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
           </div>
 
           {/* Chat Input */}
-          <div className="sticky bottom-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-700 p-4">
+          <div className="sticky bottom-0 bg-background/95 backdrop-blur-md border-t border-border p-4">
             <ChatInput />
           </div>
         </div>

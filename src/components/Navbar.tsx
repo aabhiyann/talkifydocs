@@ -61,8 +61,8 @@ const Navbar = () => {
     <nav
       className={`sticky top-0 z-50 w-full transition-all duration-200 ${
         isScrolled
-          ? "bg-white/95 backdrop-blur-md border-b border-secondary-200 shadow-sm"
-          : "bg-white/80 backdrop-blur-sm"
+          ? "bg-background/95 backdrop-blur-md border-b border-border shadow-sm"
+          : "bg-background/80 backdrop-blur-sm"
       }`}
     >
       <MaxWidthWrapper>
@@ -187,7 +187,7 @@ const Navbar = () => {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-secondary-200 bg-white/95 backdrop-blur-lg">
+          <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-lg">
             <div className="flex flex-col space-y-1 p-4">
               {navItems.map((item) => {
                 const Icon = item.icon;

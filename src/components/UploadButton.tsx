@@ -209,7 +209,7 @@ const UploadDropzone = () => {
                           <File className="h-5 w-5 text-primary-600" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                          <p className="text-sm font-medium text-foreground truncate">
                             {acceptedFiles[0].name}
                           </p>
                           <p className="text-xs text-gray-500 dark:text-gray-400">

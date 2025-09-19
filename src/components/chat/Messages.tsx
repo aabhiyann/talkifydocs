@@ -95,7 +95,7 @@ const Messages = ({ fileId }: MessagesProps) => {
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center">
             <MessageSquare className="h-8 w-8 text-primary-600" />
           </div>
-          <h3 className="text-heading-md font-semibold text-gray-900 dark:text-gray-100 mb-2">
+          <h3 className="text-heading-md font-semibold text-foreground mb-2">
             Start a conversation
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
@@ -177,7 +177,7 @@ const Messages = ({ fileId }: MessagesProps) => {
                 className={`${
                   message.isUserMessage
                     ? "bg-primary-600 text-white border-primary-600"
-                    : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                    : "bg-card border-border"
                 }`}
               >
                 <CardContent className="p-4">
@@ -189,7 +189,7 @@ const Messages = ({ fileId }: MessagesProps) => {
                       className={`${
                         message.isUserMessage
                           ? "text-white"
-                          : "text-gray-900 dark:text-gray-100"
+                          : "text-foreground"
                       }`}
                     >
                       <Message

@@ -29,7 +29,7 @@ export default function Home() {
 
           <div className="relative">
             <div className="glass rounded-3xl p-2 shadow-dramatic">
-              <div className="rounded-2xl overflow-hidden bg-white dark:bg-secondary-800">
+              <div className="rounded-2xl overflow-hidden bg-background">
                 <Image
                   src="/dashboard-preview.jpg"
                   alt="TalkifyDocs Dashboard Preview"
@@ -120,7 +120,7 @@ export default function Home() {
           {/* Upload Preview */}
           <div className="relative">
             <div className="glass rounded-3xl p-2 shadow-dramatic">
-              <div className="rounded-2xl overflow-hidden bg-white dark:bg-secondary-800">
+              <div className="rounded-2xl overflow-hidden bg-background">
                 <Image
                   src="/file-upload-preview.jpg"
                   alt="File Upload Preview"
