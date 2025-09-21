@@ -1,0 +1,45 @@
+# <type>(<scope>): <subject>
+#
+# <body>
+#
+# <footer>
+
+# Types:
+# feat:     A new feature
+# fix:      A bug fix
+# docs:     Documentation only changes
+# style:    Changes that do not affect the meaning of the code
+# refactor: A code change that neither fixes a bug nor adds a feature
+# perf:     A code change that improves performance
+# test:     Adding missing tests or correcting existing tests
+# chore:    Changes to the build process or auxiliary tools
+#
+# Scopes:
+# pdf:      PDF-related functionality
+# auth:     Authentication
+# ui:       User interface
+# api:      API endpoints
+# db:       Database
+# config:   Configuration
+# deps:     Dependencies
+#
+# Examples:
+# feat(pdf): add PDF fullscreen viewer
+# fix(api): resolve authentication timeout issue
+# docs(readme): update installation instructions
+# perf(db): optimize query performance
+#
+# Subject line:
+# - Use imperative mood ("add" not "added")
+# - Capitalize first letter
+# - No period at the end
+# - 50 characters or less
+#
+# Body:
+# - Explain what and why, not how
+# - Wrap at 72 characters
+# - Use bullet points for multiple changes
+#
+# Footer:
+# - Reference issues: "Closes #123", "Fixes #456"
+# - Breaking changes: "BREAKING CHANGE: description"
