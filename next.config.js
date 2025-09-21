@@ -3,10 +3,10 @@ const nextConfig = {
   // Performance optimizations
   compress: true,
   poweredByHeader: false,
-  
+
   // Disable dev indicators
   devIndicators: {
-    position: 'bottom-right',
+    position: "bottom-right",
   },
 
   // Image optimization
@@ -21,6 +21,15 @@ const nextConfig = {
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     config.resolve.alias.canvas = false;
     config.resolve.alias.encoding = false;
+
+    // PDF.js worker configuration
+    config.module.rules.push({
+      test: /pdf\.worker\.(min\.)?js/,
+      type: "asset/resource",
+      generator: {
+        filename: "static/worker/[hash][ext][query]",
+      },
+    });
 
     // Bundle analyzer (uncomment to analyze bundle)
     // if (!dev && !isServer) {

@@ -10,8 +10,7 @@ import { error } from "console";
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
 import { absoluteUrl } from "@/lib/utils";
 import { use } from "react";
-import { getUserSubscriptionPlan, stripe } from "@/lib/stripe";
-import { PLANS } from "@/config/stripe";
+// Stripe imports moved to be conditional to avoid webpack bundling issues
 
 export const appRouter = router({
   authCallback: publicProcedure.query(async () => {
@@ -65,6 +64,10 @@ export const appRouter = router({
     });
 
     if (!dbUser) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+    // Dynamic import to avoid webpack bundling issues
+    const { getUserSubscriptionPlan, stripe } = await import("@/lib/stripe");
+    const { PLANS } = await import("@/config/stripe");
 
     const subscriptionPlan = await getUserSubscriptionPlan();
 
