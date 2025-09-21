@@ -1,10 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription } from "./ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "./ui/dialog";
 import { Button } from "./ui/button";
 import Dropzone from "react-dropzone";
-import { Cloud, File, Loader2, Upload, X, CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  Cloud,
+  File,
+  Loader2,
+  Upload,
+  X,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
 import { Progress } from "./ui/progress";
 import { useUploadThing } from "@/lib/uploadthing";
 import { useToast } from "./ui/use-toast";
@@ -17,7 +32,9 @@ const UploadDropzone = () => {
   const router = useRouter();
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "processing" | "success" | "error">("idle");
+  const [uploadStatus, setUploadStatus] = useState<
+    "idle" | "uploading" | "processing" | "success" | "error"
+  >("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const { toast } = useToast();
@@ -33,10 +50,24 @@ const UploadDropzone = () => {
     },
     onError: (error) => {
       setUploadStatus("error");
-      setErrorMessage(error.message || "Failed to process file");
+      let errorMsg = error.message || "Failed to process file";
+
+      // Provide more specific error messages
+      if (errorMsg.includes("RetryError")) {
+        errorMsg =
+          "File processing is taking longer than expected. Please try again.";
+      } else if (errorMsg.includes("setup")) {
+        errorMsg =
+          "The PDF file appears to be corrupted or unsupported. Please try a different file.";
+      } else if (errorMsg.includes("timeout")) {
+        errorMsg =
+          "File processing timed out. Please try again with a smaller file.";
+      }
+
+      setErrorMessage(errorMsg);
     },
     retry: true,
-    retryDelay: 500,
+    retryDelay: 1000, // Increased retry delay
   });
 
   const startSimulatedProgress = () => {
@@ -69,20 +100,20 @@ const UploadDropzone = () => {
       <Dropzone
         multiple={false}
         accept={{
-          'application/pdf': ['.pdf']
+          "application/pdf": [".pdf"],
         }}
         maxSize={4 * 1024 * 1024} // 4MB
         onDrop={async (acceptedFile, rejectedFiles) => {
           if (rejectedFiles.length > 0) {
             const error = rejectedFiles[0].errors[0];
             let message = "File rejected";
-            
+
             if (error.code === "file-too-large") {
               message = "File is too large. Maximum size is 4MB.";
             } else if (error.code === "file-invalid-type") {
               message = "Only PDF files are allowed.";
             }
-            
+
             setErrorMessage(message);
             setUploadStatus("error");
             return;
@@ -115,7 +146,9 @@ const UploadDropzone = () => {
           } catch (error) {
             clearInterval(progressInterval);
             setUploadStatus("error");
-            setErrorMessage(error instanceof Error ? error.message : "Upload failed");
+            setErrorMessage(
+              error instanceof Error ? error.message : "Upload failed"
+            );
           }
         }}
       >
@@ -135,13 +168,15 @@ const UploadDropzone = () => {
             <div className="p-8">
               <div className="flex flex-col items-center justify-center space-y-4">
                 {/* Upload Icon */}
-                <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors duration-200 ${
-                  uploadStatus === "success"
-                    ? "bg-green-100 dark:bg-green-900/20"
-                    : uploadStatus === "error"
-                    ? "bg-red-100 dark:bg-red-900/20"
-                    : "bg-primary-100 dark:bg-primary-900/20"
-                }`}>
+                <div
+                  className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors duration-200 ${
+                    uploadStatus === "success"
+                      ? "bg-green-100 dark:bg-green-900/20"
+                      : uploadStatus === "error"
+                      ? "bg-red-100 dark:bg-red-900/20"
+                      : "bg-primary-100 dark:bg-primary-900/20"
+                  }`}
+                >
                   {uploadStatus === "success" ? (
                     <CheckCircle2 className="h-8 w-8 text-primary-600 dark:text-primary-400" />
                   ) : uploadStatus === "error" ? (
@@ -176,19 +211,22 @@ const UploadDropzone = () => {
                   ) : isUploading ? (
                     <>
                       <h3 className="text-lg font-semibold text-primary-700 dark:text-primary-300">
-                        {uploadStatus === "processing" ? "Processing..." : "Uploading..."}
+                        {uploadStatus === "processing"
+                          ? "Processing..."
+                          : "Uploading..."}
                       </h3>
                       <p className="text-sm text-primary-600 dark:text-primary-400">
-                        {uploadStatus === "processing" 
-                          ? "AI is analyzing your document..." 
-                          : "Please wait while we upload your file..."
-                        }
+                        {uploadStatus === "processing"
+                          ? "AI is analyzing your document..."
+                          : "Please wait while we upload your file..."}
                       </p>
                     </>
                   ) : (
                     <>
                       <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
-                        {isDragActive ? "Drop your PDF here" : "Upload a PDF document"}
+                        {isDragActive
+                          ? "Drop your PDF here"
+                          : "Upload a PDF document"}
                       </h3>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
                         Drag and drop your PDF here, or click to browse
@@ -201,41 +239,43 @@ const UploadDropzone = () => {
                 </div>
 
                 {/* File Preview */}
-                {acceptedFiles && acceptedFiles[0] && uploadStatus !== "success" && (
-                  <Card className="w-full max-w-sm">
-                    <CardContent className="p-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center">
-                          <File className="h-5 w-5 text-primary-600" />
+                {acceptedFiles &&
+                  acceptedFiles[0] &&
+                  uploadStatus !== "success" && (
+                    <Card className="w-full max-w-sm">
+                      <CardContent className="p-4">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center">
+                            <File className="h-5 w-5 text-primary-600" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-foreground truncate">
+                              {acceptedFiles[0].name}
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              {(acceptedFiles[0].size / 1024 / 1024).toFixed(2)}{" "}
+                              MB
+                            </p>
+                          </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-foreground truncate">
-                            {acceptedFiles[0].name}
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {(acceptedFiles[0].size / 1024 / 1024).toFixed(2)} MB
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
+                      </CardContent>
+                    </Card>
+                  )}
 
                 {/* Progress Bar */}
                 {isUploading && uploadStatus !== "error" && (
                   <div className="w-full max-w-sm space-y-2">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-600 dark:text-gray-400">
-                        {uploadStatus === "processing" ? "Processing" : "Uploading"}
+                        {uploadStatus === "processing"
+                          ? "Processing"
+                          : "Uploading"}
                       </span>
                       <span className="text-gray-600 dark:text-gray-400">
                         {Math.round(uploadProgress)}%
                       </span>
                     </div>
-                    <Progress 
-                      value={uploadProgress} 
-                      className="h-2"
-                    />
+                    <Progress value={uploadProgress} className="h-2" />
                   </div>
                 )}
 
@@ -268,11 +308,7 @@ const UploadDropzone = () => {
               </div>
             </div>
 
-            <input
-              {...getInputProps()}
-              type="file"
-              className="hidden"
-            />
+            <input {...getInputProps()} type="file" className="hidden" />
           </div>
         )}
       </Dropzone>
