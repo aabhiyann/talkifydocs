@@ -4,6 +4,7 @@ import { ArrowRight, Sparkles, Zap, Shield, CheckCircle } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
 import HeroSection from "@/components/HeroSection";
+import { marketing } from "@/content/marketing";
 
 export default function Home() {
   return (
@@ -19,11 +20,10 @@ export default function Home() {
         <MaxWidthWrapper>
           <div className="text-center mb-16">
             <h2 className="text-display-lg mb-6 bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
-              See TalkifyDocs in Action
+              {marketing.home.previewTitle}
             </h2>
             <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-2xl mx-auto">
-              Experience the power of AI-driven document analysis with our intuitive interface. 
-              Upload, analyze, and interact with your documents like never before.
+              {marketing.home.previewDesc}
             </p>
           </div>
 
@@ -54,11 +54,10 @@ export default function Home() {
         <MaxWidthWrapper>
           <div className="text-center mb-16">
             <h2 className="text-display-lg mb-6 bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
-              How It Works
+              {marketing.home.howTitle}
             </h2>
             <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-2xl mx-auto">
-              Get started with TalkifyDocs in three simple steps and unlock the power of AI-driven document analysis. 
-              Transform your workflow in minutes, not hours.
+              {marketing.home.howDesc}
             </p>
           </div>
 

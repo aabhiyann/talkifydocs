@@ -3,6 +3,7 @@
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import Link from "next/link";
 import { ArrowRight, Sparkles, Zap, Shield } from "lucide-react";
+import { marketing } from "@/content/marketing";
 import { buttonVariants } from "./ui/button";
 
 const HeroSection = () => {
@@ -22,19 +23,18 @@ const HeroSection = () => {
           <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full glass border border-primary-200/50 dark:border-primary-700/50 shadow-soft">
             <Sparkles className="w-4 h-4 text-primary-600" />
             <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
-              AI-Powered Document Analysis
+              {marketing.hero.badge}
             </span>
           </div>
 
           {/* Main Content */}
           <div className="space-y-6">
             <h1 className="text-display-2xl md:text-display-xl lg:text-display-2xl font-extrabold bg-gradient-to-r from-primary-600 via-accent-600 to-primary-600 bg-clip-text text-transparent animate-fade-in">
-              Transform your documents into intelligent conversations
+              {marketing.hero.heading}
             </h1>
 
             <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-3xl mx-auto leading-relaxed animate-slide-up">
-              TalkifyDocs revolutionizes document interaction through advanced AI technology. 
-              Upload your PDFs, ask questions, and get instant, accurate answers from your content.
+              {marketing.hero.subheading}
             </p>
           </div>
 
@@ -48,7 +48,7 @@ const HeroSection = () => {
                   "gradient-primary hover:shadow-strong text-white px-8 py-4 rounded-xl font-semibold shadow-medium hover:shadow-dramatic transition-all duration-300 hover:scale-105 focus-ring",
               })}
             >
-              Get Started
+              {marketing.hero.ctas.primary}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
 
@@ -61,7 +61,7 @@ const HeroSection = () => {
                   "px-8 py-4 rounded-xl font-semibold border-2 border-primary-200 dark:border-primary-700 hover:border-primary-300 dark:hover:border-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-300 hover:scale-105 focus-ring",
               })}
             >
-              View Pricing
+              {marketing.hero.ctas.secondary}
             </Link>
           </div>
 
