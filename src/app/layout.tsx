@@ -21,6 +21,7 @@ export const metadata: Metadata = {
   description: "Upload, analyze, and chat with your PDF documents using advanced AI technology. Extract insights and get instant answers from your documents.",
   keywords: "PDF analysis, AI chat, document processing, PDF reader, document AI",
   authors: [{ name: "TalkifyDocs Team" }],
+  metadataBase: new URL("https://talkifydocs.com"),
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
@@ -31,11 +32,15 @@ export const metadata: Metadata = {
     description: "Upload, analyze, and chat with your PDF documents using advanced AI technology.",
     type: "website",
     locale: "en_US",
+    url: "https://talkifydocs.com",
+    siteName: "TalkifyDocs",
+    images: [{ url: "/thumbnail.png", width: 1200, height: 630, alt: "TalkifyDocs" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "TalkifyDocs - AI-Powered Document Analysis",
     description: "Upload, analyze, and chat with your PDF documents using advanced AI technology.",
+    images: ["/thumbnail.png"],
   },
 };
 
