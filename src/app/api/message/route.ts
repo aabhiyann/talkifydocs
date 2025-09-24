@@ -106,7 +106,7 @@ export const POST = async (req: NextRequest) => {
     const pineconeIndex = pinecone.Index("talkifydocs");
 
     const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
-      pineconeIndex,
+      pineconeIndex: pineconeIndex as any, // Type assertion to fix compatibility issue
       namespace: file.id,
     });
 

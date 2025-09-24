@@ -43,8 +43,15 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   const [Document, setDocument] = useState<any>(null);
   const [Page, setPage] = useState<any>(null);
   const [mounted, setMounted] = useState(false);
+  const [loadTimeout, setLoadTimeout] = useState<NodeJS.Timeout | null>(null);
 
-  const isLoadingPdf = isLoading || renderedScale !== scale || !pdfjsLib || !Document || !Page || !mounted;
+  const isLoadingPdf =
+    isLoading ||
+    renderedScale !== scale ||
+    !pdfjsLib ||
+    !Document ||
+    !Page ||
+    !mounted;
 
   // Set mounted state to prevent hydration issues
   useEffect(() => {
@@ -58,26 +65,48 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
     const loadPdfComponents = async () => {
       try {
         setIsLoading(true);
-        
+
+        // Set a timeout to prevent infinite loading
+        const timeout = setTimeout(() => {
+          setIsLoading(false);
+          toast({
+            title: "PDF Loading Timeout",
+            description:
+              "PDF viewer is taking too long to load. Please refresh the page.",
+            variant: "destructive",
+          });
+        }, 30000); // 30 second timeout
+
+        setLoadTimeout(timeout);
+
         // Import PDF.js library
-        const pdfjs = await import('pdfjs-dist');
+        const pdfjs = await import("pdfjs-dist");
         setPdfjsLib(pdfjs);
-        
-        // Configure worker with a simple, reliable approach
-        pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
-        
+
+        // Configure worker with multiple fallback options
+        if (typeof window !== "undefined") {
+          // Use the worker from the installed package
+          pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`;
+        }
+
         // Import react-pdf components
-        const { Document: DocumentComponent, Page: PageComponent } = await import('react-pdf');
+        const { Document: DocumentComponent, Page: PageComponent } =
+          await import("react-pdf");
         setDocument(() => DocumentComponent);
         setPage(() => PageComponent);
-        
-        // Import CSS
-        await import('react-pdf/dist/Page/AnnotationLayer.css');
-        await import('react-pdf/dist/Page/TextLayer.css');
-        
+
+        // Note: CSS imports are handled by Next.js automatically
+
+        // Clear timeout and set loading to false
+        clearTimeout(timeout);
+        setLoadTimeout(null);
         setIsLoading(false);
       } catch (error) {
-        console.error('Failed to load PDF components:', error);
+        console.error("Failed to load PDF components:", error);
+        if (loadTimeout) {
+          clearTimeout(loadTimeout);
+          setLoadTimeout(null);
+        }
         setIsLoading(false);
         toast({
           title: "Error loading PDF viewer",
@@ -88,7 +117,14 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
     };
 
     loadPdfComponents();
-  }, [mounted, toast]);
+
+    // Cleanup timeout on unmount
+    return () => {
+      if (loadTimeout) {
+        clearTimeout(loadTimeout);
+      }
+    };
+  }, [mounted, toast, loadTimeout]);
 
   const CustomPageValidator = z.object({
     page: z
@@ -140,11 +176,30 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   };
 
   const onDocumentLoadError = (error: any) => {
-    console.error('PDF document load error:', error);
-    console.error('PDF URL:', url);
+    console.error("PDF document load error:", error);
+    console.error("PDF URL:", url);
+    console.error("Error details:", {
+      name: error?.name,
+      message: error?.message,
+      stack: error?.stack,
+    });
+
+    // Check for specific error types
+    let errorMessage = "Failed to load PDF document.";
+    if (error?.name === "InvalidPDFException") {
+      errorMessage = "The uploaded file is not a valid PDF or is corrupted.";
+    } else if (error?.name === "MissingPDFException") {
+      errorMessage = "The PDF file could not be found or accessed.";
+    } else if (error?.message?.includes("CORS")) {
+      errorMessage =
+        "CORS error: The PDF file cannot be loaded due to security restrictions.";
+    } else if (error?.message?.includes("network")) {
+      errorMessage = "Network error: Unable to load the PDF file.";
+    }
+
     toast({
       title: "Error loading PDF",
-      description: "Failed to load PDF document. Please try again.",
+      description: errorMessage,
       variant: "destructive",
     });
   };
@@ -154,18 +209,17 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   };
 
   if (isLoadingPdf) {
-    
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
         <div className="flex flex-col items-center space-y-4">
           <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
           <p className="text-sm text-muted-foreground">Loading PDF viewer...</p>
           <p className="text-xs text-muted-foreground">
-            {!mounted && 'Initializing...'}
-            {mounted && !pdfjsLib && 'Loading PDF library...'}
-            {pdfjsLib && !Document && 'Loading PDF components...'}
-            {Document && !Page && 'Loading PDF renderer...'}
-            {Document && Page && 'Preparing PDF...'}
+            {!mounted && "Initializing..."}
+            {mounted && !pdfjsLib && "Loading PDF library..."}
+            {pdfjsLib && !Document && "Loading PDF components..."}
+            {Document && !Page && "Loading PDF renderer..."}
+            {Document && Page && "Preparing PDF..."}
           </p>
         </div>
       </div>
@@ -177,15 +231,31 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
       <div className="flex items-center justify-center h-full">
         <div className="flex flex-col items-center space-y-4">
           <div className="text-destructive">
-            <svg className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z" />
+            <svg
+              className="h-12 w-12 mx-auto"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z"
+              />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-foreground">Failed to load PDF viewer</h3>
+          <h3 className="text-lg font-semibold text-foreground">
+            Failed to load PDF viewer
+          </h3>
           <p className="text-sm text-muted-foreground text-center">
             There was an error loading the PDF viewer. Please refresh the page.
           </p>
-          <Button onClick={() => window.location.reload()} variant="outline" size="sm">
+          <Button
+            onClick={() => window.location.reload()}
+            variant="outline"
+            size="sm"
+          >
             Refresh Page
           </Button>
         </div>
@@ -284,7 +354,9 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
               loading={
                 <div className="flex flex-col items-center justify-center py-12">
                   <Loader2 className="h-8 w-8 animate-spin text-primary-600 mb-4" />
-                  <p className="text-sm text-muted-foreground">Loading PDF...</p>
+                  <p className="text-sm text-muted-foreground">
+                    Loading PDF...
+                  </p>
                 </div>
               }
               onLoadError={onDocumentLoadError}
@@ -294,16 +366,29 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
               error={
                 <div className="flex flex-col items-center justify-center py-12">
                   <div className="text-destructive mb-4">
-                    <svg className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z" />
+                    <svg
+                      className="h-12 w-12 mx-auto"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z"
+                      />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Failed to load PDF</h3>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
+                    Failed to load PDF
+                  </h3>
                   <p className="text-sm text-muted-foreground text-center mb-4">
-                    There was an error loading the PDF document. This might be due to a network issue or an unsupported file format.
+                    There was an error loading the PDF document. This might be
+                    due to a network issue or an unsupported file format.
                   </p>
-                  <Button 
-                    onClick={() => window.location.reload()} 
+                  <Button
+                    onClick={() => window.location.reload()}
                     variant="outline"
                     size="sm"
                   >
