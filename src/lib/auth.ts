@@ -7,8 +7,13 @@ export type AuthUser = {
   email: string | null;
   name: string | null;
   imageUrl: string | null;
+  tier?: "FREE" | "PRO" | "ADMIN";
 };
 
+/**
+ * Returns the current authenticated user, ensuring there is a corresponding
+ * Prisma User record. If no user is authenticated, returns null.
+ */
 export async function getCurrentUser(): Promise<AuthUser | null> {
   const { userId } = auth();
   if (!userId) return null;
@@ -42,9 +47,14 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     email: dbUser.email,
     name: dbUser.name,
     imageUrl: dbUser.imageUrl,
+    tier: dbUser.tier as AuthUser["tier"],
   };
 }
 
+/**
+ * Same as getCurrentUser but throws if the user is not authenticated.
+ * Can be used in server components and server actions.
+ */
 export async function requireUser(): Promise<AuthUser> {
   const user = await getCurrentUser();
 
@@ -55,4 +65,18 @@ export async function requireUser(): Promise<AuthUser> {
   return user;
 }
 
+/**
+ * Alias required by v2 design-doc language.
+ */
+export const requireAuth = requireUser;
+
+export async function requireAdmin(): Promise<AuthUser> {
+  const user = await requireUser();
+
+  if (user.tier !== "ADMIN") {
+    throw new Error("User is not authorized to access this resource");
+  }
+
+  return user;
+}
 
