@@ -2,7 +2,7 @@ import ChatWrapper from "@/components/chat/ChatWrapper";
 import PdfRenderer from "@/components/PdfRenderer";
 import { db } from "@/db";
 import { requireUser } from "@/lib/auth";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { Metadata, Viewport } from "next";
 
 interface PageProps {
@@ -26,9 +26,7 @@ const Page = async ({ params }: PageProps) => {
   // retrieve file id
   const { fileid } = params;
 
-  const user = await requireUser().catch(() =>
-    redirect(`/auth-callback?origin=dashboard/${fileid}`)
-  );
+  const user = await requireUser();
 
   //make db call
   const file = await db.file.findFirst({
