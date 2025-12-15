@@ -4,6 +4,11 @@ import ReactMarkdown from "react-markdown";
 import { format } from "date-fns";
 import { forwardRef } from "react";
 import { Icons } from "../Icons";
+import { Button } from "../ui/button";
+import { Save } from "lucide-react";
+import { saveAsHighlight } from "@/actions/highlights";
+import { useToast } from "../ui/use-toast";
+import { useState } from "react";
 
 interface MessageProps {
   message: ExtendedMessage;
@@ -13,10 +18,48 @@ interface MessageProps {
     page?: number;
     citation?: any;
   }) => void;
+  previousUserMessage?: string;
+  fileId?: string;
 }
 
 const Message = forwardRef<HTMLDivElement, MessageProps>(
-  ({ message, isNextMessageSamePerson, onCitationClick }, ref) => {
+  ({ message, isNextMessageSamePerson, onCitationClick, previousUserMessage, fileId }, ref) => {
+    const { toast } = useToast();
+    const [isSaving, setIsSaving] = useState(false);
+
+    const handleSaveHighlight = async () => {
+      if (!previousUserMessage || !fileId || typeof message.text !== "string") {
+        toast({
+          title: "Cannot save highlight",
+          description: "Missing question or answer content",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setIsSaving(true);
+      try {
+        await saveAsHighlight(
+          previousUserMessage,
+          message.text,
+          fileId,
+          Array.isArray((message as any).citations) ? (message as any).citations : undefined
+        );
+        toast({
+          title: "Highlight saved",
+          description: "This Q&A pair has been saved to your highlights",
+        });
+      } catch (error) {
+        toast({
+          title: "Error saving highlight",
+          description: error instanceof Error ? error.message : "Failed to save highlight",
+          variant: "destructive",
+        });
+      } finally {
+        setIsSaving(false);
+      }
+    };
+
     return (
       <div
         ref={ref}
@@ -129,13 +172,28 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
               )}
 
             {message.id !== "loading-message" ? (
-              <div
-                className={cn("text-xs select-none mt-2 w-full text-right", {
-                  "text-gray-500": !message.isUserMessage,
-                  "text-primary-200": message.isUserMessage,
-                })}
-              >
-                {format(new Date(message.createdAt), "HH:mm")}
+              <div className="flex items-center justify-between mt-2">
+                <div className="text-xs select-none">
+                  {format(new Date(message.createdAt), "HH:mm")}
+                </div>
+                {!message.isUserMessage &&
+                  previousUserMessage &&
+                  fileId &&
+                  typeof message.text === "string" && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleSaveHighlight}
+                      disabled={isSaving}
+                      className={cn(
+                        "h-7 px-2 text-xs",
+                        "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <Save className="h-3 w-3 mr-1" />
+                      {isSaving ? "Saving..." : "Save"}
+                    </Button>
+                  )}
               </div>
             ) : null}
           </div>

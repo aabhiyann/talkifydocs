@@ -3,6 +3,7 @@
 import { trpc } from "@/app/_trpc/client";
 import { UploadZone } from "./dashboard/UploadZone";
 import { DocumentGrid } from "./dashboard/DocumentGrid";
+import { MultiDocSelector } from "./chat/MultiDocSelector";
 import {
   Ghost,
   Loader2,
@@ -153,6 +154,9 @@ const Dashboard = memo(() => {
               </p>
             </div>
             <div className="flex items-center space-x-3">
+              {files && files.length >= 2 && (
+                <MultiDocSelector files={files.filter((f) => f.uploadStatus === "SUCCESS")} />
+              )}
               <UploadZone />
             </div>
           </div>

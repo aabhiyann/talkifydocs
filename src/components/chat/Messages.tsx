@@ -147,77 +147,94 @@ const Messages = ({ fileId, onCitationClick }: MessagesProps) => {
         )}
 
         {/* Messages */}
-        {combinedMessages.map((message, index) => (
-          <div
-            key={message.id}
-            ref={
-              index === combinedMessages.length - 1 ? lastMessageRef : undefined
-            }
-            className={`flex ${
-              message.isUserMessage ? "justify-end" : "justify-start"
-            }`}
-          >
+        {combinedMessages.map((message, index) => {
+          // Find the previous user message for assistant messages
+          const previousUserMessage = !message.isUserMessage
+            ? (() => {
+                for (let i = index - 1; i >= 0; i--) {
+                  const prevMsg = combinedMessages[i];
+                  if (prevMsg?.isUserMessage && typeof prevMsg.text === "string") {
+                    return prevMsg.text;
+                  }
+                }
+                return undefined;
+              })()
+            : undefined;
+
+          return (
             <div
-              className={`flex items-start space-x-3 max-w-[80%] ${
-                message.isUserMessage ? "flex-row-reverse space-x-reverse" : ""
+              key={message.id}
+              ref={
+                index === combinedMessages.length - 1 ? lastMessageRef : undefined
+              }
+              className={`flex ${
+                message.isUserMessage ? "justify-end" : "justify-start"
               }`}
             >
-              {/* Avatar */}
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  message.isUserMessage
-                    ? "bg-primary-600 text-white"
-                    : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+                className={`flex items-start space-x-3 max-w-[80%] ${
+                  message.isUserMessage ? "flex-row-reverse space-x-reverse" : ""
                 }`}
               >
-                {message.isUserMessage ? (
-                  <User className="h-4 w-4" />
-                ) : (
-                  <Bot className="h-4 w-4" />
-                )}
-              </div>
+                {/* Avatar */}
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    message.isUserMessage
+                      ? "bg-primary-600 text-white"
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+                  }`}
+                >
+                  {message.isUserMessage ? (
+                    <User className="h-4 w-4" />
+                  ) : (
+                    <Bot className="h-4 w-4" />
+                  )}
+                </div>
 
-              {/* Message Content */}
-              <Card
-                className={`${
-                  message.isUserMessage
-                    ? "bg-primary-600 text-white border-primary-600"
-                    : "bg-card border-border"
-                }`}
-              >
-                <CardContent className="p-4">
-                  <div className="space-y-2">
-                    <div className="text-sm font-medium opacity-70">
-                      {message.isUserMessage ? "You" : "AI Assistant"}
+                {/* Message Content */}
+                <Card
+                  className={`${
+                    message.isUserMessage
+                      ? "bg-primary-600 text-white border-primary-600"
+                      : "bg-card border-border"
+                  }`}
+                >
+                  <CardContent className="p-4">
+                    <div className="space-y-2">
+                      <div className="text-sm font-medium opacity-70">
+                        {message.isUserMessage ? "You" : "AI Assistant"}
+                      </div>
+                      <div
+                        className={`${
+                          message.isUserMessage
+                            ? "text-white"
+                            : "text-foreground"
+                        }`}
+                      >
+                        <Message
+                          message={message}
+                          isNextMessageSamePerson={false}
+                          onCitationClick={onCitationClick}
+                          previousUserMessage={previousUserMessage}
+                          fileId={fileId}
+                        />
+                      </div>
+                      <div
+                        className={`text-xs opacity-60 ${
+                          message.isUserMessage
+                            ? "text-white"
+                            : "text-gray-500 dark:text-gray-400"
+                        }`}
+                      >
+                        {new Date(message.createdAt).toLocaleTimeString()}
+                      </div>
                     </div>
-                    <div
-                      className={`${
-                        message.isUserMessage
-                          ? "text-white"
-                          : "text-foreground"
-                      }`}
-                    >
-                      <Message
-                        message={message}
-                        isNextMessageSamePerson={false}
-                        onCitationClick={onCitationClick}
-                      />
-                    </div>
-                    <div
-                      className={`text-xs opacity-60 ${
-                        message.isUserMessage
-                          ? "text-white"
-                          : "text-gray-500 dark:text-gray-400"
-                      }`}
-                    >
-                      {new Date(message.createdAt).toLocaleTimeString()}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {/* Intersection Observer */}
         <div ref={ref} className="h-4" />
