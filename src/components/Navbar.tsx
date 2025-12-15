@@ -17,8 +17,7 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { usePathname } from "next/navigation";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-import { AdminLink } from "./AdminLink";
+import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
