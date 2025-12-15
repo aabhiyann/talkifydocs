@@ -4,6 +4,7 @@ import { useState } from "react";
 import PdfRenderer from "@/components/PdfRenderer";
 import ChatWrapper from "@/components/chat/ChatWrapper";
 import { FileManagementDropdown } from "./FileManagementDropdown";
+import { ChatExportMenu } from "./ChatExportMenu";
 import { cn } from "@/lib/utils";
 import type { File } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
@@ -93,15 +94,18 @@ const ConversationChatShell = ({
         <div className="border-b p-4 bg-background/95 backdrop-blur-sm">
           <div className="flex items-center justify-between mb-2">
             <h2 className="font-semibold text-lg">Chat</h2>
-            {availableFiles.length > 0 && (
-              <FileManagementDropdown
-                conversationId={conversationId}
-                currentFiles={currentFiles}
-                availableFiles={availableFiles}
-                onFileAdded={handleFileAdded}
-                onFileRemoved={handleFileRemoved}
-              />
-            )}
+            <div className="flex items-center gap-2">
+              <ChatExportMenu conversationId={conversationId} />
+              {availableFiles.length > 0 && (
+                <FileManagementDropdown
+                  conversationId={conversationId}
+                  currentFiles={currentFiles}
+                  availableFiles={availableFiles}
+                  onFileAdded={handleFileAdded}
+                  onFileRemoved={handleFileRemoved}
+                />
+              )}
+            </div>
           </div>
 
           {/* File badges */}

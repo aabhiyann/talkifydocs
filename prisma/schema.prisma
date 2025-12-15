@@ -117,6 +117,9 @@ model Conversation {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
+  isPublic  Boolean @default(false)
+  shareToken String? @unique
+
   messages          Message[]
   conversationFiles ConversationFile[]
 
@@ -125,6 +128,7 @@ model Conversation {
 
   @@index([userId])
   @@index([createdAt])
+  @@index([shareToken])
 }
 
 model ConversationFile {
