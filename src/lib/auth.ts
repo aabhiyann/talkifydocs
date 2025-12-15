@@ -54,12 +54,16 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 /**
  * Same as getCurrentUser but throws if the user is not authenticated.
  * Can be used in server components and server actions.
+ * Note: Middleware should protect routes, but this provides an extra check.
  */
 export async function requireUser(): Promise<AuthUser> {
   const user = await getCurrentUser();
 
   if (!user) {
-    throw new Error("User not authenticated");
+    // Redirect to sign-in if not authenticated
+    // This should rarely happen as middleware protects routes
+    const { redirect } = await import("next/navigation");
+    redirect("/sign-in");
   }
 
   return user;
