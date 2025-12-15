@@ -15,9 +15,10 @@ type Props = {
   files: FileSummary[];
   viewMode: "grid" | "list";
   onDelete: (id: string) => void;
+  onRetry?: (id: string) => void;
 };
 
-export const DocumentGrid = ({ files, viewMode, onDelete }: Props) => {
+export const DocumentGrid = ({ files, viewMode, onDelete, onRetry }: Props) => {
   if (!files.length) {
     return null;
   }
@@ -36,7 +37,12 @@ export const DocumentGrid = ({ files, viewMode, onDelete }: Props) => {
           className="animate-scale-in"
           style={{ animationDelay: `${index * 100}ms` }}
         >
-          <DocumentCard file={file} viewMode={viewMode} onDelete={onDelete} />
+          <DocumentCard
+            file={file}
+            viewMode={viewMode}
+            onDelete={onDelete}
+            onRetry={onRetry}
+          />
         </div>
       ))}
     </div>

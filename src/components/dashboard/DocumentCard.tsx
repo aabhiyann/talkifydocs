@@ -39,9 +39,10 @@ type Props = {
   file: FileSummary;
   viewMode: "grid" | "list";
   onDelete: (id: string) => void;
+  onRetry?: (id: string) => void;
 };
 
-export const DocumentCard = ({ file, viewMode, onDelete }: Props) => {
+export const DocumentCard = ({ file, viewMode, onDelete, onRetry }: Props) => {
   const createdAt =
     file.createdAt instanceof Date ? file.createdAt : new Date(file.createdAt);
 
@@ -148,24 +149,33 @@ export const DocumentCard = ({ file, viewMode, onDelete }: Props) => {
             </div>
           </div>
 
-          <div className="pt-2">
+          <div className="pt-2 flex items-center justify-between gap-2">
             {file.uploadStatus === "SUCCESS" ? (
-              <Link href={`/dashboard/${file.id}`}>
+              <Link href={`/dashboard/${file.id}`} className="flex-1">
                 <Button className="w-full group-hover:bg-primary-600 transition-colors duration-200">
                   <MessagesSquare className="w-4 h-4 mr-2" />
                   Start Chatting
                 </Button>
               </Link>
             ) : (
-              <Button
-                className="w-full"
-                variant="outline"
-                disabled={file.uploadStatus === "PROCESSING"}
-              >
-                {file.uploadStatus === "PROCESSING"
-                  ? "Processing…"
-                  : "Queued for processing"}
-              </Button>
+              <>
+                <Button
+                  className="flex-1"
+                  variant="outline"
+                  disabled={file.uploadStatus === "PROCESSING"}
+                  onClick={() => {
+                    if (file.uploadStatus === "FAILED" && onRetry) {
+                      onRetry(file.id);
+                    }
+                  }}
+                >
+                  {file.uploadStatus === "PROCESSING"
+                    ? "Processing…"
+                    : file.uploadStatus === "FAILED"
+                    ? "Retry processing"
+                    : "Queued for processing"}
+                </Button>
+              </>
             )}
           </div>
         </div>

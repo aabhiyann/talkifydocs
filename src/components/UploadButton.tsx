@@ -111,6 +111,7 @@ const UploadDropzone = () => {
           if (isFailed) {
             updateUpload(uploadId, {
               status: "error",
+              dbFileId: data.file?.id,
               error:
                 "We couldn't process this file. Please check the file and try again.",
             });
@@ -356,9 +357,41 @@ const UploadDropzone = () => {
                                   {(upload.file.size / 1024 / 1024).toFixed(1)} MB
                                 </p>
                                 {upload.status === "error" && (
-                                  <p className="text-xs text-red-600 dark:text-red-400">
-                                    {upload.error}
-                                  </p>
+                                  <div className="flex flex-col space-y-1">
+                                    <p className="text-xs text-red-600 dark:text-red-400">
+                                      {upload.error}
+                                    </p>
+                                    {upload.dbFileId && (
+                                      <Button
+                                        variant="link"
+                                        size="sm"
+                                        className="h-auto p-0 text-xs text-primary-600 dark:text-primary-400"
+                                        onClick={async (e) => {
+                                          e.stopPropagation();
+                                          updateUpload(upload.id, {
+                                            status: "processing",
+                                            progress: 0,
+                                          });
+                                          await fetch("/api/process-upload", {
+                                            method: "POST",
+                                            headers: {
+                                              "Content-Type": "application/json",
+                                            },
+                                            body: JSON.stringify({
+                                              fileId: upload.dbFileId,
+                                            }),
+                                          });
+                                          listenForProcessing(
+                                            upload.id,
+                                            upload.dbFileId,
+                                            upload.file.name
+                                          );
+                                        }}
+                                      >
+                                        Retry processing
+                                      </Button>
+                                    )}
+                                  </div>
                                 )}
                                 {upload.status === "success" && upload.dbFileId && (
                                   <Button

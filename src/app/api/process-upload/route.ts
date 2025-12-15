@@ -1,5 +1,7 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireUser } from "@/lib/auth";
+import { processPdfFile } from "@/lib/upload/process-pdf";
 
 export const runtime = "nodejs";
 
@@ -74,5 +76,57 @@ export async function GET(req: NextRequest) {
     },
   });
 }
+
+export async function POST(req: NextRequest) {
+  try {
+    const user = await requireUser();
+    const body = await req.json().catch(() => null);
+    const fileId = body?.fileId as string | undefined;
+
+    if (!fileId) {
+      return NextResponse.json({ error: "Missing fileId" }, { status: 400 });
+    }
+
+    const file = await db.file.findFirst({
+      where: {
+        id: fileId,
+        userId: user.id,
+      },
+      select: {
+        id: true,
+        url: true,
+        name: true,
+      },
+    });
+
+    if (!file) {
+      return NextResponse.json({ error: "File not found" }, { status: 404 });
+    }
+
+    // Reset status to PROCESSING so clients immediately see the retry state
+    await db.file.update({
+      where: { id: file.id },
+      data: { uploadStatus: "PROCESSING" },
+    });
+
+    // Fire-and-forget re-processing; SSE clients will pick up changes
+    void processPdfFile({
+      fileId: file.id,
+      fileUrl: file.url,
+      fileName: file.name,
+    }).catch((error) => {
+      console.error("[process-upload] Retry processing error:", error);
+    });
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("[process-upload] Retry endpoint error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
 
 
