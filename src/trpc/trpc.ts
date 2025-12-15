@@ -1,22 +1,28 @@
-import { requireUser } from "@/lib/auth";
 import { TRPCError, initTRPC } from "@trpc/server";
+import type { AuthUser } from "@/lib/auth";
 
-const t = initTRPC.create();
+const t = initTRPC.context<{
+  user?: AuthUser | null;
+}>().create();
 const middleware = t.middleware;
 
 const isAuth = middleware(async (opts) => {
-  try {
-    const user = await requireUser();
-
-    return opts.next({
-      ctx: {
-        userId: user.id,
-        user,
-      },
+  const { ctx } = opts;
+  
+  // Check if user exists in context
+  if (!ctx.user) {
+    throw new TRPCError({ 
+      code: "UNAUTHORIZED",
+      message: "User not authenticated"
     });
-  } catch {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
   }
+
+  return opts.next({
+    ctx: {
+      userId: ctx.user.id,
+      user: ctx.user,
+    },
+  });
 });
 
 export const router = t.router;
