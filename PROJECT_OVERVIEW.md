@@ -40,7 +40,6 @@
 ### 2. High‑level architecture
 
 - **Frontend**
-
   - **Next.js 14 App Router** (`src/app`), **React 18**, **TypeScript**.
   - **Tailwind CSS** + custom design system (`tailwind.config.ts`, `src/styles/design-system.css`, `src/app/globals.css`).
   - Component library based on **shadcn/Radix‑style** primitives in `src/components/ui`.
@@ -63,18 +62,16 @@
     - **Pinecone** (`src/lib/pinecone.ts`) + **LangChain** for embeddings and vector search.
     - **Stripe** (`src/lib/stripe.ts`, `src/config/stripe.ts`) for subscriptions.
     - **UploadThing** (`src/app/api/uploadthing/core.ts`) for file upload.
-    - **Kinde** for authentication.
+    - **Clerk** for authentication.
 
 ### 3. Data model (Prisma)
 
 - **User**
-
-  - `id` (Kinde user ID), `email`.
+  - `id` (internal ID), `clerkId`, `email`.
   - Relations: `File[]`, `Message[]`.
   - Stripe metadata: `stripeCustomerId`, `stripeSubscriptionId`, `stripePriceId`, `stripeCurrentPeriodEnd`.
 
 - **File**
-
   - `id`, `name`, `url`, `key`.
   - `uploadStatus`: `PENDING | PROCESSING | FAILED | SUCCESS`.
   - Optional `userId` reference to `User`.
@@ -86,18 +83,18 @@
 
 ### 4. Key flows
 
-#### Authentication (Kinde)
+#### Authentication (Clerk)
 
-- Server code uses `getKindeServerSession()` to fetch the current user.
+- Server code uses Clerk’s `auth()` / `currentUser()` helpers (wrapped in `lib/auth.ts`) to fetch the current user.
 - tRPC’s `privateProcedure` (in `src/trpc/trpc.ts`) wraps resolvers with auth middleware.
-- Protected pages like `dashboard/page.tsx` redirect unauthenticated users to `/auth-callback`.
+- Protected pages like `dashboard/page.tsx` rely on `requireUser()` and are enforced by Clerk middleware.
 
 #### Uploading & processing PDFs
 
 - Upload handled by UploadThing router in `src/app/api/uploadthing/core.ts`:
   - Middleware:
     - Rate limit by IP via `checkRateLimit(clientIP, "UPLOAD")`.
-    - Ensure the user is authenticated via Kinde.
+    - Ensure the user is authenticated via Clerk.
   - `onUploadComplete`:
     - Creates a `File` row with `uploadStatus = "PROCESSING"`.
     - Downloads the PDF from UploadThing’s URL (with timeout).
@@ -113,7 +110,7 @@
   - Validates request headers & size via `lib/security.validateRequest`.
   - Rate limits per IP via `checkRateLimit(clientIP, "MESSAGE")`.
   - Validates body shape via `messageSchema` + `sendMessageValidator`.
-  - Authenticates user with Kinde and verifies ownership of the requested `File`.
+  - Authenticates user with Clerk (via `requireUser`) and verifies ownership of the requested `File`.
   - Stores the user’s question as a `Message` row.
   - Builds embeddings with OpenAI and loads `PineconeStore` for that file namespace.
   - Executes `similaritySearch` to get the most relevant chunks.
@@ -129,7 +126,7 @@
 - Plans in `src/config/stripe.ts`:
   - `Free` and `Pro` with quotas and Stripe price IDs.
 - `getUserSubscriptionPlan` in `src/lib/stripe.ts`:
-  - Reads Kinde user, loads `db.user`, determines if subscription is active based on `stripeCurrentPeriodEnd`.
+  - Uses the current authenticated user (via Clerk), loads `db.user`, determines if subscription is active based on `stripeCurrentPeriodEnd`.
   - Returns plan metadata + flags `isSubscribed`, `isCanceled`.
 - tRPC router (`src/trpc/index.ts`) has `createStripeSession`:
   - For existing subscribers, opens a Stripe **billing portal**.
@@ -140,18 +137,15 @@
 ### 5. Frontend UX & design choices
 
 - **Marketing site**:
-
   - `src/app/page.tsx` + `HeroSection` + `marketing` content show what the product does and how it works.
   - Additional pages: About, Features, Pricing, Contact, Style Guide.
 
 - **Dashboard** (`src/components/dashboard.tsx`, `src/app/dashboard/page.tsx`):
-
   - Shows all user PDFs with search, sorting, and grid/list toggle.
   - Uses tRPC `getUserFiles` and `deleteFile` for data and mutations.
   - Provides clear empty state, loading skeletons, and error states.
 
 - **Chat view** (`src/components/chat/ChatWrapper.tsx`):
-
   - Polls `getFileUploadStatus` via tRPC.
   - Renders different UI for `PENDING`, `PROCESSING`, `FAILED`, and `SUCCESS` file states.
   - For `SUCCESS`, shows:
@@ -172,12 +166,10 @@
 ### 6. Security, validation, and reliability
 
 - **Env validation** (`src/lib/env.ts`):
-
-  - Zod schema for all env vars (DB, OpenAI, Pinecone, Stripe, UploadThing, Kinde).
+  - Zod schema for all env vars (DB, OpenAI, Pinecone, Stripe, UploadThing, Clerk).
   - Runtime validation with sensible fallbacks in non‑critical paths.
 
 - **Request hardening** (`src/lib/security.ts`, `src/lib/validation.ts`, `src/lib/errors.ts`):
-
   - Rate limiting per IP and operation type (API, UPLOAD, MESSAGE).
   - Header and content‑type checks, request size limits.
   - Zod schemas for messages, users, and file metadata.
@@ -198,7 +190,7 @@
 ### 8. How to run locally (summary)
 
 1. `cp FREE_SETUP_GUIDE.md` / `SETUP_ENVIRONMENT.md` instructions into `.env.local` (or run `npm run setup:free`).
-2. Fill in keys: Postgres, OpenAI, Pinecone, UploadThing, Kinde, Stripe.
+2. Fill in keys: Postgres, OpenAI, Pinecone, UploadThing, Clerk, Stripe.
 3. `npm install`
 4. `npx prisma db push`
 5. `npm run dev` and open `http://localhost:3000`.

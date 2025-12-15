@@ -8,7 +8,7 @@ This guide is for **explaining TalkifyDocs in interviews**. Use it as a script +
 
 You can memorize a version of this:
 
-> “TalkifyDocs is an AI‑powered PDF assistant I built. Authenticated users can upload PDFs and then ask natural‑language questions and get answers grounded in those documents. The stack is Next.js 14 with the App Router, TypeScript, Tailwind, Prisma + Postgres, Kinde for authentication, Stripe for subscriptions, UploadThing for file uploads, and an OpenAI + Pinecone pipeline under the hood. I focused on both UX (dashboard, chat UI, PDF viewer) and robustness (validation, rate limiting, and security headers).”
+> “TalkifyDocs is an AI‑powered PDF assistant I built. Authenticated users can upload PDFs and then ask natural‑language questions and get answers grounded in those documents. The stack is Next.js 14 with the App Router, TypeScript, Tailwind, Prisma + Postgres, Clerk for authentication, Stripe for subscriptions, UploadThing for file uploads, and an OpenAI + Pinecone pipeline under the hood. I focused on both UX (dashboard, chat UI, PDF viewer) and robustness (validation, rate limiting, and security headers).”
 
 If you have more time (45–60s), add:
 
@@ -22,7 +22,7 @@ You can walk through the system in this order:
 
 ### 2.1 Start with the user journey (top‑down)
 
-1. **User signs in** (Kinde).
+1. **User signs in** (Clerk).
 2. Lands on **dashboard**:
    - Sees list of PDFs (from `File` table).
    - Can upload a new PDF (UploadThing).
@@ -56,7 +56,7 @@ On a whiteboard, draw:
   - Pinecone.
   - Stripe.
   - UploadThing.
-  - Kinde (auth provider).
+  - Clerk (auth provider).
 
 Then connect them:
 
@@ -89,9 +89,9 @@ Explain:
 
 **What to say:**
 
-- “We use Kinde for auth. On the server we call `getKindeServerSession()` to get the logged‑in user.”
+- “We use Clerk for auth. On the server we use Clerk’s `auth()` / `currentUser()` helpers (wrapped in `lib/auth.ts`) to get the logged‑in user.”
 - “In tRPC, there’s an `isAuth` middleware that wraps `privateProcedure`. It throws a `TRPCError('UNAUTHORIZED')` if the user is missing, and otherwise adds `userId` and `user` to the context.”
-- “Pages like `/dashboard` check for user + DB record and redirect to `/auth-callback` if needed.”
+- “Protected pages like `/dashboard` use `requireUser()` and are enforced by Clerk middleware so unauthenticated users are redirected to sign in.”
 
 **Key point:** you show that you understand server‑side auth with a third‑party provider and how you propagate identity into your API layer.
 
@@ -128,7 +128,7 @@ Explain:
    - Validate the request headers and size.
    - Rate‑limit this endpoint by IP (message throttling).
    - Zod‑validate the payload (length limits, no obvious script injections).
-   - Authenticate with Kinde and verify that the user owns the file.”
+   - Authenticate with Clerk (via `requireUser`) and verify that the user owns the file.”
 3. “We then:
    - Save the user’s question into the `Message` table.
    - Load embeddings for that file from Pinecone and run a similarity search to get the top few chunks.

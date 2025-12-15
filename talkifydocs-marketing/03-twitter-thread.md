@@ -43,7 +43,7 @@ Tech stack:
 - Backend: Next route handlers + tRPC + Prisma  
 - AI: OpenAI Chat Completions + embeddings, LangChain  
 - Vector DB: Pinecone  
-- Auth: Kinde  
+- Auth: Clerk  
 - Billing: Stripe  
 - Uploads: UploadThing  
 
@@ -116,7 +116,7 @@ Feels like a product, not a one-off demo.
 **Tweet 10 (Auth & Billing):**  
 Auth & billing:  
 
-- Kinde for authentication and session management  
+- Clerk for authentication and session management  
 - Stripe for Free vs Pro plans  
 - Webhooks keep the `User` record in sync with Stripe subscription state  
 - tRPC procedure creates either a checkout session or billing portal session  

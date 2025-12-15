@@ -1,4 +1,4 @@
-This route group is reserved for future auth-related pages (Clerk/Kinde).
+This route group is reserved for auth-related pages (Clerk).
 
 Examples (to be implemented in v2):
 - sign-in

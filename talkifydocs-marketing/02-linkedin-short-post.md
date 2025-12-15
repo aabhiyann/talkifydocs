@@ -11,8 +11,8 @@ Instead of scrolling and Ctrl+F-ing through 80-page PDFs, you:
 
 Under the hood, it uses:
 - **Next.js 14 + React + TypeScript** for the app and dashboard  
-- **Prisma + PostgreSQL** for users, files, and message history  
-- **Kinde** for authentication  
+-- **Prisma + PostgreSQL** for users, files, and message history  
+-- **Clerk** for authentication  
 - **UploadThing** for PDF uploads  
 - **OpenAI + Pinecone + LangChain** for retrieval-augmented generation (RAG)  
 - **Stripe** for subscription billing (Free vs Pro plans)  

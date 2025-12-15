@@ -23,13 +23,9 @@ STRIPE_WEBHOOK_SECRET="whsec_your-stripe-webhook-secret-here"
 UPLOADTHING_SECRET="sk_live_your-uploadthing-secret-here"
 UPLOADTHING_APP_ID="your-uploadthing-app-id-here"
 
-# Kinde Auth (Required for authentication)
-KINDE_CLIENT_ID="your-kinde-client-id-here"
-KINDE_CLIENT_SECRET="your-kinde-client-secret-here"
-KINDE_ISSUER_URL="https://your-domain.kinde.com"
-KINDE_SITE_URL="http://localhost:3000"
-KINDE_POST_LOGOUT_REDIRECT_URL="http://localhost:3000"
-KINDE_POST_LOGIN_REDIRECT_URL="http://localhost:3000"
+# Clerk Auth (Required for authentication)
+CLERK_SECRET_KEY="sk_test_your-clerk-secret-key-here"
+CLERK_WEBHOOK_SECRET="whsec_your-clerk-webhook-secret-here"
 
 # App
 NODE_ENV="development"
@@ -55,11 +51,11 @@ PORT="3000"
 - Get your secret and app ID
 - Add them to `UPLOADTHING_SECRET` and `UPLOADTHING_APP_ID`
 
-### 4. Kinde Auth
-- Go to [Kinde](https://kinde.com/)
+### 4. Clerk Auth
+- Go to [Clerk](https://clerk.com/)
 - Create a new application
-- Get your client ID, secret, and issuer URL
-- Add them to the Kinde variables
+- Get your secret key and webhook secret
+- Add them to the Clerk variables
 
 ### 5. Stripe
 - Go to [Stripe Dashboard](https://dashboard.stripe.com/)

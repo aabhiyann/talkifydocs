@@ -9,7 +9,7 @@ canonical_url: https://your-portfolio.com/projects/talkifydocs
 
 # TalkifyDocs: Building an AI-Powered PDF Assistant with Next.js, OpenAI, and Pinecone
 
-**TL;DR:** I built **TalkifyDocs**, an AI-powered PDF assistant where users upload documents and then chat with them in natural language. Under the hood it uses Next.js 14, Prisma, Kinde, Stripe, UploadThing, OpenAI, Pinecone, and LangChain. This post breaks down the architecture, key challenges, and what I learned about building production AI apps beyond “just call the OpenAI API”.
+**TL;DR:** I built **TalkifyDocs**, an AI-powered PDF assistant where users upload documents and then chat with them in natural language. Under the hood it uses Next.js 14, Prisma, Clerk, Stripe, UploadThing, OpenAI, Pinecone, and LangChain. This post breaks down the architecture, key challenges, and what I learned about building production AI apps beyond “just call the OpenAI API”.
 
 🔗 **[Live Demo](https://YOUR-TALKIFYDOCS-URL)**  
 💻 **[Source Code](https://github.com/YOUR_USERNAME/talkifydocs)**  
@@ -89,7 +89,7 @@ I designed TalkifyDocs around three principles:
 
 #### 3. Auth & Billing
 
-- Kinde handles authentication and user identity.
+- Clerk handles authentication and user identity.
 - Stripe provides Free/Pro subscription plans.
 - Webhooks update the `User` record with subscription info to gate features (e.g., quotas, pages per PDF).
 
@@ -134,7 +134,7 @@ At a high level, TalkifyDocs is a full-stack RAG (retrieval-augmented generation
 - **Backend:** Next.js App Router route handlers, tRPC, Prisma
 - **AI & Retrieval:** OpenAI Chat Completions, OpenAI Embeddings, LangChain, Pinecone
 - **Storage:** PostgreSQL (via Prisma), UploadThing for file uploads
-- **Auth:** Kinde
+- **Auth:** Clerk
 - **Billing:** Stripe subscriptions + webhooks
 
 ---
@@ -265,7 +265,7 @@ The system behaves more like a real product than a weekend experiment.
 ### Query Pipeline
 
 1. Validate and rate-limit the request.
-2. Authenticate via Kinde and ensure the user owns the file.
+2. Authenticate via Clerk and ensure the user owns the file.
 3. Store the user question as a `Message` row.
 4. Use Pinecone to perform similarity search per file namespace.
 5. Load the last few messages for conversational context.
@@ -329,7 +329,7 @@ Owning frontend, backend, infra, and prompts forced me to think holistically:
 | Frontend    | Next.js 14 (App Router), React 18, TypeScript, Tailwind, shadcn   |
 | Backend     | Next.js route handlers, tRPC, Prisma ORM                          |
 | AI & Search | OpenAI Chat Completions, OpenAI Embeddings, LangChain, Pinecone   |
-| Auth        | Kinde Auth                                                        |
+| Auth        | Clerk Auth                                                        |
 | Billing     | Stripe (subscriptions, billing portal, webhooks)                  |
 | Uploads     | UploadThing                                                       |
 | Database    | PostgreSQL (via Prisma)                                           |

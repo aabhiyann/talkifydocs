@@ -51,23 +51,23 @@ This guide will help you set up all required services for **FREE** to get your P
 
 ---
 
-## 🔐 Step 4: Kinde Auth (FREE)
+## 🔐 Step 4: Clerk Auth (FREE)
 
 ### Get free authentication
-1. Go to [Kinde](https://kinde.com/)
-2. Sign up with your email
+1. Go to [Clerk](https://clerk.com/)
+2. Sign up with your email or GitHub
 3. Create a new application
-4. Go to "Settings" → "Applications"
+4. Go to your project's API keys/settings
 5. Copy your:
-   - Client ID
-   - Client Secret
-   - Issuer URL (looks like `https://your-domain.kinde.com`)
+   - Publishable key
+   - Secret key
+   - (Optional) Webhook secret for production
 
-**Cost**: FREE (up to 10,000 users)
+**Cost**: FREE (generous starter tier)
 
 ---
 
-## 💳 Step 4: Stripe (FREE)
+## 💳 Step 5: Stripe (FREE)
 
 ### Get free payment processing
 1. Go to [Stripe Dashboard](https://dashboard.stripe.com/)
@@ -83,7 +83,7 @@ This guide will help you set up all required services for **FREE** to get your P
 
 ---
 
-## 🗄️ Step 5: Database (FREE)
+## 🗄️ Step 6: Database (FREE)
 
 ### Option A: Supabase (Recommended)
 1. Go to [Supabase](https://supabase.com/)
@@ -103,7 +103,7 @@ This guide will help you set up all required services for **FREE** to get your P
 
 ---
 
-## ⚙️ Step 6: Create Environment File
+## ⚙️ Step 7: Create Environment File
 
 Create a file named `.env.local` in your project root:
 
@@ -122,13 +122,9 @@ PINECONE_ENVIRONMENT="gcp-starter"
 UPLOADTHING_SECRET="sk_live_your-uploadthing-secret-here"
 UPLOADTHING_APP_ID="your-uploadthing-app-id-here"
 
-# Kinde Auth (Your keys from Step 4)
-KINDE_CLIENT_ID="your-kinde-client-id-here"
-KINDE_CLIENT_SECRET="your-kinde-client-secret-here"
-KINDE_ISSUER_URL="https://your-domain.kinde.com"
-KINDE_SITE_URL="http://localhost:3000"
-KINDE_POST_LOGOUT_REDIRECT_URL="http://localhost:3000"
-KINDE_POST_LOGIN_REDIRECT_URL="http://localhost:3000"
+# Clerk Auth (Your keys from Step 4)
+CLERK_SECRET_KEY="sk_test_your-clerk-secret-key-here"
+CLERK_WEBHOOK_SECRET="whsec_your-clerk-webhook-secret-here"
 
 # Stripe (Your keys from Step 5)
 STRIPE_SECRET_KEY="sk_test_your-stripe-secret-key-here"
@@ -161,7 +157,7 @@ npx prisma db seed
 
 ---
 
-## 🎯 Step 8: Test Your Setup
+## 🎯 Step 9: Test Your Setup
 
 1. Start your development server:
    ```bash
@@ -181,7 +177,7 @@ npx prisma db seed
 - **OpenAI**: $5 free credit (no charges)
 - **Pinecone**: FREE
 - **UploadThing**: FREE
-- **Kinde**: FREE
+- **Clerk**: FREE (starter)
 - **Stripe**: FREE (test mode)
 - **Database**: FREE
 

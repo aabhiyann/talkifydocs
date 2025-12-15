@@ -32,9 +32,8 @@ const requiredVars = [
     'PINECONE_ENVIRONMENT',
     'UPLOADTHING_SECRET',
     'UPLOADTHING_APP_ID',
-    'KINDE_CLIENT_ID',
-    'KINDE_CLIENT_SECRET',
-    'KINDE_ISSUER_URL',
+    'CLERK_SECRET_KEY',
+    'CLERK_WEBHOOK_SECRET',
     'STRIPE_SECRET_KEY',
     'STRIPE_WEBHOOK_SECRET'
 ];
@@ -68,6 +67,6 @@ console.log('\n💡 Quick links:');
 console.log('   OpenAI: https://platform.openai.com/api-keys');
 console.log('   Pinecone: https://app.pinecone.io/');
 console.log('   UploadThing: https://uploadthing.com/');
-console.log('   Kinde: https://kinde.com/');
+console.log('   Clerk: https://clerk.com/');
 console.log('   Stripe: https://dashboard.stripe.com/');
 console.log('   Supabase: https://supabase.com/');

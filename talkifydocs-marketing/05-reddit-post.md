@@ -30,7 +30,7 @@ Tech stack:
 - **Backend:** Next route handlers + tRPC + Prisma  
 - **AI:** OpenAI Chat Completions + embeddings, LangChain  
 - **Vector DB:** Pinecone  
-- **Auth:** Kinde  
+- **Auth:** Clerk  
 - **Billing:** Stripe  
 - **Uploads:** UploadThing  
 
@@ -81,7 +81,7 @@ This is the difference between “cool demo” and “I’d actually deploy this
 - **Frontend:** Next.js 14, React, TypeScript, Tailwind  
 - **Backend:** tRPC, Prisma, Next route handlers  
 - **AI:** OpenAI + Pinecone + LangChain (RAG)  
-- **Auth/Billing:** Kinde + Stripe  
+- **Auth/Billing:** Clerk + Stripe  
 - **Uploads:** UploadThing  
 
 ---
