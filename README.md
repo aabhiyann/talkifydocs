@@ -1,6 +1,15 @@
 ## TalkifyDocs v2.0
 
-AI-powered PDF assistant that lets you upload documents and chat with them using natural language. This is the v2.0 modernization of the original TalkifyDocs app, focusing on 2025 best practices, performance, and UX.
+AI-powered PDF assistant that lets you upload documents and chat with them using natural language. Built with Next.js 16, React 19, Clerk authentication, and advanced AI capabilities including multi-document conversations, highlights, and admin dashboard.
+
+**Key Features:**
+- 📄 Upload and chat with PDFs using AI
+- 🔀 Multi-document conversations (up to 5 files)
+- ⭐ Save highlights and bookmarks
+- 📤 Export and share conversations
+- 🎯 Public demo mode (no sign-up required)
+- 👨‍💼 Admin dashboard with user management
+- 🚀 Production-ready with monitoring and caching
 
 ### Docs Index
 

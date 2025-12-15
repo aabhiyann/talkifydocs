@@ -47,16 +47,20 @@ TalkifyDocs is an AI-powered PDF assistant built with Next.js 15, allowing users
 
 ```json
 {
-  "next": "^15.0.0",
-  "react": "^19.0.0",
-  "typescript": "^5.3.0",
-  "@clerk/nextjs": "^5.0.0",
-  "@prisma/client": "^5.8.0",
-  "ai": "^3.0.0",
-  "pinecone-client": "^2.0.0",
-  "langchain": "^0.1.0",
+  "next": "^16.0.0",
+  "react": "^19.2.0",
+  "typescript": "^5.9.0",
+  "@clerk/nextjs": "^6.36.0",
+  "@prisma/client": "^5.7.0",
+  "@vercel/blob": "^0.27.0",
+  "@upstash/redis": "^1.0.0",
+  "@sentry/nextjs": "^8.0.0",
+  "ai": "^2.2.0",
+  "@langchain/openai": "^0.3.0",
+  "@langchain/pinecone": "^0.1.0",
+  "@pinecone-database/pinecone": "^1.0.0",
   "zod": "^3.22.0",
-  "zustand": "^4.5.0"
+  "zustand": "^5.0.0"
 }
 ```
 

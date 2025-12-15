@@ -35,15 +35,22 @@
   - Authenticated users upload PDFs.
   - PDFs are parsed, embedded, and indexed into a vector database.
   - Users ask questions in natural language and get answers grounded in their documents.
-  - Subscription billing with a **Free** and **Pro** plan.
+  - **Multi-document conversations** - chat with up to 5 documents simultaneously.
+  - **Highlights & Bookmarks** - save important Q&A pairs for later reference.
+  - **Chat Export & Sharing** - export conversations as Markdown or share via public links.
+  - **Demo Mode** - public demo with example documents (no sign-up required).
+  - **Admin Dashboard** - user management, metrics, and system monitoring.
+  - Subscription billing with **Free**, **Pro**, and **Admin** tiers.
 
 ### 2. High‑level architecture
 
 - **Frontend**
-  - **Next.js 14 App Router** (`src/app`), **React 18**, **TypeScript**.
+  - **Next.js 16 App Router** (`src/app`), **React 19**, **TypeScript**.
   - **Tailwind CSS** + custom design system (`tailwind.config.ts`, `src/styles/design-system.css`, `src/app/globals.css`).
   - Component library based on **shadcn/Radix‑style** primitives in `src/components/ui`.
   - tRPC client in `src/app/_trpc/client.ts` for type‑safe API calls.
+  - **Google Analytics** for user behavior tracking.
+  - **Sentry** for error tracking and monitoring.
 
 - **Backend**
   - Next.js **route handlers** in `src/app/api/**`:
@@ -58,11 +65,13 @@
     - Schema in `prisma/schema.prisma` (`User`, `File`, `Message`).
     - `src/db/index.ts` exports a singleton `db` client.
   - External services:
-    - **OpenAI** (`src/lib/openai.ts`) for chat completions.
-    - **Pinecone** (`src/lib/pinecone.ts`) + **LangChain** for embeddings and vector search.
+    - **OpenAI** (`src/lib/openai.ts`) for chat completions and embeddings.
+    - **Pinecone** (`src/lib/pinecone.ts`) + **LangChain** for vector search.
     - **Stripe** (`src/lib/stripe.ts`, `src/config/stripe.ts`) for subscriptions.
-    - **UploadThing** (`src/app/api/uploadthing/core.ts`) for file upload.
-    - **Clerk** for authentication.
+    - **Vercel Blob** (`@vercel/blob`) for file storage and thumbnails.
+    - **Clerk** (`@clerk/nextjs`) for authentication and user management.
+    - **Upstash Redis** (optional) for caching and rate limiting.
+    - **Sentry** (optional) for error tracking and performance monitoring.
 
 ### 3. Data model (Prisma)
 
