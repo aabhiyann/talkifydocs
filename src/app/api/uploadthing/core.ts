@@ -1,6 +1,5 @@
-// import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/dist/types/server";
 import { db } from "@/db";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { requireUser } from "@/lib/auth";
 
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 
@@ -25,10 +24,9 @@ export const ourFileRouter = {
         throw new Error("Upload rate limit exceeded. Please try again later.");
       }
 
-      const { getUser } = getKindeServerSession();
-      const user = await getUser();
+      const user = await requireUser();
 
-      if (!user || !user.id) throw new Error("Unauthorized");
+      if (!user.id) throw new Error("Unauthorized");
 
       return { userId: user.id };
     })

@@ -1,9 +1,8 @@
-// import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/dist/types/server";
 import { db } from "@/db";
 import { openai } from "@/lib/openai";
 import { getPineconeClient } from "@/lib/pinecone";
 import { sendMessageValidator } from "@/lib/validators/SendMessageValidator";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { requireUser } from "@/lib/auth";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { PineconeStore } from "langchain/vectorstores/pinecone";
 
@@ -66,12 +65,9 @@ export const POST = async (req: NextRequest) => {
       "Message API request started"
     );
 
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
-
-    if (!user || !user.id) {
+    const user = await requireUser().catch(() => {
       throw new AuthenticationError("User not authenticated");
-    }
+    });
 
     const { fileId, message } = sendMessageValidator.parse(body);
 

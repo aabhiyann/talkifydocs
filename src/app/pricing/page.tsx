@@ -9,14 +9,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { PLANS } from "@/config/stripe";
+import { getCurrentUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { ArrowRight, Check, HelpCircle, Minus } from "lucide-react";
 import Link from "next/link";
 
 const Page = async () => {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
+  const user = await getCurrentUser();
 
   const pricingItems = [
     {
