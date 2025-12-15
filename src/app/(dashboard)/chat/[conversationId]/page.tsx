@@ -27,15 +27,35 @@ const ChatPage = async ({ params }: PageProps) => {
     notFound();
   }
 
-  const files = conversation.conversationFiles.map((cf) => cf.file);
+  const conversationFiles = conversation.conversationFiles;
 
-  if (files.length === 0) {
+  if (conversationFiles.length === 0) {
     notFound();
   }
 
+  // Get all user files for the file selector (excluding already added ones)
+  const currentFileIds = new Set(conversationFiles.map((cf) => cf.fileId));
+  const availableFiles = await db.file.findMany({
+    where: {
+      userId: user.id,
+      uploadStatus: "SUCCESS",
+      id: {
+        notIn: Array.from(currentFileIds),
+      },
+    },
+    take: 20, // Limit to avoid huge lists
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
   return (
     <div className="flex-1 flex flex-col h-[calc(100vh-3.5rem)]">
-      <ConversationChatShell files={files} />
+      <ConversationChatShell
+        conversationId={params.conversationId}
+        files={conversationFiles}
+        availableFiles={availableFiles}
+      />
     </div>
   );
 };

@@ -3,18 +3,57 @@
 import { useState } from "react";
 import PdfRenderer from "@/components/PdfRenderer";
 import ChatWrapper from "@/components/chat/ChatWrapper";
+import { FileManagementDropdown } from "./FileManagementDropdown";
 import { cn } from "@/lib/utils";
 import type { File } from "@prisma/client";
+import { Badge } from "@/components/ui/badge";
 
-interface ConversationChatShellProps {
-  files: File[];
+interface ConversationFile {
+  file: File;
+  fileId: string;
 }
 
-const ConversationChatShell = ({ files }: ConversationChatShellProps) => {
-  const [activeFileId, setActiveFileId] = useState<string>(files[0]?.id);
-  const [currentPage, setCurrentPage] = useState<number | undefined>(1);
+interface ConversationChatShellProps {
+  conversationId: string;
+  files: ConversationFile[];
+  availableFiles?: File[];
+}
 
-  const activeFile = files.find((file) => file.id === activeFileId) ?? files[0];
+const ConversationChatShell = ({
+  conversationId,
+  files,
+  availableFiles = [],
+}: ConversationChatShellProps) => {
+  const [activeFileId, setActiveFileId] = useState<string>(
+    files[0]?.fileId ?? ""
+  );
+  const [currentPage, setCurrentPage] = useState<number | undefined>(1);
+  const [currentFiles, setCurrentFiles] = useState<ConversationFile[]>(files);
+
+  const activeFile = currentFiles.find((cf) => cf.fileId === activeFileId)?.file ?? currentFiles[0]?.file;
+
+  if (!activeFile) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p className="text-muted-foreground">No files in conversation</p>
+      </div>
+    );
+  }
+
+  const handleFileAdded = (file: File) => {
+    setCurrentFiles([...currentFiles, { file, fileId: file.id }]);
+    // Switch to newly added file
+    setActiveFileId(file.id);
+  };
+
+  const handleFileRemoved = (fileId: string) => {
+    const updated = currentFiles.filter((cf) => cf.fileId !== fileId);
+    setCurrentFiles(updated);
+    // If removed file was active, switch to first remaining file
+    if (activeFileId === fileId && updated.length > 0) {
+      setActiveFileId(updated[0].fileId);
+    }
+  };
 
   return (
     <div className="flex flex-col lg:flex-row h-full bg-background">
@@ -22,19 +61,19 @@ const ConversationChatShell = ({ files }: ConversationChatShellProps) => {
       <div className="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-border flex flex-col">
         {/* File selector */}
         <div className="border-b border-border px-3 py-2 flex gap-2 overflow-x-auto bg-muted/40">
-          {files.map((file) => (
+          {currentFiles.map((cf) => (
             <button
-              key={file.id}
+              key={cf.fileId}
               type="button"
-              onClick={() => setActiveFileId(file.id)}
+              onClick={() => setActiveFileId(cf.fileId)}
               className={cn(
                 "px-3 py-1 text-sm rounded-full whitespace-nowrap transition-colors",
-                activeFile.id === file.id
+                activeFileId === cf.fileId
                   ? "bg-primary-600 text-white"
                   : "bg-background text-foreground hover:bg-muted"
               )}
             >
-              {file.name}
+              {cf.file.name}
             </button>
           ))}
         </div>
@@ -51,17 +90,52 @@ const ConversationChatShell = ({ files }: ConversationChatShellProps) => {
 
       {/* Right: Chat */}
       <div className="w-full lg:w-1/2 flex flex-col">
-        <ChatWrapper
-          fileId={activeFile.id}
-          onCitationClick={({ fileId, page }) => {
-            if (fileId && fileId !== activeFileId) {
-              setActiveFileId(fileId);
-            }
-            if (typeof page === "number" && page > 0) {
-              setCurrentPage(page);
-            }
-          }}
-        />
+        <div className="border-b p-4 bg-background/95 backdrop-blur-sm">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="font-semibold text-lg">Chat</h2>
+            {availableFiles.length > 0 && (
+              <FileManagementDropdown
+                conversationId={conversationId}
+                currentFiles={currentFiles}
+                availableFiles={availableFiles}
+                onFileAdded={handleFileAdded}
+                onFileRemoved={handleFileRemoved}
+              />
+            )}
+          </div>
+
+          {/* File badges */}
+          {currentFiles.length > 1 && (
+            <div className="flex gap-2 flex-wrap mt-2">
+              {currentFiles.map((cf) => (
+                <Badge
+                  key={cf.fileId}
+                  variant={cf.fileId === activeFileId ? "default" : "secondary"}
+                  className="text-xs"
+                >
+                  {cf.file.name}
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="flex-1 overflow-hidden">
+          <ChatWrapper
+            fileId={activeFile.id}
+            onCitationClick={({ fileId, page }) => {
+              if (fileId && fileId !== activeFileId) {
+                const targetFile = currentFiles.find((cf) => cf.fileId === fileId);
+                if (targetFile) {
+                  setActiveFileId(fileId);
+                }
+              }
+              if (typeof page === "number" && page > 0) {
+                setCurrentPage(page);
+              }
+            }}
+          />
+        </div>
       </div>
     </div>
   );
