@@ -126,6 +126,9 @@ UPLOADTHING_APP_ID="your-uploadthing-app-id-here"
 CLERK_SECRET_KEY="sk_test_your-clerk-secret-key-here"
 CLERK_WEBHOOK_SECRET="whsec_your-clerk-webhook-secret-here"
 
+# Vercel Blob (for thumbnails)
+BLOB_READ_WRITE_TOKEN="your-vercel-blob-read-write-token"
+
 # Stripe (Your keys from Step 5)
 STRIPE_SECRET_KEY="sk_test_your-stripe-secret-key-here"
 STRIPE_WEBHOOK_SECRET="whsec_your-stripe-webhook-secret-here"

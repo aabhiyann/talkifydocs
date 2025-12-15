@@ -27,6 +27,9 @@ UPLOADTHING_APP_ID="your-uploadthing-app-id-here"
 CLERK_SECRET_KEY="sk_test_your-clerk-secret-key-here"
 CLERK_WEBHOOK_SECRET="whsec_your-clerk-webhook-secret-here"
 
+# Vercel Blob (Required for PDF thumbnails)
+BLOB_READ_WRITE_TOKEN="your-vercel-blob-read-write-token"
+
 # App
 NODE_ENV="development"
 PORT="3000"

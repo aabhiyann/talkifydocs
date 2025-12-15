@@ -19,6 +19,11 @@ const envSchema = z.object({
   UPLOADTHING_SECRET: z.string().min(1, "UploadThing secret is required"),
   UPLOADTHING_APP_ID: z.string().min(1, "UploadThing app ID is required"),
 
+  // Vercel Blob
+  BLOB_READ_WRITE_TOKEN: z
+    .string()
+    .min(1, "BLOB_READ_WRITE_TOKEN is required for Vercel Blob uploads"),
+
   // Clerk Auth
   CLERK_SECRET_KEY: z.string().min(1, "Clerk secret key is required"),
   CLERK_WEBHOOK_SECRET: z
@@ -49,6 +54,7 @@ try {
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || "",
     UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET || "",
     UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID || "",
+    BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN || "",
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY || "",
     CLERK_WEBHOOK_SECRET: process.env.CLERK_WEBHOOK_SECRET || "",
     NODE_ENV: process.env.NODE_ENV || "development",

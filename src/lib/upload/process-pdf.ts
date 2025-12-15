@@ -73,6 +73,27 @@ export async function processPdfFile({
       throw new Error("PDF appears to be empty or could not be parsed");
     }
 
+    // Enforce free-plan page limits (5 pages per PDF as per marketing site)
+    const fileWithUser = await db.file.findUnique({
+      where: { id: fileId },
+      select: {
+        user: {
+          select: {
+            tier: true,
+          },
+        },
+      },
+    });
+
+    const tier = fileWithUser?.user?.tier;
+    const isProOrAdmin = tier === "PRO" || tier === "ADMIN";
+
+    if (!isProOrAdmin && pageLevelDocs.length > 5) {
+      throw new Error(
+        "Free plan supports up to 5 pages per PDF. Upgrade to Pro for larger documents."
+      );
+    }
+
     const metadata = await extractPdfDetails(pageLevelDocs);
     const thumbnailUrl = await safeGenerateThumbnail(fileId, fileUrl);
 
