@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import Link from "next/link";
-import { buttonVariants } from "./ui/button";
+import { buttonVariants, Button } from "./ui/button";
 import {
   ArrowRight,
   Menu,
@@ -12,28 +12,16 @@ import {
   MessageSquare,
   Settings,
   User,
-  LogOut,
   Home,
   Zap,
 } from "lucide-react";
-import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/components";
-import { Button } from "./ui/button";
 import { ThemeToggle } from "./ThemeToggle";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-import { useRouter, usePathname } from "next/navigation";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+import { usePathname } from "next/navigation";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const { user, isAuthenticated } = useKindeBrowserClient();
-  const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
@@ -43,10 +31,6 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const handleSignOut = () => {
-    router.push("/api/auth/logout");
-  };
 
   const isActive = (path: string) => pathname === path;
 
@@ -100,72 +84,46 @@ const Navbar = () => {
             <div className="flex items-center space-x-2 ml-4 pl-4 border-l border-secondary-200">
               <ThemeToggle />
 
-              {isAuthenticated ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="flex items-center space-x-2"
-                    >
-                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
-                        <User className="w-4 h-4 text-white" />
-                      </div>
-                      <span className="hidden sm:inline">
-                        {user?.given_name || "User"}
-                      </span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    <div className="px-3 py-2">
-                      <p className="text-sm font-medium">
-                        {user?.given_name} {user?.family_name}
-                      </p>
-                      <p className="text-xs text-secondary-500">
-                        {user?.email}
-                      </p>
-                    </div>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href="/dashboard"
-                        className="flex items-center space-x-2"
-                      >
-                        <Home className="w-4 h-4" />
-                        <span>Dashboard</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href="/dashboard/billing"
-                        className="flex items-center space-x-2"
-                      >
-                        <Settings className="w-4 h-4" />
-                        <span>Billing</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={handleSignOut}
-                      className="text-red-600"
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Sign out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
+              <SignedIn>
+                <div className="flex items-center space-x-2">
+                  <Link
+                    href="/dashboard"
+                    className={buttonVariants({
+                      variant: "ghost",
+                      size: "sm",
+                    })}
+                  >
+                    <Home className="w-4 h-4 mr-2" />
+                    Dashboard
+                  </Link>
+                  <UserButton
+                    afterSignOutUrl="/"
+                    appearance={{
+                      elements: {
+                        avatarBox:
+                          "w-8 h-8 border border-border/60 shadow-sm rounded-full",
+                      },
+                    }}
+                  />
+                </div>
+              </SignedIn>
+
+              <SignedOut>
                 <>
-                  <LoginLink
+                  <Link
+                    href="/sign-in"
                     className={buttonVariants({ variant: "ghost", size: "sm" })}
                   >
                     Sign in
-                  </LoginLink>
-                  <RegisterLink className={buttonVariants({ size: "sm" })}>
+                  </Link>
+                  <Link
+                    href="/sign-up"
+                    className={buttonVariants({ size: "sm" })}
+                  >
                     Get Started <ArrowRight className="ml-1.5 h-4 w-4" />
-                  </RegisterLink>
+                  </Link>
                 </>
-              )}
+              </SignedOut>
             </div>
           </div>
 
@@ -216,16 +174,8 @@ const Navbar = () => {
                   <ThemeToggle />
                 </div>
 
-                {isAuthenticated ? (
+                <SignedIn>
                   <div className="space-y-2">
-                    <div className="px-3 py-2 bg-secondary-50 dark:bg-secondary-800 rounded-lg">
-                      <p className="text-sm font-medium">
-                        {user?.given_name} {user?.family_name}
-                      </p>
-                      <p className="text-xs text-secondary-500">
-                        {user?.email}
-                      </p>
-                    </div>
                     <Link
                       href="/dashboard"
                       className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-secondary-600 hover:text-secondary-900 hover:bg-secondary-50 dark:text-secondary-300 dark:hover:text-secondary-100 dark:hover:bg-secondary-800/50"
@@ -242,22 +192,22 @@ const Navbar = () => {
                       <Settings className="w-4 h-4" />
                       <span>Billing</span>
                     </Link>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        handleSignOut();
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Sign out
-                    </Button>
+                    <div className="px-3 py-2 flex items-center justify-between rounded-lg border border-secondary-200 dark:border-secondary-700">
+                      <span className="text-sm font-medium">Account</span>
+                      <UserButton
+                        afterSignOutUrl="/"
+                        appearance={{
+                          elements: { avatarBox: "w-8 h-8" },
+                        }}
+                      />
+                    </div>
                   </div>
-                ) : (
+                </SignedIn>
+
+                <SignedOut>
                   <div className="space-y-2">
-                    <LoginLink
+                    <Link
+                      href="/sign-in"
                       className={buttonVariants({
                         variant: "ghost",
                         size: "sm",
@@ -265,15 +215,16 @@ const Navbar = () => {
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Sign in
-                    </LoginLink>
-                    <RegisterLink
+                    </Link>
+                    <Link
+                      href="/sign-up"
                       className={buttonVariants({ size: "sm" })}
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Get Started <ArrowRight className="ml-1.5 h-4 w-4" />
-                    </RegisterLink>
+                    </Link>
                   </div>
-                )}
+                </SignedOut>
               </div>
             </div>
           </div>
