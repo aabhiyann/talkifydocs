@@ -93,6 +93,21 @@ export function createErrorResponse(
 
 // Handle different error types
 export function handleError(error: unknown): ErrorResponse {
+  // Capture error in Sentry for production
+  if (process.env.NODE_ENV === "production") {
+    try {
+      const { captureException } = require("./sentry");
+      if (error instanceof Error) {
+        captureException(error);
+      } else {
+        captureException(new Error(String(error)));
+      }
+    } catch (sentryError) {
+      // Sentry not available, continue without it
+      console.error("Failed to capture error in Sentry:", sentryError);
+    }
+  }
+
   if (error instanceof AppError) {
     return createErrorResponse(error);
   }

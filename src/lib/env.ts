@@ -45,6 +45,24 @@ const envSchema = z.object({
     .default("development"),
   PORT: z.string().default("3000"),
   VERCEL_URL: z.string().optional(),
+  NEXT_PUBLIC_APP_URL: z.string().url().optional(),
+
+  // Redis (Upstash)
+  UPSTASH_REDIS_REST_URL: z.string().url().optional(),
+  UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
+  REDIS_HOST: z.string().optional(),
+  REDIS_PORT: z.string().optional(),
+  REDIS_PASSWORD: z.string().optional(),
+
+  // Sentry
+  SENTRY_DSN: z.string().url().optional(),
+  SENTRY_TRACES_SAMPLE_RATE: z.string().optional(),
+
+  // Google Analytics
+  NEXT_PUBLIC_GA_ID: z.string().optional(),
+
+  // Pinecone Index Name
+  PINECONE_INDEX: z.string().optional(),
 });
 
 // Only validate environment variables at runtime, not during build

@@ -50,8 +50,16 @@ const nextConfig = {
 
   // Experimental features for performance
   experimental: {
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-toast', '@radix-ui/react-tooltip', '@radix-ui/react-progress'],
     // optimizeCss: true,
     // scrollRestoration: true,
+  },
+
+  // Compiler optimizations
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
   },
 
   // Security headers
