@@ -10,13 +10,14 @@ tags: ai, nextjs, react, fullstack, machinelearning
 **TL;DR:** I built **TalkifyDocs**, a full-stack AI app where users upload PDFs and then chat with their documents. Under the hood it uses Next.js 14, Prisma, Clerk, Stripe, UploadThing, OpenAI, and Pinecone. This is what I learned about building production-ready AI apps vs. just hacking with the OpenAI API.
 
 > Replace these before posting:
+>
 > - Live demo: `https://YOUR-TALKIFYDOCS-URL`
 > - Repo: `https://github.com/YOUR_USERNAME/talkifydocs`
 > - Portfolio: `https://your-portfolio.com/projects/talkifydocs`
 
 🔗 **Live Demo:** YOUR DEMO LINK HERE  
 💻 **Source Code:** YOUR REPO LINK HERE  
-🌐 **Case Study:** YOUR PORTFOLIO LINK HERE  
+🌐 **Case Study:** YOUR PORTFOLIO LINK HERE
 
 ---
 
@@ -81,7 +82,7 @@ TalkifyDocs is built as a modern full-stack app on top of Next.js 14’s App Rou
 - **Frontend:** Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS, shadcn/Radix-style UI components
 - **Backend:** Next.js route handlers, tRPC, Prisma ORM
 - **AI & Search:** OpenAI Chat Completions, LangChain, Pinecone vector DB
-- **Auth & Billing:** Clerk (auth), Stripe (subscriptions)
+- **Auth & Billing:** Clerk (hosted auth with prebuilt SignIn/SignUp/UserButton + middleware), Stripe (subscriptions)
 - **Uploads & Storage:** UploadThing (file uploads), PostgreSQL (Neon/Railway/etc.)
 
 ### High-Level Flow
@@ -213,15 +214,15 @@ Owning everything from schema design to API contracts, security, and UI made me 
 
 ## Tech Stack Summary
 
-| Category     | Technologies                                                                 |
-|-------------|------------------------------------------------------------------------------|
-| Frontend    | Next.js 14 (App Router), React 18, TypeScript, Tailwind, shadcn/Radix UI    |
-| Backend     | Next.js route handlers, tRPC, Prisma                                        |
-| AI & Search | OpenAI Chat Completions, OpenAI Embeddings, LangChain, Pinecone             |
-| Auth        | Clerk Auth                                                                  |
-| Billing     | Stripe subscriptions + webhooks                                            |
-| Uploads     | UploadThing                                                                 |
-| Database    | PostgreSQL (via Prisma)                                                     |
+| Category    | Technologies                                                             |
+| ----------- | ------------------------------------------------------------------------ |
+| Frontend    | Next.js 14 (App Router), React 18, TypeScript, Tailwind, shadcn/Radix UI |
+| Backend     | Next.js route handlers, tRPC, Prisma                                     |
+| AI & Search | OpenAI Chat Completions, OpenAI Embeddings, LangChain, Pinecone          |
+| Auth        | Clerk Auth                                                               |
+| Billing     | Stripe subscriptions + webhooks                                          |
+| Uploads     | UploadThing                                                              |
+| Database    | PostgreSQL (via Prisma)                                                  |
 
 ---
 
@@ -232,7 +233,7 @@ Owning everything from schema design to API contracts, security, and UI made me 
 **Live Demo:** YOUR DEMO LINK HERE  
 **Login:** example credentials if you have a demo user  
 **Source Code:** YOUR REPO LINK HERE  
-**Case Study:** YOUR PORTFOLIO LINK HERE  
+**Case Study:** YOUR PORTFOLIO LINK HERE
 
 ---
 
@@ -240,5 +241,3 @@ If you’ve built something similar—or you’re exploring AI + Next.js + RAG p
 
 **Hashtags to consider:**  
 `#AI` `#NextJS` `#React` `#MachineLearning` `#FullStack` `#SoftwareEngineering`
-
-

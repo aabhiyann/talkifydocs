@@ -13,7 +13,7 @@ canonical_url: https://your-portfolio.com/projects/talkifydocs
 
 🔗 **[Live Demo](https://YOUR-TALKIFYDOCS-URL)**  
 💻 **[Source Code](https://github.com/YOUR_USERNAME/talkifydocs)**  
-🌐 **[Portfolio Case Study](https://your-portfolio.com/projects/talkifydocs)**  
+🌐 **[Portfolio Case Study](https://your-portfolio.com/projects/talkifydocs)**
 
 > Replace the URLs above with your real links before publishing.
 
@@ -21,15 +21,15 @@ canonical_url: https://your-portfolio.com/projects/talkifydocs
 
 ## Table of Contents
 
-- [The Problem](#the-problem)  
-- [My Approach](#my-approach)  
-- [Architecture Overview](#architecture-overview)  
-- [Key Technical Challenges](#key-technical-challenges)  
-- [RAG Implementation Details](#rag-implementation-details)  
-- [Security, Validation, and Reliability](#security-validation-and-reliability)  
-- [What I Learned](#what-i-learned)  
-- [Tech Stack](#tech-stack)  
-- [Try It Yourself](#try-it-yourself)  
+- [The Problem](#the-problem)
+- [My Approach](#my-approach)
+- [Architecture Overview](#architecture-overview)
+- [Key Technical Challenges](#key-technical-challenges)
+- [RAG Implementation Details](#rag-implementation-details)
+- [Security, Validation, and Reliability](#security-validation-and-reliability)
+- [What I Learned](#what-i-learned)
+- [Tech Stack](#tech-stack)
+- [Try It Yourself](#try-it-yourself)
 
 ---
 
@@ -134,7 +134,7 @@ At a high level, TalkifyDocs is a full-stack RAG (retrieval-augmented generation
 - **Backend:** Next.js App Router route handlers, tRPC, Prisma
 - **AI & Retrieval:** OpenAI Chat Completions, OpenAI Embeddings, LangChain, Pinecone
 - **Storage:** PostgreSQL (via Prisma), UploadThing for file uploads
-- **Auth:** Clerk
+- **Auth:** Clerk (hosted auth, prebuilt components, org support)
 - **Billing:** Stripe subscriptions + webhooks
 
 ---
@@ -180,7 +180,7 @@ Parsing, embedding, and indexing PDFs can be slow and error-prone, especially wi
 
 If you just block on this in a single request, the UX is terrible.
 
-**My Solution:**  
+**My Solution:**
 
 - Introduced a `File` model with `uploadStatus`:
   - `PENDING` → `PROCESSING` → `SUCCESS` or `FAILED`
@@ -238,27 +238,27 @@ The system behaves more like a real product than a weekend experiment.
 
 ### Indexing Pipeline
 
-1. **Upload**  
+1. **Upload**
    - User selects a PDF via UploadThing UI.
    - UploadThing sends a callback with `file` metadata and `userId`.
 
-2. **Persist Metadata**  
+2. **Persist Metadata**
    - Create a `File` row:
      - `name`, `url`, `key`, `userId`, `uploadStatus = "PROCESSING"`.
 
-3. **Download & Parse**  
+3. **Download & Parse**
    - Fetch the file via its URL (with an AbortController timeout).
    - Validate:
      - Non-empty.
      - Content type `application/pdf`.
    - Use LangChain `PDFLoader` to load page-level documents.
 
-4. **Embed & Store**  
+4. **Embed & Store**
    - Ensure a Pinecone index exists (create if needed).
    - Use `OpenAIEmbeddings` to embed each page/chunk.
    - Write vectors to Pinecone, optionally using the `file.id` as a namespace.
 
-5. **Update Status**  
+5. **Update Status**
    - On success: `uploadStatus = "SUCCESS"`.
    - On error: `uploadStatus = "FAILED"` with detailed logs.
 
@@ -324,15 +324,15 @@ Owning frontend, backend, infra, and prompts forced me to think holistically:
 
 ## Tech Stack
 
-| Category     | Technologies                                                      |
-|-------------|-------------------------------------------------------------------|
-| Frontend    | Next.js 14 (App Router), React 18, TypeScript, Tailwind, shadcn   |
-| Backend     | Next.js route handlers, tRPC, Prisma ORM                          |
-| AI & Search | OpenAI Chat Completions, OpenAI Embeddings, LangChain, Pinecone   |
-| Auth        | Clerk Auth                                                        |
-| Billing     | Stripe (subscriptions, billing portal, webhooks)                  |
-| Uploads     | UploadThing                                                       |
-| Database    | PostgreSQL (via Prisma)                                           |
+| Category    | Technologies                                                    |
+| ----------- | --------------------------------------------------------------- |
+| Frontend    | Next.js 14 (App Router), React 18, TypeScript, Tailwind, shadcn |
+| Backend     | Next.js route handlers, tRPC, Prisma ORM                        |
+| AI & Search | OpenAI Chat Completions, OpenAI Embeddings, LangChain, Pinecone |
+| Auth        | Clerk Auth                                                      |
+| Billing     | Stripe (subscriptions, billing portal, webhooks)                |
+| Uploads     | UploadThing                                                     |
+| Database    | PostgreSQL (via Prisma)                                         |
 
 ---
 
@@ -340,7 +340,7 @@ Owning frontend, backend, infra, and prompts forced me to think holistically:
 
 **Live Demo:** [YOUR TALKIFYDOCS URL](https://YOUR-TALKIFYDOCS-URL)  
 **Source Code:** [GitHub Repo](https://github.com/YOUR_USERNAME/talkifydocs)  
-**Portfolio Case Study:** [TalkifyDocs Project](https://your-portfolio.com/projects/talkifydocs)  
+**Portfolio Case Study:** [TalkifyDocs Project](https://your-portfolio.com/projects/talkifydocs)
 
 ---
 
@@ -355,5 +355,3 @@ Building TalkifyDocs taught me that production AI work lives at the intersection
 The best AI products aren’t just clever prompts—they’re well-designed systems.
 
 If you’ve built something similar, or you’re exploring RAG with Next.js and OpenAI, I’d love to hear what you learned.
-
-
