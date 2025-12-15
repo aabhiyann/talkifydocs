@@ -15,6 +15,7 @@ import "simplebar-react/dist/simplebar.min.css";
 
 import { Toaster } from "@/components/ui/toaster";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -72,7 +73,9 @@ export default function RootLayout({
       }}
     >
       <html lang="en">
-        <head></head>
+        <head>
+          <GoogleAnalytics />
+        </head>
         <Providers>
           <body
             className={cn(
