@@ -15,8 +15,44 @@ AI-powered PDF assistant that lets you upload documents and chat with them using
 - **Execution Plan**
   - `IMPLEMENTATION_PHASES.md` – Phase-by-phase implementation plan for v2.0
 
-### Getting Started (current v1)
+### Quick Start
 
-See the “How to run locally” section in `PROJECT_OVERVIEW.md` for up-to-date setup instructions for the existing app.
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-As v2.0 work progresses, this README will be updated with the new stack (Next.js 15, Clerk, updated Prisma schema, etc.).
+2. **Set up environment variables:**
+   ```bash
+   # Copy the example or create .env.local manually
+   # See LOCAL_DEVELOPMENT.md for all required variables
+   ```
+
+3. **Set up database:**
+   ```bash
+   npm run db:generate
+   npm run db:push
+   ```
+
+4. **Start development server:**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open your browser:**
+   ```
+   http://localhost:3000
+   ```
+
+**📖 For detailed setup instructions, see [LOCAL_DEVELOPMENT.md](./LOCAL_DEVELOPMENT.md)**
+
+### Required Services
+
+- **PostgreSQL** database (local or cloud like Neon/Supabase)
+- **Clerk** account for authentication
+- **OpenAI** API key for AI features
+- **Pinecone** account for vector storage
+- **Vercel Blob** for file storage
+- **Stripe** account (for billing features)
+
+All setup instructions are in [LOCAL_DEVELOPMENT.md](./LOCAL_DEVELOPMENT.md)
