@@ -15,14 +15,14 @@ type BatchUploadState = {
   uploads: Map<string, FileUpload>;
   activeUploads: number;
   maxConcurrent: number;
-  
+
   // Actions
   addUpload: (file: File) => string;
   updateUpload: (id: string, update: Partial<FileUpload>) => void;
   removeUpload: (id: string) => void;
   clearCompleted: () => void;
   reset: () => void;
-  
+
   // Getters
   getUpload: (id: string) => FileUpload | undefined;
   getAllUploads: () => FileUpload[];
@@ -42,13 +42,13 @@ export const useUploadStatusStore = create<BatchUploadState>((set, get) => ({
       progress: 0,
       status: "idle",
     };
-    
+
     set((state) => {
       const newUploads = new Map(state.uploads);
       newUploads.set(id, upload);
       return { uploads: newUploads };
     });
-    
+
     return id;
   },
 
@@ -77,7 +77,7 @@ export const useUploadStatusStore = create<BatchUploadState>((set, get) => ({
     set((state) => {
       const newUploads = new Map(state.uploads);
       newUploads.delete(id);
-      
+
       // Update active count
       let activeCount = 0;
       newUploads.forEach((u) => {
@@ -118,5 +118,3 @@ export const useUploadStatusStore = create<BatchUploadState>((set, get) => ({
     return get().activeUploads > 0;
   },
 }));
-
-
