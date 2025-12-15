@@ -54,23 +54,23 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 /**
  * Same as getCurrentUser but throws if the user is not authenticated.
  * Can be used in server components and server actions.
- * Note: Middleware should protect routes, but this provides an extra check.
+ * Note: Middleware should protect routes, so this should rarely throw.
+ * If it does throw, the middleware will handle the redirect.
  */
 export async function requireUser(): Promise<AuthUser> {
   // Check auth state first using Clerk's auth()
   const { userId } = auth();
   if (!userId) {
-    // If middleware didn't catch this, redirect to sign-in
-    const { redirect } = await import("next/navigation");
-    redirect("/sign-in");
+    // Middleware should have caught this, but throw error as fallback
+    throw new Error("User not authenticated");
   }
 
   const user = await getCurrentUser();
 
   if (!user) {
-    // This shouldn't happen if userId exists, but handle it gracefully
-    const { redirect } = await import("next/navigation");
-    redirect("/sign-in");
+    // This shouldn't happen if userId exists, but could if DB sync fails
+    // Throw error - middleware will handle redirect
+    throw new Error("User not found in database");
   }
 
   return user;

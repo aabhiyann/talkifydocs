@@ -1,9 +1,17 @@
 import Dashboard from "@/components/dashboard";
-import { db } from "@/db";
-import { requireUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 const Page = async () => {
-  const user = await requireUser();
+  // Use getCurrentUser instead of requireUser to avoid redirect loops
+  // Middleware already protects this route
+  const user = await getCurrentUser();
+  
+  // If user doesn't exist, redirect to sign-in
+  // This should rarely happen as middleware protects the route
+  if (!user) {
+    redirect("/sign-in");
+  }
 
   return <Dashboard />;
 };
