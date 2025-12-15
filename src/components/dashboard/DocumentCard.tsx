@@ -30,6 +30,9 @@ type FileSummary = {
   createdAt: string | Date;
   uploadStatus: "PENDING" | "PROCESSING" | "SUCCESS" | "FAILED";
   thumbnailUrl?: string | null;
+  pageCount?: number | null;
+  summary?: string | null;
+  entities?: any | null;
   _count?: {
     messages?: number;
   };
@@ -45,6 +48,15 @@ type Props = {
 export const DocumentCard = ({ file, viewMode, onDelete, onRetry }: Props) => {
   const createdAt =
     file.createdAt instanceof Date ? file.createdAt : new Date(file.createdAt);
+
+  const summary =
+    file.summary && file.summary.length > 220
+      ? `${file.summary.slice(0, 200).trim()}…`
+      : file.summary || null;
+
+  const keyTerms: string[] =
+    (file.entities && (file.entities.key_terms || file.entities.keyTerms)) || [];
+  const topKeyTerms = keyTerms.slice(0, 3);
 
   return (
     <Card className="group hover-lift hover-glow animate-scale-in transition-all duration-300">
@@ -147,7 +159,33 @@ export const DocumentCard = ({ file, viewMode, onDelete, onRetry }: Props) => {
                   : "We’re preparing your document"}
               </span>
             </div>
+
+            {typeof file.pageCount === "number" && file.pageCount > 0 && (
+              <div className="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400">
+                <span>{file.pageCount}</span>
+                <span>pages</span>
+              </div>
+            )}
           </div>
+
+          {summary && (
+            <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-3">
+              {summary}
+            </p>
+          )}
+
+          {topKeyTerms.length > 0 && (
+            <div className="flex flex-wrap gap-1 pt-1">
+              {topKeyTerms.map((term) => (
+                <span
+                  key={term}
+                  className="rounded-full bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 px-2 py-0.5 text-[10px] font-medium"
+                >
+                  {term}
+                </span>
+              ))}
+            </div>
+          )}
 
           <div className="pt-2 flex items-center justify-between gap-2">
             {file.uploadStatus === "SUCCESS" ? (

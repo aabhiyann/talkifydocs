@@ -3,8 +3,10 @@ import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { PineconeStore } from "langchain/vectorstores/pinecone";
 import { db } from "@/lib/db";
 import { getPineconeClient } from "@/lib/pinecone";
-import { extractPdfMetadata } from "./extract-metadata";
-import { generatePdfThumbnail } from "./generate-thumbnail";
+import { extractMetadata } from "./extract-metadata";
+import { generateThumbnail } from "./generate-thumbnail";
+import { extractEntities } from "./extract-entities";
+import { summarizeDocument } from "./summarize-document";
 
 type ProcessPdfParams = {
   fileId: string;
@@ -120,8 +122,17 @@ export async function processPdfFile({
       );
     }
 
-    const metadata = await extractPdfDetails(pageLevelDocs);
-    const thumbnailUrl = await safeGenerateThumbnail(fileId, fileUrl);
+    const [metadata, thumbnailUrl] = await Promise.all([
+      extractMetadata(fileUrl),
+      generateThumbnail(fileUrl),
+    ]);
+
+    const fullText = pageLevelDocs.map((d) => d.pageContent).join("\n");
+
+    const [entities, summary] = await Promise.all([
+      extractEntities(fullText),
+      summarizeDocument(fullText),
+    ]);
 
     // Initialize Pinecone + embeddings and index documents
     console.log("[upload] Initializing Pinecone client...");
@@ -169,10 +180,11 @@ export async function processPdfFile({
       where: { id: fileId },
       data: {
         uploadStatus: "SUCCESS",
-        pageCount: metadata.pageCount,
-        summary: metadata.summary,
-        metadata: metadata.metadata ?? undefined,
-        thumbnailUrl: thumbnailUrl ?? undefined,
+        pageCount: metadata.pageCount ?? pageLevelDocs.length,
+        summary,
+        entities,
+        metadata,
+        thumbnailUrl,
       },
     });
 
@@ -199,46 +211,4 @@ type PdfMetadata = {
   summary?: string | null;
   metadata?: Record<string, any> | null;
 };
-
-async function extractPdfDetails(
-  pageLevelDocs: Awaited<ReturnType<PDFLoader["load"]>>
-): Promise<PdfMetadata> {
-  try {
-    const base = await extractPdfMetadata(pageLevelDocs);
-    return {
-      pageCount: base.pageCount ?? pageLevelDocs.length,
-      summary: base.summary ?? null,
-      metadata: base.metadata ?? null,
-    };
-  } catch (e) {
-    console.warn("[upload] Failed to extract PDF metadata:", e);
-    return {
-      pageCount: pageLevelDocs.length,
-      summary: null,
-      metadata: null,
-    };
-  }
-}
-
-async function safeGenerateThumbnail(
-  fileId: string,
-  fileUrl: string
-): Promise<string | null> {
-  try {
-    const thumbnailUrl = await generatePdfThumbnail({ fileId, fileUrl });
-    if (thumbnailUrl) {
-      console.log(
-        `[upload] Generated thumbnail for file ${fileId}: ${thumbnailUrl}`
-      );
-    }
-    return thumbnailUrl;
-  } catch (e) {
-    console.warn(
-      `[upload] Failed to generate thumbnail for file ${fileId}:`,
-      e
-    );
-    return null;
-  }
-}
-
 

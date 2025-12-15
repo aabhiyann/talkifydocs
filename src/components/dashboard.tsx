@@ -1,7 +1,7 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
-import UploadButton from "./UploadButton";
+import { UploadZone } from "./dashboard/UploadZone";
 import { DocumentGrid } from "./dashboard/DocumentGrid";
 import {
   Ghost,
@@ -153,7 +153,7 @@ const Dashboard = memo(() => {
               </p>
             </div>
             <div className="flex items-center space-x-3">
-              <UploadButton />
+              <UploadZone />
             </div>
           </div>
 
@@ -299,7 +299,7 @@ const Dashboard = memo(() => {
                 : "Upload your first PDF document to get started with AI-powered analysis and intelligent conversations."}
             </p>
             <div className="space-y-4">
-              <UploadButton />
+              <UploadZone />
               {searchQuery && (
                 <Button variant="outline" onClick={() => setSearchQuery("")}>
                   Clear Search

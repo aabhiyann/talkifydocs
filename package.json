@@ -73,7 +73,10 @@
     "uploadthing": "^6.1.1",
     "ws": "^8.16.0",
     "zod": "^3.22.4",
-    "zustand": "^5.0.9"
+    "zustand": "^5.0.9",
+    "pdf-lib": "^1.17.1",
+    "pdf-parse": "^1.1.1",
+    "sharp": "^0.33.5"
   },
   "devDependencies": {
     "@jest/test-sequencer": "^30.1.2",
