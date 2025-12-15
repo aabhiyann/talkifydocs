@@ -1,9 +1,9 @@
+/* Import Modern Design System - must be before all other rules */
+@import "../styles/design-system.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Import Modern Design System */
-@import "../styles/design-system.css";
 
 @layer base {
   :root {

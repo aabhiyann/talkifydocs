@@ -60,13 +60,14 @@ Upload flow:
 1️⃣ User uploads PDF via drag-and-drop (Vercel Blob)  
 2️⃣ Backend creates `File` row with `uploadStatus = PROCESSING`  
 3️⃣ Async processing:
-   - Generate thumbnail (pdf-lib + sharp)
-   - Extract metadata (author, dates, page count)
-   - Generate AI summary (GPT-4o)
-   - Extract entities (people, orgs, dates)
-   - Create embeddings → Pinecone (per file namespace)  
-4️⃣ Status updates via SSE (real-time, no polling)  
-5️⃣ Status set to `SUCCESS` or `FAILED`
+
+- Generate thumbnail (pdf-lib + sharp)
+- Extract metadata (author, dates, page count)
+- Generate AI summary (GPT-4o)
+- Extract entities (people, orgs, dates)
+- Create embeddings → Pinecone (per file namespace)  
+  4️⃣ Status updates via SSE (real-time, no polling)  
+  5️⃣ Status set to `SUCCESS` or `FAILED`
 
 The UI shows real-time progress with clear states.
 
@@ -78,12 +79,13 @@ Chat flow (supports multi-doc):
 1️⃣ User asks a question (single or multi-document conversation)  
 2️⃣ Backend validates + rate-limits and checks file ownership  
 3️⃣ Hybrid search across selected files:
-   - Semantic search (Pinecone)
-   - BM25 keyword re-ranking
-4️⃣ Combine top chunks + recent chat history  
-5️⃣ Send to OpenAI GPT-4o with strict system prompt  
-6️⃣ Stream answer with citations (fileId, page, snippet)  
-7️⃣ Save as `Message` with clickable citations
+
+- Semantic search (Pinecone)
+- BM25 keyword re-ranking
+  4️⃣ Combine top chunks + recent chat history  
+  5️⃣ Send to OpenAI GPT-4o with strict system prompt  
+  6️⃣ Stream answer with citations (fileId, page, snippet)  
+  7️⃣ Save as `Message` with clickable citations
 
 ---
 

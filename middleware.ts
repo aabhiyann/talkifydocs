@@ -1,30 +1,27 @@
-import { authMiddleware } from "@clerk/nextjs";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-export default authMiddleware({
-  // Public routes that never require authentication
-  publicRoutes: [
-    "/",
-    "/features",
-    "/pricing",
-    "/about",
-    "/contact",
-    "/style-guide",
-    "/health",
-    "/api/health",
-    "/api/webhooks/stripe",
-    "/api/webhooks/clerk",
-    "/sign-in(.*)",
-    "/sign-up(.*)",
-    "/auth-callback(.*)",
-    "/demo(.*)",
-    "/docs(.*)",
-  ],
-  ignoredRoutes: [
-    // Let Next.js handle static files and images
-    "/_next(.*)",
-    "/favicon.ico",
-    "/robots.txt",
-  ],
+const isPublicRoute = createRouteMatcher([
+  "/",
+  "/features",
+  "/pricing",
+  "/about",
+  "/contact",
+  "/style-guide",
+  "/health",
+  "/api/health",
+  "/api/webhooks/stripe",
+  "/api/webhooks/clerk",
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+  "/auth-callback(.*)",
+  "/demo(.*)",
+  "/docs(.*)",
+]);
+
+export default clerkMiddleware(async (auth, req) => {
+  if (!isPublicRoute(req)) {
+    await auth.protect();
+  }
 });
 
 export const config = {
