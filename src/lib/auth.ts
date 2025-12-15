@@ -57,11 +57,18 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
  * Note: Middleware should protect routes, but this provides an extra check.
  */
 export async function requireUser(): Promise<AuthUser> {
+  // Check auth state first using Clerk's auth()
+  const { userId } = auth();
+  if (!userId) {
+    // If middleware didn't catch this, redirect to sign-in
+    const { redirect } = await import("next/navigation");
+    redirect("/sign-in");
+  }
+
   const user = await getCurrentUser();
 
   if (!user) {
-    // Redirect to sign-in if not authenticated
-    // This should rarely happen as middleware protects routes
+    // This shouldn't happen if userId exists, but handle it gracefully
     const { redirect } = await import("next/navigation");
     redirect("/sign-in");
   }
