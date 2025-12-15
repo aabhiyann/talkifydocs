@@ -1,35 +1,97 @@
-import { requireUser } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { requireAdmin } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { StatsCard } from "@/components/admin/StatsCard";
+import { RecentUsersTable } from "@/components/admin/RecentUsersTable";
+import { SystemMetrics } from "@/components/admin/SystemMetrics";
+import { ErrorLogViewer } from "@/components/admin/ErrorLogViewer";
+import { getSystemMetrics } from "@/actions/admin";
+import { Users, FileText, MessageSquare, Crown } from "lucide-react";
 
-const AdminPage = async () => {
-  const user = await requireUser();
+export default async function AdminDashboard() {
+  await requireAdmin();
 
-  if (user.tier !== "ADMIN") {
-    // Non-admins are redirected away from admin routes
-    redirect("/dashboard");
-  }
+  // Fetch stats
+  const [
+    totalUsers,
+    totalFiles,
+    totalMessages,
+    proUsers,
+  ] = await Promise.all([
+    db.user.count(),
+    db.file.count(),
+    db.message.count(),
+    db.user.count({ where: { tier: "PRO" } }),
+  ]);
+
+  // Recent users
+  const recentUsers = await db.user.findMany({
+    take: 10,
+    orderBy: { createdAt: "desc" },
+    include: {
+      _count: {
+        select: { files: true, messages: true },
+      },
+    },
+  });
+
+  // System metrics
+  const metrics = await getSystemMetrics();
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] px-6 py-10">
-      <div className="mx-auto max-w-4xl space-y-6">
-        <h1 className="text-display-md font-semibold text-secondary-900 dark:text-secondary-50">
-          Admin Dashboard
-        </h1>
-        <p className="text-body-lg text-secondary-600 dark:text-secondary-300">
-          This page is protected by role-based access control. Only users with
-          the <span className="font-semibold">ADMIN</span> tier can view it.
-        </p>
-        <div className="rounded-xl border border-secondary-200 bg-background/60 p-6 shadow-sm dark:border-secondary-800 dark:bg-secondary-900/40">
-          <p className="text-body-md text-secondary-700 dark:text-secondary-200">
-            Use this area to add admin-only tools such as user management,
-            billing overrides, and system monitoring.
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className="container mx-auto px-4 py-8 md:px-6 lg:px-8">
+        <div className="mb-8">
+          <h1 className="text-display-lg font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-2">
+            Admin Dashboard
+          </h1>
+          <p className="text-body-lg text-gray-600 dark:text-gray-300">
+            System overview, user management, and monitoring
           </p>
         </div>
+
+        {/* Stats Cards */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+          <StatsCard
+            title="Total Users"
+            value={totalUsers}
+            change="+12%"
+            trend="up"
+            icon={<Users className="w-5 h-5" />}
+          />
+          <StatsCard
+            title="Pro Users"
+            value={proUsers}
+            change="+8%"
+            trend="up"
+            icon={<Crown className="w-5 h-5" />}
+          />
+          <StatsCard
+            title="Documents"
+            value={totalFiles}
+            change="+23%"
+            trend="up"
+            icon={<FileText className="w-5 h-5" />}
+          />
+          <StatsCard
+            title="Messages"
+            value={totalMessages}
+            change="+45%"
+            trend="up"
+            icon={<MessageSquare className="w-5 h-5" />}
+          />
+        </div>
+
+        {/* System Metrics and Error Logs */}
+        <div className="grid gap-6 md:grid-cols-2 mb-8">
+          <SystemMetrics initialMetrics={metrics} />
+          <ErrorLogViewer />
+        </div>
+
+        {/* Recent Users */}
+        <RecentUsersTable users={recentUsers} />
       </div>
     </div>
   );
-};
-
-export default AdminPage;
+}
 
 

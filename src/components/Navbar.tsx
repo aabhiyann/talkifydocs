@@ -18,11 +18,14 @@ import {
 import { ThemeToggle } from "./ThemeToggle";
 import { usePathname } from "next/navigation";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { AdminLink } from "./AdminLink";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const pathname = usePathname();
+  const { user } = useUser();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,6 +34,18 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      // Check admin status via API
+      fetch("/api/admin/check")
+        .then((res) => res.json())
+        .then((data) => setIsAdmin(data.isAdmin || false))
+        .catch(() => setIsAdmin(false));
+    } else {
+      setIsAdmin(false);
+    }
+  }, [user]);
 
   const isActive = (path: string) => pathname === path;
 
@@ -96,6 +111,18 @@ const Navbar = () => {
                     <Home className="w-4 h-4 mr-2" />
                     Dashboard
                   </Link>
+                  {isAdmin && (
+                    <Link
+                      href="/admin"
+                      className={buttonVariants({
+                        variant: "ghost",
+                        size: "sm",
+                      })}
+                    >
+                      <Shield className="w-4 h-4 mr-2" />
+                      Admin
+                    </Link>
+                  )}
                   <UserButton
                     afterSignOutUrl="/"
                     appearance={{
