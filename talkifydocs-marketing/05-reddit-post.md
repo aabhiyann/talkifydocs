@@ -26,13 +26,15 @@ I just shipped a full-stack AI app where you can upload PDFs and then _chat with
 
 Tech stack:
 
-- **Frontend:** Next.js 14 (App Router), React, TypeScript, Tailwind
-- **Backend:** Next route handlers + tRPC + Prisma
-- **AI:** OpenAI Chat Completions + embeddings, LangChain
+- **Frontend:** Next.js 16 (App Router), React 19, TypeScript, Tailwind
+- **Backend:** Next route handlers + Server Actions + Prisma
+- **AI:** OpenAI GPT-4o + text-embedding-3-small, LangChain, Hybrid Search
 - **Vector DB:** Pinecone
 - **Auth:** Clerk (hosted auth + user management, magic links/social login)
-- **Billing:** Stripe
-- **Uploads:** UploadThing
+- **Billing:** Stripe (Free, Pro, Admin tiers)
+- **Storage:** Vercel Blob (files + thumbnails)
+- **Caching:** Upstash Redis
+- **Monitoring:** Sentry + Google Analytics
 
 ## 3 Things Building This Taught Me
 
@@ -44,26 +46,31 @@ Naively sending an entire PDF (or giant chunks of it) to the model is:
 - Slow
 - Still prone to hallucinations
 
-I implemented a **retrieval-augmented generation (RAG)** flow instead:
+I implemented a **retrieval-augmented generation (RAG)** flow with hybrid search:
 
-- Embed the PDF once → store vectors in Pinecone
-- For each question, retrieve the top-K relevant chunks
-- Send only those + recent chat history to OpenAI with a strict system prompt
+- Embed the PDF once → store vectors in Pinecone (namespaced by file)
+- For each question, use hybrid search (semantic + BM25 keyword) across selected documents
+- Retrieve the top-K relevant chunks
+- Send only those + recent chat history to OpenAI GPT-4o with a strict system prompt
+- Return answers with citations (fileId, page, snippet) for transparency
 
-This kept costs manageable and answers much more grounded.
+This kept costs manageable, answers grounded, and enables multi-document conversations.
 
 ### 2. UX for Long-Running Operations Matters
 
-Parsing, embedding, and indexing PDFs isn’t instant. Instead of blocking the user on a blank screen, I:
+Parsing, embedding, and indexing PDFs isn't instant. Instead of blocking the user, I:
 
 - Added an `uploadStatus` field (`PENDING`, `PROCESSING`, `SUCCESS`, `FAILED`)
-- Poll the status on the chat page and show clear states:
-  - “Loading your document…”
-  - “Processing your document…”
-  - “Processing failed, please re-upload”
-  - “Ready to chat”
+- Real-time status updates via Server-Sent Events (SSE) - no polling!
+- Show clear states:
+  - "Loading your document…"
+  - "Processing your document…" (with progress)
+  - "Processing failed, please re-upload"
+  - "Ready to chat" (with thumbnail, summary, entities)
+- Generate thumbnails and AI summaries during processing
+- Extract key entities (people, orgs, dates) for quick reference
 
-The app feels way less “mysterious” and more like a proper product.
+The app feels way less "mysterious" and more like a proper product.
 
 ### 3. Safety & Cost Controls Are Non-Negotiable
 
@@ -78,11 +85,13 @@ This is the difference between “cool demo” and “I’d actually deploy this
 
 ## Tech Stack Summary
 
-- **Frontend:** Next.js 14, React, TypeScript, Tailwind
-- **Backend:** tRPC, Prisma, Next route handlers
-- **AI:** OpenAI + Pinecone + LangChain (RAG)
+- **Frontend:** Next.js 16, React 19, TypeScript, Tailwind
+- **Backend:** Server Actions, Prisma, Next route handlers
+- **AI:** OpenAI GPT-4o + Pinecone + LangChain (RAG with Hybrid Search)
 - **Auth/Billing:** Clerk + Stripe
-- **Uploads:** UploadThing
+- **Storage:** Vercel Blob
+- **Caching:** Upstash Redis
+- **Monitoring:** Sentry + Google Analytics
 
 ---
 

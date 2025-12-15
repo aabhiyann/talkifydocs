@@ -5,7 +5,7 @@
 **Tweet 1 (Hook):**  
 I just built an AI app where you can upload a PDF and then _chat with it_ in natural language.
 
-Here’s how I used Next.js 14 + OpenAI + Pinecone to ship a production-ready “Chat with PDF” app 🧵
+Here's how I used Next.js 16 + React 19 + OpenAI GPT-4o + Pinecone to ship a production-ready "Chat with PDF" app with multi-doc conversations, highlights, and admin dashboard 🧵
 
 🔗 Live demo: YOUR TALKIFYDOCS URL  
 💻 Code: YOUR GITHUB URL
@@ -28,50 +28,62 @@ That became **TalkifyDocs**.
 **Tweet 3 (Core Idea):**  
 Core capabilities:
 
-1️⃣ Upload PDFs and index them  
-2️⃣ Ask natural-language questions  
-3️⃣ Get answers grounded in your document  
-4️⃣ Manage docs in a SaaS-style dashboard (with auth + billing)
+1️⃣ Upload PDFs and index them (with thumbnails, summaries, entity extraction)  
+2️⃣ Ask natural-language questions (single or multi-document)  
+3️⃣ Get answers grounded in your documents with clickable citations  
+4️⃣ Save highlights and export conversations  
+5️⃣ Manage docs in a SaaS-style dashboard (with auth + billing)  
+6️⃣ Public demo mode (no sign-up required)
 
-All built on Next.js 14 with a full RAG pipeline underneath.
+All built on Next.js 16 with a full RAG pipeline + hybrid search underneath.
 
 ---
 
 **Tweet 4 (Stack):**  
 Tech stack:
 
-- Frontend: Next.js 14 (App Router), React, TypeScript, Tailwind
-- Backend: Next route handlers + tRPC + Prisma
-- AI: OpenAI Chat Completions + embeddings, LangChain
+- Frontend: Next.js 16 (App Router), React 19, TypeScript, Tailwind
+- Backend: Next route handlers + Server Actions + Prisma
+- AI: OpenAI GPT-4o + text-embedding-3-small, LangChain, Hybrid Search
 - Vector DB: Pinecone
 - Auth: Clerk (prebuilt auth UI + session management)
-- Billing: Stripe
-- Uploads: UploadThing
+- Billing: Stripe (Free, Pro, Admin tiers)
+- Storage: Vercel Blob (files + thumbnails)
+- Caching: Upstash Redis
+- Monitoring: Sentry + Google Analytics
 
 ---
 
 **Tweet 5 (Upload Flow):**  
 Upload flow:
 
-1️⃣ User uploads a PDF via UploadThing  
-2️⃣ Backend creates a `File` row with `uploadStatus = PROCESSING`  
-3️⃣ Server downloads the file, validates it, and parses pages via LangChain’s `PDFLoader`  
-4️⃣ OpenAI embeddings → Pinecone index (per file namespace)  
+1️⃣ User uploads PDF via drag-and-drop (Vercel Blob)  
+2️⃣ Backend creates `File` row with `uploadStatus = PROCESSING`  
+3️⃣ Async processing:
+   - Generate thumbnail (pdf-lib + sharp)
+   - Extract metadata (author, dates, page count)
+   - Generate AI summary (GPT-4o)
+   - Extract entities (people, orgs, dates)
+   - Create embeddings → Pinecone (per file namespace)  
+4️⃣ Status updates via SSE (real-time, no polling)  
 5️⃣ Status set to `SUCCESS` or `FAILED`
 
-The UI polls status and shows clear states.
+The UI shows real-time progress with clear states.
 
 ---
 
 **Tweet 6 (Chat Flow):**  
-Chat flow:
+Chat flow (supports multi-doc):
 
-1️⃣ User asks a question about a specific file  
-2️⃣ Backend validates + rate-limits the request and checks file ownership  
-3️⃣ Query Pinecone for the top-K relevant chunks  
-4️⃣ Combine chunks + recent chat history  
-5️⃣ Send to OpenAI Chat Completions with a strict system prompt  
-6️⃣ Stream answer back to the client and save it as a `Message` row
+1️⃣ User asks a question (single or multi-document conversation)  
+2️⃣ Backend validates + rate-limits and checks file ownership  
+3️⃣ Hybrid search across selected files:
+   - Semantic search (Pinecone)
+   - BM25 keyword re-ranking
+4️⃣ Combine top chunks + recent chat history  
+5️⃣ Send to OpenAI GPT-4o with strict system prompt  
+6️⃣ Stream answer with citations (fileId, page, snippet)  
+7️⃣ Save as `Message` with clickable citations
 
 ---
 

@@ -185,7 +185,7 @@ If you just block on this in a single request, the UX is terrible.
 - Introduced a `File` model with `uploadStatus`:
   - `PENDING` → `PROCESSING` → `SUCCESS` or `FAILED`
 - Upload flow:
-  - When an upload finishes on UploadThing:
+  - When a PDF is uploaded to Vercel Blob:
     - Create a `File` row with `PROCESSING`.
     - Kick off processing inside the route handler:
       - Download from S3 (with timeout).
