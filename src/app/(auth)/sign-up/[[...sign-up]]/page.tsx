@@ -13,7 +13,7 @@ export default function SignUpPage() {
           },
         }}
         // After successful sign up, Clerk will redirect here
-        redirectUrl="/dashboard"
+        fallbackRedirectUrl="/dashboard"
       />
     </div>
   );

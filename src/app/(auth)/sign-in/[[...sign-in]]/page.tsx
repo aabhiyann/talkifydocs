@@ -12,8 +12,8 @@ export default function SignInPage() {
             card: "shadow-lg border border-border/60 bg-background/95 backdrop-blur",
           },
         }}
-        // After successful sign in, Clerk will redirect here
-        redirectUrl="/dashboard"
+        // Use fallbackRedirectUrl instead of deprecated redirectUrl
+        fallbackRedirectUrl="/dashboard"
       />
     </div>
   );
