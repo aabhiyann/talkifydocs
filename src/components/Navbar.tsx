@@ -16,7 +16,7 @@ import {
   Home,
   Zap,
 } from "lucide-react";
-import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/server";
+import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./ThemeToggle";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";

@@ -10,7 +10,6 @@ import { PineconeStore } from "langchain/vectorstores/pinecone";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 
 import { NextRequest } from "next/server";
-import { use } from "react";
 import {
   handleError,
   createErrorResponse,

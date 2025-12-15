@@ -1,4 +1,3 @@
-import { stringify } from "querystring";
 import { privateProcedure, publicProcedure, router } from "./trpc";
 // import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/dist/types/server";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
@@ -6,10 +5,8 @@ import { z } from "zod";
 
 import { TRPCError } from "@trpc/server";
 import { db } from "@/db";
-import { error } from "console";
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
 import { absoluteUrl } from "@/lib/utils";
-import { use } from "react";
 // Stripe imports moved to be conditional to avoid webpack bundling issues
 
 export const appRouter = router({
@@ -90,7 +87,7 @@ export const appRouter = router({
     const stripeSession = await stripe.checkout.sessions.create({
       success_url: billingUrl,
       cancel_url: billingUrl,
-      payment_method_types: ["card", "paypal"],
+      payment_method_types: ["card"],
       mode: "subscription",
       billing_address_collection: "auto",
       line_items: [

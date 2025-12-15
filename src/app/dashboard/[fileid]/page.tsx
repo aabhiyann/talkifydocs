@@ -6,9 +6,9 @@ import { notFound, redirect } from "next/navigation";
 import { Metadata, Viewport } from "next";
 
 interface PageProps {
-  params: Promise<{
+  params: {
     fileid: string;
-  }>;
+  };
 }
 
 export const metadata: Metadata = {
@@ -24,7 +24,7 @@ export const viewport: Viewport = {
 
 const Page = async ({ params }: PageProps) => {
   // retrieve file id
-  const { fileid } = await params;
+  const { fileid } = params;
 
   const { getUser } = getKindeServerSession();
   const user = await getUser();
