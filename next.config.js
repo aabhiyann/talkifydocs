@@ -45,6 +45,9 @@ const nextConfig = {
     return config;
   },
 
+  // Turbopack configuration (Next.js 16)
+  turbopack: {},
+
   // Experimental features for performance
   experimental: {
     // optimizeCss: true,
