@@ -1,4 +1,4 @@
-import { db } from "@/db";
+import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 
 import { createUploadthing, type FileRouter } from "uploadthing/next";
@@ -19,7 +19,7 @@ export const ourFileRouter = {
       const clientIP = getClientIP(req);
 
       // Check rate limit for uploads
-      const rateLimit = checkRateLimit(clientIP, "UPLOAD");
+      const rateLimit = await checkRateLimit(clientIP, "UPLOAD");
       if (!rateLimit.allowed) {
         throw new Error("Upload rate limit exceeded. Please try again later.");
       }
@@ -28,9 +28,13 @@ export const ourFileRouter = {
 
       if (!user.id) throw new Error("Unauthorized");
 
-      // Check user plan limits (placeholder for now)
-      // TODO: Get actual user plan from database
-      const isProUser = false; // Will be replaced with actual plan check
+      // Check user plan limits based on User tier
+      const dbUser = await db.user.findUnique({
+        where: { id: user.id },
+        select: { tier: true },
+      });
+
+      const isProUser = dbUser?.tier === "PRO" || dbUser?.tier === "ADMIN";
       const maxFileSize = isProUser ? 200 * 1024 * 1024 : 50 * 1024 * 1024;
       
       // Validate file sizes

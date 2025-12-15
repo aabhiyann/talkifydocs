@@ -1,26 +1,47 @@
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { db } from "@/lib/db";
 
 export type AuthUser = {
-  id: string;
+  id: string; // internal User.id (Prisma)
+  clerkId: string;
   email: string | null;
-  givenName: string | null;
-  familyName: string | null;
+  name: string | null;
+  imageUrl: string | null;
 };
 
 export async function getCurrentUser(): Promise<AuthUser | null> {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
+  const { userId } = auth();
+  if (!userId) return null;
 
-  if (!user || !user.id) {
-    return null;
-  }
+  const clerk = await currentUser();
+  if (!clerk || !clerk.id) return null;
+
+  const email = clerk.emailAddresses?.[0]?.emailAddress ?? null;
+  const name = clerk.fullName ?? null;
+  const imageUrl = clerk.imageUrl ?? null;
+
+  // Ensure we have a corresponding Prisma User
+  const dbUser = await db.user.upsert({
+    where: { clerkId: clerk.id },
+    create: {
+      clerkId: clerk.id,
+      email: email ?? "",
+      name,
+      imageUrl,
+    },
+    update: {
+      email: email ?? "",
+      name,
+      imageUrl,
+    },
+  });
 
   return {
-    id: user.id,
-    // Kinde user objects expose email as `email` in this project
-    email: (user as any).email ?? null,
-    givenName: (user as any).given_name ?? null,
-    familyName: (user as any).family_name ?? null,
+    id: dbUser.id,
+    clerkId: dbUser.clerkId,
+    email: dbUser.email,
+    name: dbUser.name,
+    imageUrl: dbUser.imageUrl,
   };
 }
 

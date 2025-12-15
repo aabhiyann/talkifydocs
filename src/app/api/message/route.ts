@@ -1,4 +1,4 @@
-import { db } from "@/db";
+import { db } from "@/lib/db";
 import { openai } from "@/lib/openai";
 import { getPineconeClient } from "@/lib/pinecone";
 import { sendMessageValidator } from "@/lib/validators/SendMessageValidator";
@@ -41,7 +41,7 @@ export const POST = async (req: NextRequest) => {
     }
 
     // Check rate limit
-    const rateLimit = checkRateLimit(clientIP, "MESSAGE");
+    const rateLimit = await checkRateLimit(clientIP, "MESSAGE");
     if (!rateLimit.allowed) {
       throw new ValidationError("Rate limit exceeded. Please try again later.");
     }
@@ -82,12 +82,42 @@ export const POST = async (req: NextRequest) => {
       throw new NotFoundError("File");
     }
 
+    // Create or reuse a conversation for this file+user
+    let conversation = await db.conversation.findFirst({
+      where: {
+        userId: user.id,
+        conversationFiles: {
+          some: {
+            fileId,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    if (!conversation) {
+      conversation = await db.conversation.create({
+        data: {
+          title: file.name,
+          userId: user.id,
+          conversationFiles: {
+            create: {
+              fileId,
+            },
+          },
+        },
+      });
+    }
+
     await db.message.create({
       data: {
         text: message,
         isUserMessage: true,
         userId: user.id,
         fileId,
+        conversationId: conversation.id,
       },
     });
 
@@ -109,7 +139,7 @@ export const POST = async (req: NextRequest) => {
 
     const prevMessages = await db.message.findMany({
       where: {
-        fileId,
+        conversationId: conversation.id,
       },
       orderBy: {
         createdAt: "asc",
@@ -161,6 +191,7 @@ export const POST = async (req: NextRequest) => {
             isUserMessage: false,
             fileId,
             userId: user.id,
+            conversationId: conversation.id,
           },
         });
       },

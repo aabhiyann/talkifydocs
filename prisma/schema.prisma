@@ -3,62 +3,173 @@ generator client {
 }
 
 datasource db {
-  provider     = "postgresql"
-  url          = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // Using Prisma relation mode for safer relation handling across environments
   relationMode = "prisma"
-}
-
-model User {
-  id    String @id @unique //matches kinde user id
-  email String @unique
-
-  File    File[]
-  Message Message[]
-
-  stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
-  stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
-  stripePriceId          String?   @map(name: "stripe_price_id")
-  stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
 }
 
 enum UploadStatus {
   PENDING
   PROCESSING
-  FAILED
   SUCCESS
+  FAILED
+}
+
+enum UserTier {
+  FREE
+  PRO
+  ADMIN
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  TRIALING
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  name      String?
+  imageUrl  String?
+  tier      UserTier @default(FREE)
+
+  stripeCustomerId     String?            @unique
+  subscriptionStatus   SubscriptionStatus @default(TRIALING)
+  stripeSubscriptionId String?           @unique
+  stripePriceId        String?
+  stripeCurrentPeriodEnd DateTime?
+
+  files         File[]
+  messages      Message[]
+  conversations Conversation[]
+  highlights    Highlight[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clerkId])
+  @@index([email])
 }
 
 model File {
   id   String @id @default(cuid())
   name String
 
+  key         String        @unique
+  url         String
+  size        BigInt        @db.BigInt
+  pageCount   Int
   uploadStatus UploadStatus @default(PENDING)
+  thumbnailUrl String?
 
-  url      String
-  key      String
-  messages Message[]
+  summary  String? @db.Text
+  entities Json?
+  metadata Json?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  messages          Message[]
+  conversationFiles ConversationFile[]
+  highlights        Highlight[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  User      User?    @relation(fields: [userId], references: [id])
-  userId    String?
 
   @@index([userId])
+  @@index([uploadStatus])
+  @@index([createdAt])
 }
 
 model Message {
   id   String @id @default(cuid())
-  text String @db.Text()
+  text String @db.Text
 
   isUserMessage Boolean
+  citations     Json?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  file   File?  @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  fileId String?
+
+  conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  User      User?    @relation(fields: [userId], references: [id])
-  userId    String?
-  File      File?    @relation(fields: [fileId], references: [id])
-  fileId    String?
 
   @@index([userId])
   @@index([fileId])
+  @@index([conversationId])
+  @@index([createdAt])
+}
+
+model Conversation {
+  id    String @id @default(cuid())
+  title String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  messages          Message[]
+  conversationFiles ConversationFile[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model ConversationFile {
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
+
+  file   File   @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  fileId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([conversationId, fileId])
+  @@index([fileId])
+}
+
+model Highlight {
+  id       String @id @default(cuid())
+  question String @db.Text
+  answer   String @db.Text
+  citations Json?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  file   File   @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  fileId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([fileId])
+  @@index([createdAt])
+}
+
+model RateLimit {
+  id          String   @id @default(cuid())
+  identifier  String
+  operation   String
+  count       Int
+  windowStart DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([identifier, operation, windowStart])
 }

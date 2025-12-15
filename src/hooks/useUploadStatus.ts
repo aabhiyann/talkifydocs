@@ -2,6 +2,24 @@ import { create } from "zustand";
 
 export type UploadStatus = "idle" | "uploading" | "processing" | "success" | "error";
 
+// Map Prisma UploadStatus enum values to UI UploadStatus states
+// Prisma: "PENDING" | "PROCESSING" | "SUCCESS" | "FAILED"
+export const mapDbUploadStatusToUi = (
+  status: "PENDING" | "PROCESSING" | "SUCCESS" | "FAILED" | null | undefined,
+): UploadStatus => {
+  switch (status) {
+    case "SUCCESS":
+      return "success";
+    case "FAILED":
+      return "error";
+    case "PENDING":
+    case "PROCESSING":
+      return "processing";
+    default:
+      return "idle";
+  }
+};
+
 export type FileUpload = {
   id: string;
   file: File;

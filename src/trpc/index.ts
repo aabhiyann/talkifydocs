@@ -12,25 +12,14 @@ export const appRouter = router({
     const { getCurrentUser } = await import("@/lib/auth");
     const user = await getCurrentUser();
 
-    if (!user || !user.id || !user.email)
+    if (!user || !user.id || !user.email) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
-
-    // check if the user is in the database
-    const dbUser = await db.user.findFirst({
-      where: {
-        id: user.id,
-      },
-    });
-
-    if (!dbUser) {
-      // create user in the db
-      await db.user.create({
-        data: {
-          id: user.id,
-          email: user.email,
-        },
-      });
     }
+
+    // User is already upserted in getCurrentUser; just ensure record exists
+    await db.user.findUniqueOrThrow({
+      where: { id: user.id },
+    });
 
     return { success: true };
   }),
@@ -52,7 +41,7 @@ export const appRouter = router({
 
     if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-    const dbUser = await db.user.findFirst({
+    const dbUser = await db.user.findUnique({
       where: {
         id: userId,
       },
