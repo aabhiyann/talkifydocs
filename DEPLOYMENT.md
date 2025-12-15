@@ -161,6 +161,13 @@ NODE_ENV=production
 
 ## Post-Deployment Verification
 
+### Automated Smoke Tests
+Run the smoke test script:
+```bash
+./scripts/smoke-tests.sh https://your-domain.com
+```
+
+Or manually verify:
 - [ ] Health check endpoint returns 200: `curl https://your-domain.com/api/health`
 - [ ] Homepage loads correctly
 - [ ] Sign up flow works
@@ -171,6 +178,18 @@ NODE_ENV=production
 - [ ] Admin dashboard accessible (for admin users)
 - [ ] Error tracking in Sentry (if configured)
 - [ ] Analytics tracking (if configured)
+
+### Performance Verification
+Run the performance check script:
+```bash
+./scripts/performance-check.sh
+```
+
+Check Lighthouse scores:
+- [ ] Performance score > 70
+- [ ] Accessibility score > 90
+- [ ] Best Practices score > 90
+- [ ] SEO score > 80
 
 ## Performance Optimization
 
