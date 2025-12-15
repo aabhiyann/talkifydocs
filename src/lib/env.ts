@@ -19,17 +19,11 @@ const envSchema = z.object({
   UPLOADTHING_SECRET: z.string().min(1, "UploadThing secret is required"),
   UPLOADTHING_APP_ID: z.string().min(1, "UploadThing app ID is required"),
 
-  // Kinde Auth
-  KINDE_CLIENT_ID: z.string().min(1, "Kinde client ID is required"),
-  KINDE_CLIENT_SECRET: z.string().min(1, "Kinde client secret is required"),
-  KINDE_ISSUER_URL: z.string().url("Invalid Kinde issuer URL"),
-  KINDE_SITE_URL: z.string().url("Invalid Kinde site URL"),
-  KINDE_POST_LOGOUT_REDIRECT_URL: z
+  // Clerk Auth
+  CLERK_SECRET_KEY: z.string().min(1, "Clerk secret key is required"),
+  CLERK_WEBHOOK_SECRET: z
     .string()
-    .url("Invalid post logout redirect URL"),
-  KINDE_POST_LOGIN_REDIRECT_URL: z
-    .string()
-    .url("Invalid post login redirect URL"),
+    .min(1, "Clerk webhook secret is required for user sync"),
 
   // App
   NODE_ENV: z
@@ -55,14 +49,8 @@ try {
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || "",
     UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET || "",
     UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID || "",
-    KINDE_CLIENT_ID: process.env.KINDE_CLIENT_ID || "",
-    KINDE_CLIENT_SECRET: process.env.KINDE_CLIENT_SECRET || "",
-    KINDE_ISSUER_URL: process.env.KINDE_ISSUER_URL || "https://localhost:3000",
-    KINDE_SITE_URL: process.env.KINDE_SITE_URL || "https://localhost:3000",
-    KINDE_POST_LOGOUT_REDIRECT_URL:
-      process.env.KINDE_POST_LOGOUT_REDIRECT_URL || "https://localhost:3000",
-    KINDE_POST_LOGIN_REDIRECT_URL:
-      process.env.KINDE_POST_LOGIN_REDIRECT_URL || "https://localhost:3000",
+    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY || "",
+    CLERK_WEBHOOK_SECRET: process.env.CLERK_WEBHOOK_SECRET || "",
     NODE_ENV: process.env.NODE_ENV || "development",
     PORT: process.env.PORT || "3000",
     VERCEL_URL: process.env.VERCEL_URL,
