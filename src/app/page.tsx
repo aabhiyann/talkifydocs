@@ -19,10 +19,10 @@ export default function Home() {
         
         <MaxWidthWrapper>
           <div className="text-center mb-16">
-            <h2 className="text-display-lg mb-6 bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+            <h2 className="text-4xl font-bold mb-6 text-gray-900 dark:text-white font-serif">
               {marketing.home.previewTitle}
             </h2>
-            <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               {marketing.home.previewDesc}
             </p>
           </div>
@@ -53,10 +53,10 @@ export default function Home() {
       <section className="py-24 bg-gradient-to-b from-white to-primary-50/30 dark:from-secondary-900 dark:to-primary-950/30">
         <MaxWidthWrapper>
           <div className="text-center mb-16">
-            <h2 className="text-display-lg mb-6 bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+            <h2 className="text-4xl font-bold mb-6 text-gray-900 dark:text-white font-serif">
               {marketing.home.howTitle}
             </h2>
-            <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               {marketing.home.howDesc}
             </p>
           </div>

@@ -30,8 +30,8 @@ const ChatInput = ({ isDisabled }: ChatInputProps) => {
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <div className="p-4">
+    <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
+      <div className="w-full max-w-4xl mx-auto">
         <div className="relative">
           <div className="flex items-end space-x-2">
             <div className="flex-1">
@@ -45,7 +45,7 @@ const ChatInput = ({ isDisabled }: ChatInputProps) => {
                 value={message}
                 onKeyDown={handleKeyDown}
                 disabled={isDisabled}
-                className="resize-none pr-20 text-base py-3 min-h-[52px] border-gray-200 focus:border-primary-500 focus:ring-primary-500"
+                className="resize-none pr-20 text-base py-3 min-h-[52px] bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 focus:outline-none focus:ring-2 focus:ring-primary-600 placeholder:text-gray-400"
               />
               
               {/* Action Buttons */}
@@ -76,7 +76,7 @@ const ChatInput = ({ isDisabled }: ChatInputProps) => {
                     addMessage();
                     textareaRef.current?.focus();
                   }}
-                  className="h-8 w-8 p-0 bg-primary-600 hover:bg-primary-700"
+                  className="h-8 w-8 p-0 bg-primary-600 hover:bg-primary-700 text-white rounded-lg hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
                 >
                   {isLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -89,13 +89,13 @@ const ChatInput = ({ isDisabled }: ChatInputProps) => {
           </div>
           
           {/* Helper Text */}
-          <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
+          <div className="mt-2 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
             <span>Press Enter to send, Shift+Enter for new line</span>
             <span>{message.length}/2000</span>
           </div>
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
 

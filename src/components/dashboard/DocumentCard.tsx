@@ -60,7 +60,7 @@ export const DocumentCard = ({ file, viewMode, onDelete, onRetry, isDemo = false
   const topKeyTerms = keyTerms.slice(0, 3);
 
   return (
-    <Card className="group hover-lift hover-glow animate-scale-in transition-all duration-300">
+    <Card className="group hover:shadow-xl hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-300 cursor-pointer hover:-translate-y-1">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-start space-x-3">
@@ -76,7 +76,7 @@ export const DocumentCard = ({ file, viewMode, onDelete, onRetry, isDemo = false
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <CardTitle className="text-heading-sm card-title group-hover:text-primary-600 transition-colors duration-200 line-clamp-2">
+              <CardTitle className="text-heading-sm card-title group-hover:text-primary-600 transition-colors duration-200 line-clamp-2 font-serif">
                 {file.name}
               </CardTitle>
               <div className="flex items-center space-x-2 text-body-sm text-gray-500 dark:text-gray-400 mt-1">

@@ -5,36 +5,43 @@ import Link from "next/link";
 import { ArrowRight, Sparkles, Zap, Shield } from "lucide-react";
 import { marketing } from "@/content/marketing";
 import { buttonVariants } from "./ui/button";
+import { cn } from "@/lib/utils";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden py-20 px-6">
+      {/* Background Grid Pattern - Wist-Inspired */}
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+      
       {/* Background Elements */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-primary-950 dark:via-secondary-900 dark:to-accent-950" />
-        {/* Animated Background Shapes */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-primary-400/20 to-accent-400/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-accent-400/20 to-primary-400/20 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-white dark:from-gray-950 dark:via-gray-950 dark:to-gray-900" />
+        {/* Subtle gradient overlays */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-primary-400/10 to-primary-600/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-primary-600/10 to-primary-400/10 rounded-full blur-3xl" />
       </div>
 
-      <MaxWidthWrapper className="relative z-10">
+      <MaxWidthWrapper className="relative z-10 max-w-6xl">
         <div className="text-center space-y-8">
-          {/* Badge */}
-          <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full glass border border-primary-200/50 dark:border-primary-700/50 shadow-soft">
+          {/* Badge - Wist Style */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-full mb-6 animate-fade-in">
             <Sparkles className="w-4 h-4 text-primary-600" />
-            <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
-              {marketing.hero.badge}
+            <span className="text-sm font-medium text-primary-600">
+              Now with GPT-4o
             </span>
           </div>
 
           {/* Main Content */}
           <div className="space-y-6">
-            <h1 className="text-display-2xl md:text-display-xl lg:text-display-2xl font-extrabold bg-gradient-to-r from-primary-600 via-accent-600 to-primary-600 bg-clip-text text-transparent animate-fade-in">
-              {marketing.hero.heading}
+            {/* Headline - Large Serif Font */}
+            <h1 className="text-6xl md:text-7xl font-bold mb-6 text-gray-900 dark:text-white font-serif tracking-tight animate-fade-in">
+              AI Chat With a Brain.
             </h1>
 
-            <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-3xl mx-auto leading-relaxed animate-slide-up">
-              {marketing.hero.subheading}
+            {/* Subheadline */}
+            <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto leading-relaxed animate-slide-up">
+              Upload your PDFs and chat with them using advanced AI. 
+              Get instant answers with citations.
             </p>
           </div>
 
@@ -77,40 +84,34 @@ const HeroSection = () => {
             </Link>
           </div>
 
-          {/* Feature Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
-            <div className="group glass rounded-2xl p-6 border border-primary-100/50 dark:border-primary-700/50 hover:bg-white/80 dark:hover:bg-secondary-800/80 transition-all duration-300 hover:scale-105 hover:shadow-strong animate-bounce-in">
-              <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                <Zap className="w-6 h-6 text-white" />
+          {/* Feature Cards - Wist Style */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20">
+            <div className="group bg-white dark:bg-gray-800 rounded-2xl p-8 hover:shadow-xl transition-shadow duration-300 hover:-translate-y-1">
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center mb-4">
+                <Zap className="w-6 h-6 text-primary-600" />
               </div>
-              <h3 className="text-heading-lg text-secondary-900 dark:text-secondary-100 mb-2">
-                Lightning Fast
-              </h3>
-              <p className="text-body-sm text-secondary-600 dark:text-secondary-400">
+              <h3 className="text-xl font-semibold mb-3 font-serif">Lightning Fast</h3>
+              <p className="text-gray-600 dark:text-gray-400">
                 Get instant answers from your documents with our advanced AI processing
               </p>
             </div>
 
-            <div className="group glass rounded-2xl p-6 border border-primary-100/50 dark:border-primary-700/50 hover:bg-white/80 dark:hover:bg-secondary-800/80 transition-all duration-300 hover:scale-105 hover:shadow-strong animate-bounce-in delay-200">
-              <div className="w-12 h-12 rounded-xl gradient-accent flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                <Shield className="w-6 h-6 text-white" />
+            <div className="group bg-white dark:bg-gray-800 rounded-2xl p-8 hover:shadow-xl transition-shadow duration-300 hover:-translate-y-1">
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center mb-4">
+                <Shield className="w-6 h-6 text-primary-600" />
               </div>
-              <h3 className="text-heading-lg text-secondary-900 dark:text-secondary-100 mb-2">
-                Secure & Private
-              </h3>
-              <p className="text-body-sm text-secondary-600 dark:text-secondary-400">
+              <h3 className="text-xl font-semibold mb-3 font-serif">Secure & Private</h3>
+              <p className="text-gray-600 dark:text-gray-400">
                 Your documents are encrypted and processed securely with enterprise-grade security
               </p>
             </div>
 
-            <div className="group glass rounded-2xl p-6 border border-primary-100/50 dark:border-primary-700/50 hover:bg-white/80 dark:hover:bg-secondary-800/80 transition-all duration-300 hover:scale-105 hover:shadow-strong animate-bounce-in delay-400">
-              <div className="w-12 h-12 rounded-xl gradient-secondary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                <Sparkles className="w-6 h-6 text-white" />
+            <div className="group bg-white dark:bg-gray-800 rounded-2xl p-8 hover:shadow-xl transition-shadow duration-300 hover:-translate-y-1">
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center mb-4">
+                <Sparkles className="w-6 h-6 text-primary-600" />
               </div>
-              <h3 className="text-heading-lg text-secondary-900 dark:text-secondary-100 mb-2">
-                Smart Analysis
-              </h3>
-              <p className="text-body-sm text-secondary-600 dark:text-secondary-400">
+              <h3 className="text-xl font-semibold mb-3 font-serif">Smart Analysis</h3>
+              <p className="text-gray-600 dark:text-gray-400">
                 Advanced AI understands context and provides intelligent, accurate responses
               </p>
             </div>

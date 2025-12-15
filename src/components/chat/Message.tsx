@@ -91,13 +91,11 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
           })}
         >
           <div
-            className={cn("px-4 py-2 rounded-lg inline-block", {
-              "bg-primary-600 text-secondary-50": message.isUserMessage,
-              "bg-muted text-foreground": !message.isUserMessage,
-              "rounded-br-none":
-                !isNextMessageSamePerson && message.isUserMessage,
-              "rounded-bl-none":
-                !isNextMessageSamePerson && !message.isUserMessage,
+            className={cn("px-4 py-3 rounded-2xl inline-block shadow-sm", {
+              "bg-primary-600 text-white ml-auto": message.isUserMessage,
+              "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 mr-auto": !message.isUserMessage,
+              "rounded-tr-sm": message.isUserMessage,
+              "rounded-tl-sm": !message.isUserMessage,
             })}
           >
             {typeof message.text === "string" ? (

@@ -191,46 +191,16 @@ const Messages = ({ fileId, onCitationClick }: MessagesProps) => {
                   )}
                 </div>
 
-                {/* Message Content */}
-                <Card
-                  className={`${
-                    message.isUserMessage
-                      ? "bg-primary-600 text-white border-primary-600"
-                      : "bg-card border-border"
-                  }`}
-                >
-                  <CardContent className="p-4">
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium opacity-70">
-                        {message.isUserMessage ? "You" : "AI Assistant"}
-                      </div>
-                      <div
-                        className={`${
-                          message.isUserMessage
-                            ? "text-white"
-                            : "text-foreground"
-                        }`}
-                      >
-                        <Message
-                          message={message}
-                          isNextMessageSamePerson={false}
-                          onCitationClick={onCitationClick}
-                          previousUserMessage={previousUserMessage}
-                          fileId={fileId}
-                        />
-                      </div>
-                      <div
-                        className={`text-xs opacity-60 ${
-                          message.isUserMessage
-                            ? "text-white"
-                            : "text-gray-500 dark:text-gray-400"
-                        }`}
-                      >
-                        {new Date(message.createdAt).toLocaleTimeString()}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                {/* Message Content - Wist Style */}
+                <div className="max-w-[80%]">
+                  <Message
+                    message={message}
+                    isNextMessageSamePerson={false}
+                    onCitationClick={onCitationClick}
+                    previousUserMessage={previousUserMessage}
+                    fileId={fileId}
+                  />
+                </div>
               </div>
             </div>
           );
