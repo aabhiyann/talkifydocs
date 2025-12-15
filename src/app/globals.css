@@ -7,50 +7,50 @@
 
 @layer base {
   :root {
-    /* Design System Integration */
-    --background: var(--secondary-50);
-    --foreground: var(--secondary-900);
-    --card: var(--secondary-50);
-    --card-foreground: var(--secondary-900);
-    --popover: var(--secondary-50);
-    --popover-foreground: var(--secondary-900);
-    --primary: var(--primary-500);
-    --primary-foreground: var(--secondary-50);
-    --secondary: var(--secondary-500);
-    --secondary-foreground: var(--secondary-50);
-    --muted: var(--secondary-100);
-    --muted-foreground: var(--secondary-600);
-    --accent: var(--accent-500);
-    --accent-foreground: var(--secondary-50);
+    /* Design System Integration - Wist-Inspired */
+    --background: var(--gray-50); /* Soft White */
+    --foreground: var(--gray-900); /* Deep Navy/Black */
+    --card: var(--gray-50); /* White */
+    --card-foreground: var(--gray-900);
+    --popover: var(--gray-50);
+    --popover-foreground: var(--gray-900);
+    --primary: var(--primary-600); /* Blue CTA */
+    --primary-foreground: var(--gray-50);
+    --secondary: var(--gray-500);
+    --secondary-foreground: var(--gray-50);
+    --muted: var(--gray-100); /* Light Gray */
+    --muted-foreground: var(--gray-500); /* Medium Gray */
+    --accent: var(--primary-600);
+    --accent-foreground: var(--gray-50);
     --destructive: var(--error-500);
-    --destructive-foreground: var(--secondary-50);
-    --border: var(--secondary-200);
-    --input: var(--secondary-200);
-    --ring: var(--primary-500);
+    --destructive-foreground: var(--gray-50);
+    --border: var(--gray-200); /* Border Gray */
+    --input: var(--gray-200);
+    --ring: var(--primary-600);
     --radius: var(--radius-lg);
   }
 
   .dark {
-    /* Dark mode uses inverted design system variables */
-    --background: var(--secondary-900);
-    --foreground: var(--secondary-50);
-    --card: var(--secondary-800);
-    --card-foreground: var(--secondary-100);
-    --popover: var(--secondary-800);
-    --popover-foreground: var(--secondary-100);
-    --primary: var(--primary-500);
-    --primary-foreground: var(--secondary-900);
-    --secondary: var(--secondary-700);
-    --secondary-foreground: var(--secondary-100);
-    --muted: var(--secondary-800);
-    --muted-foreground: var(--secondary-400);
-    --accent: var(--accent-500);
-    --accent-foreground: var(--secondary-900);
+    /* Dark mode - Wist-Inspired */
+    --background: var(--gray-50); /* Deep Navy/Black #0A0A0A */
+    --foreground: var(--gray-900); /* Soft White #FAFAFA */
+    --card: var(--gray-100); /* Card Background #1A1A1A */
+    --card-foreground: var(--gray-900);
+    --popover: var(--gray-100);
+    --popover-foreground: var(--gray-900);
+    --primary: var(--primary-600); /* Blue CTA */
+    --primary-foreground: var(--gray-900);
+    --secondary: var(--gray-500);
+    --secondary-foreground: var(--gray-900);
+    --muted: var(--gray-100);
+    --muted-foreground: var(--gray-600); /* Secondary Text #A0A0A0 */
+    --accent: var(--primary-600);
+    --accent-foreground: var(--gray-900);
     --destructive: var(--error-500);
-    --destructive-foreground: var(--secondary-900);
-    --border: var(--secondary-700);
-    --input: var(--secondary-700);
-    --ring: var(--primary-500);
+    --destructive-foreground: var(--gray-900);
+    --border: var(--gray-200); /* Border #2A2A2A */
+    --input: var(--gray-200);
+    --ring: var(--primary-600);
   }
 }
 
