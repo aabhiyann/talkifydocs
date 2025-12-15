@@ -24,7 +24,6 @@ import {
 import { Progress } from "./ui/progress";
 import { useUploadThing } from "@/lib/uploadthing";
 import { useToast } from "./ui/use-toast";
-import { trpc } from "@/app/_trpc/client";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -50,51 +49,91 @@ const UploadDropzone = () => {
 
   const { startUpload } = useUploadThing("pdfUploader");
 
-  const { mutate: startPolling } = trpc.getFile.useMutation({
-    onSuccess: (file, variables, context) => {
-      const uploadId = context as string;
-      updateUpload(uploadId, {
-        status: "success",
-        dbFileId: file.id,
-      });
-      
-      // If only one file, redirect immediately
-      const allUploads = getAllUploads();
-      if (allUploads.length === 1) {
-        setTimeout(() => {
-          router.push(`/dashboard/${file.id}`);
-        }, 1000);
-      } else {
-        toast({
-          title: "Upload complete",
-          description: `${file.name} has been processed successfully.`,
-        });
-      }
-    },
-    onError: (error, variables, context) => {
-      const uploadId = context as string;
-      let errorMsg = error.message || "Failed to process file";
+  const listenForProcessing = useCallback(
+    (uploadId: string, fileId: string, fileName: string) => {
+      const eventSource = new EventSource(
+        `/api/process-upload?fileId=${encodeURIComponent(fileId)}`
+      );
 
-      // Provide more specific error messages
-      if (errorMsg.includes("RetryError")) {
-        errorMsg =
-          "File processing is taking longer than expected. Please try again.";
-      } else if (errorMsg.includes("setup")) {
-        errorMsg =
-          "The PDF file appears to be corrupted or unsupported. Please try a different file.";
-      } else if (errorMsg.includes("timeout")) {
-        errorMsg =
-          "File processing timed out. Please try again with a smaller file.";
-      }
+      eventSource.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data) as {
+            status: string;
+            file?: {
+              id: string;
+              name: string;
+              uploadStatus: string;
+              thumbnailUrl: string | null;
+              pageCount: number | null;
+              metadata?: Record<string, any> | null;
+            };
+          };
 
-      updateUpload(uploadId, {
-        status: "error",
-        error: errorMsg,
-      });
+          if (!data || !data.status) return;
+
+          if (data.status === "NOT_FOUND" || data.status === "ERROR") {
+            updateUpload(uploadId, {
+              status: "error",
+              error:
+                data.status === "NOT_FOUND"
+                  ? "File not found. Please try uploading again."
+                  : "An error occurred while processing the file.",
+            });
+            eventSource.close();
+            return;
+          }
+
+          const isSuccess = data.status === "SUCCESS";
+          const isFailed = data.status === "FAILED";
+
+          if (isSuccess && data.file) {
+            updateUpload(uploadId, {
+              status: "success",
+              dbFileId: data.file.id,
+            });
+
+            const allUploads = getAllUploads();
+            if (allUploads.length === 1) {
+              setTimeout(() => {
+                router.push(`/dashboard/${data.file!.id}`);
+              }, 1000);
+            } else {
+              toast({
+                title: "Upload complete",
+                description: `${data.file.name} has been processed successfully.`,
+              });
+            }
+
+            eventSource.close();
+            return;
+          }
+
+          if (isFailed) {
+            updateUpload(uploadId, {
+              status: "error",
+              error:
+                "We couldn't process this file. Please check the file and try again.",
+            });
+            eventSource.close();
+            return;
+          }
+
+          // Intermediate processing state
+          updateUpload(uploadId, {
+            status: "processing",
+          });
+        } catch (e) {
+          console.error("Failed to parse SSE message", e);
+        }
+      };
+
+      eventSource.onerror = () => {
+        console.warn("SSE connection error for upload", uploadId);
+        eventSource.close();
+      };
     },
-    retry: true,
-    retryDelay: 1000,
-  });
+    [getAllUploads, router, toast, updateUpload]
+  );
 
   const processFile = useCallback(
     async (uploadId: string, file: File) => {
@@ -125,10 +164,12 @@ const UploadDropzone = () => {
         }
 
         const fileResponse = res[0];
-        const key = fileResponse?.key;
+        const serverData = (fileResponse as any).serverData as
+          | { id: string; name?: string; status?: string }
+          | undefined;
 
-        if (!key) {
-          throw new Error("No file key returned");
+        if (!serverData || !serverData.id) {
+          throw new Error("Upload completed but no file ID was returned");
         }
 
         updateUpload(uploadId, {
@@ -136,8 +177,12 @@ const UploadDropzone = () => {
           progress: 100,
         });
 
-        // Start polling for processing status
-        startPolling({ key }, { context: uploadId });
+        // Start listening for processing status via SSE
+        listenForProcessing(
+          uploadId,
+          serverData.id,
+          serverData.name || file.name
+        );
       } catch (error) {
         updateUpload(uploadId, {
           status: "error",
@@ -145,7 +190,7 @@ const UploadDropzone = () => {
         });
       }
     },
-    [startUpload, updateUpload, startPolling]
+    [startUpload, updateUpload, listenForProcessing]
   );
 
   const handleDrop = useCallback(
