@@ -16,9 +16,10 @@ type Props = {
   viewMode: "grid" | "list";
   onDelete: (id: string) => void;
   onRetry?: (id: string) => void;
+  isDemo?: boolean;
 };
 
-export const DocumentGrid = ({ files, viewMode, onDelete, onRetry }: Props) => {
+export const DocumentGrid = ({ files, viewMode, onDelete, onRetry, isDemo = false }: Props) => {
   if (!files.length) {
     return null;
   }
@@ -42,6 +43,7 @@ export const DocumentGrid = ({ files, viewMode, onDelete, onRetry }: Props) => {
             viewMode={viewMode}
             onDelete={onDelete}
             onRetry={onRetry}
+            isDemo={isDemo}
           />
         </div>
       ))}

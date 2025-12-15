@@ -43,9 +43,10 @@ type Props = {
   viewMode: "grid" | "list";
   onDelete: (id: string) => void;
   onRetry?: (id: string) => void;
+  isDemo?: boolean;
 };
 
-export const DocumentCard = ({ file, viewMode, onDelete, onRetry }: Props) => {
+export const DocumentCard = ({ file, viewMode, onDelete, onRetry, isDemo = false }: Props) => {
   const createdAt =
     file.createdAt instanceof Date ? file.createdAt : new Date(file.createdAt);
 
@@ -103,7 +104,7 @@ export const DocumentCard = ({ file, viewMode, onDelete, onRetry }: Props) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem asChild>
-                <Link href={`/dashboard/${file.id}`} className="flex items-center">
+                <Link href={isDemo ? `/demo/chat/${file.id}` : `/dashboard/${file.id}`} className="flex items-center">
                   <Eye className="w-4 h-4 mr-2" />
                   <span>View &amp; Chat</span>
                 </Link>
@@ -121,13 +122,15 @@ export const DocumentCard = ({ file, viewMode, onDelete, onRetry }: Props) => {
                 <span>Add to Favorites</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => onDelete(file.id)}
-                className="text-red-600 focus:text-red-600"
-              >
-                <Trash className="w-4 h-4 mr-2" />
-                <span>Delete</span>
-              </DropdownMenuItem>
+              {!isDemo && (
+                <DropdownMenuItem
+                  onClick={() => onDelete(file.id)}
+                  className="text-red-600 focus:text-red-600"
+                >
+                  <Trash className="w-4 h-4 mr-2" />
+                  <span>Delete</span>
+                </DropdownMenuItem>
+              )}
             </div>
           </div>
         </CardHeader>
@@ -189,10 +192,10 @@ export const DocumentCard = ({ file, viewMode, onDelete, onRetry }: Props) => {
 
           <div className="pt-2 flex items-center justify-between gap-2">
             {file.uploadStatus === "SUCCESS" ? (
-              <Link href={`/dashboard/${file.id}`} className="flex-1">
+              <Link href={isDemo ? `/demo/chat/${file.id}` : `/dashboard/${file.id}`} className="flex-1">
                 <Button className="w-full group-hover:bg-primary-600 transition-colors duration-200">
                   <MessagesSquare className="w-4 h-4 mr-2" />
-                  Start Chatting
+                  {isDemo ? "Try Demo" : "Start Chatting"}
                 </Button>
               </Link>
             ) : (

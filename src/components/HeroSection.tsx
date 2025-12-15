@@ -53,6 +53,18 @@ const HeroSection = () => {
             </Link>
 
             <Link
+              href="/demo"
+              className={buttonVariants({
+                variant: "outline",
+                size: "lg",
+                className:
+                  "px-8 py-4 rounded-xl font-semibold border-2 border-dashed border-primary-300 dark:border-primary-600 hover:bg-primary-50/60 dark:hover:bg-primary-900/20 transition-all duration-300 hover:scale-105 focus-ring",
+              })}
+            >
+              Try Demo
+            </Link>
+
+            <Link
               href="/pricing"
               className={buttonVariants({
                 variant: "outline",
