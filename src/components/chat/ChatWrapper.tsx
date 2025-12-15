@@ -23,9 +23,10 @@ import { Progress } from "../ui/progress";
 
 interface ChatWrapperProps {
   fileId: string;
+  onCitationClick?: (payload: { fileId: string; page?: number; citation?: any }) => void;
 }
 
-const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
+const ChatWrapper = memo(({ fileId, onCitationClick }: ChatWrapperProps) => {
   const { data, isLoading, error } = trpc.getFileUploadStatus.useQuery(
     {
       fileId,
@@ -179,7 +180,7 @@ const ChatWrapper = memo(({ fileId }: ChatWrapperProps) => {
         {/* Messages Area */}
         <div className="flex-1 flex flex-col">
           <div className="flex-1 overflow-hidden">
-            <Messages fileId={fileId} />
+            <Messages fileId={fileId} onCitationClick={onCitationClick} />
           </div>
 
           {/* Chat Input */}

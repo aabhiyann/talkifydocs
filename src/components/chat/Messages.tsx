@@ -12,9 +12,14 @@ import { Badge } from "../ui/badge";
 
 interface MessagesProps {
   fileId: string;
+  onCitationClick?: (payload: {
+    fileId: string;
+    page?: number;
+    citation?: any;
+  }) => void;
 }
 
-const Messages = ({ fileId }: MessagesProps) => {
+const Messages = ({ fileId, onCitationClick }: MessagesProps) => {
   const { isLoading: isAiThinking } = useContext(ChatContext);
 
   const { data, isLoading, fetchNextPage } =
@@ -195,6 +200,7 @@ const Messages = ({ fileId }: MessagesProps) => {
                       <Message
                         message={message}
                         isNextMessageSamePerson={false}
+                        onCitationClick={onCitationClick}
                       />
                     </div>
                     <div

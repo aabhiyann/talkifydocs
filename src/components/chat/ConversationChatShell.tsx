@@ -12,6 +12,7 @@ interface ConversationChatShellProps {
 
 const ConversationChatShell = ({ files }: ConversationChatShellProps) => {
   const [activeFileId, setActiveFileId] = useState<string>(files[0]?.id);
+  const [currentPage, setCurrentPage] = useState<number | undefined>(1);
 
   const activeFile = files.find((file) => file.id === activeFileId) ?? files[0];
 
@@ -40,13 +41,27 @@ const ConversationChatShell = ({ files }: ConversationChatShellProps) => {
 
         {/* PDF viewer */}
         <div className="flex-1 px-4 py-4 lg:px-6 lg:py-6">
-          <PdfRenderer url={activeFile.url} />
+          <PdfRenderer
+            url={activeFile.url}
+            page={currentPage}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
         </div>
       </div>
 
       {/* Right: Chat */}
       <div className="w-full lg:w-1/2 flex flex-col">
-        <ChatWrapper fileId={activeFile.id} />
+        <ChatWrapper
+          fileId={activeFile.id}
+          onCitationClick={({ fileId, page }) => {
+            if (fileId && fileId !== activeFileId) {
+              setActiveFileId(fileId);
+            }
+            if (typeof page === "number" && page > 0) {
+              setCurrentPage(page);
+            }
+          }}
+        />
       </div>
     </div>
   );

@@ -27,9 +27,17 @@ import PdfFullscreen from "./PdfFullscreen";
 
 interface PdfRendererProps {
   url: string;
+  /**
+   * Optional externally controlled page number (1-based).
+   */
+  page?: number;
+  /**
+   * Callback when the current page changes in the viewer.
+   */
+  onPageChange?: (page: number) => void;
 }
 
-const PdfRenderer = ({ url }: PdfRendererProps) => {
+const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
   const { toast } = useToast();
   const { width, ref } = useResizeDetector();
 
@@ -147,18 +155,27 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   });
 
   const handlePageSubmit = ({ page }: TCustomPageValidator) => {
-    setCurrPage(Number(page));
-    setValue("page", String(page));
+    const next = Number(page);
+    setCurrPage(next);
+    setValue("page", String(next));
+    onPageChange?.(next);
   };
 
   const handlePageChange = (direction: "up" | "down") => {
-    if (direction === "up") {
-      setCurrPage((prev) => (prev + 1 > numPages! ? numPages! : prev + 1));
-      setValue("page", String(currPage + 1));
-    } else {
-      setCurrPage((prev) => (prev - 1 > 1 ? prev - 1 : 1));
-      setValue("page", String(currPage - 1));
-    }
+    setCurrPage((prev) => {
+      if (!numPages) return prev;
+      const next =
+        direction === "up"
+          ? prev + 1 > numPages
+            ? numPages
+            : prev + 1
+          : prev - 1 > 1
+          ? prev - 1
+          : 1;
+      setValue("page", String(next));
+      onPageChange?.(next);
+      return next;
+    });
   };
 
   const handleScaleChange = (newScale: number) => {
@@ -207,6 +224,13 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   const onPageLoadSuccess = () => {
     setRenderedScale(scale);
   };
+
+  // Sync external page prop into internal state & input
+  useEffect(() => {
+    if (typeof page !== "number" || page <= 0) return;
+    setCurrPage(page);
+    setValue("page", String(page));
+  }, [page, setValue]);
 
   if (isLoadingPdf) {
     return (

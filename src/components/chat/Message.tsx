@@ -8,10 +8,15 @@ import { Icons } from "../Icons";
 interface MessageProps {
   message: ExtendedMessage;
   isNextMessageSamePerson: boolean;
+  onCitationClick?: (payload: {
+    fileId: string;
+    page?: number;
+    citation?: any;
+  }) => void;
 }
 
 const Message = forwardRef<HTMLDivElement, MessageProps>(
-  ({ message, isNextMessageSamePerson }, ref) => {
+  ({ message, isNextMessageSamePerson, onCitationClick }, ref) => {
     return (
       <div
         ref={ref}
@@ -69,38 +74,57 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
               (message as any).citations.length > 0 && (
                 <div
                   className={cn(
-                    "mt-2 text-xs",
+                    "mt-2 text-xs flex flex-wrap gap-1",
                     message.isUserMessage
                       ? "text-primary-100"
                       : "text-gray-600 dark:text-gray-300"
                   )}
                 >
-                  <span className="font-medium mr-1">Sources:</span>
-                  {(message as any).citations
-                    .map((c: any) => {
-                      if (!c) return null;
-                      const page =
-                        c.pageNumber ??
-                        c.page ??
-                        (typeof c.pageIndex === "number"
-                          ? c.pageIndex + 1
-                          : undefined);
-                      const labelParts = [
-                        c.filename || c.fileName || c.title,
-                        page ? `p.${page}` : null,
-                      ].filter(Boolean);
-                      const snippet =
-                        typeof c.snippet === "string"
-                          ? `“${c.snippet.slice(0, 80)}${
-                              c.snippet.length > 80 ? "…" : ""
-                            }”`
-                          : null;
-                      return [labelParts.join(" "), snippet]
-                        .filter(Boolean)
-                        .join(" - ");
-                    })
-                    .filter(Boolean)
-                    .join("; ")}
+                  <span className="font-medium mr-1 whitespace-nowrap">
+                    Sources:
+                  </span>
+                  {(message as any).citations.map((c: any, idx: number) => {
+                    if (!c) return null;
+                    const page =
+                      c.pageNumber ??
+                      c.page ??
+                      (typeof c.pageIndex === "number"
+                        ? c.pageIndex + 1
+                        : undefined);
+                    const labelParts = [
+                      c.filename || c.fileName || c.title,
+                      page ? `p.${page}` : null,
+                    ].filter(Boolean);
+                    const label = labelParts.join(" ");
+
+                    const handleClick = () => {
+                      if (!onCitationClick) return;
+                      const targetFileId =
+                        c.fileId || c.file_id || (message as any).fileId;
+                      onCitationClick({
+                        fileId: targetFileId,
+                        page,
+                        citation: c,
+                      });
+                    };
+
+                    return (
+                      <button
+                        key={`${(c.id as string) || idx}`}
+                        type="button"
+                        onClick={handleClick}
+                        className={cn(
+                          "underline-offset-2 hover:underline rounded px-1 py-0.5",
+                          !message.isUserMessage &&
+                            "hover:bg-gray-100 dark:hover:bg-gray-800",
+                          message.isUserMessage &&
+                            "hover:bg-primary-700/60 text-primary-50"
+                        )}
+                      >
+                        {label || `Source ${idx + 1}`}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
 
