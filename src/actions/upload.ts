@@ -1,4 +1,4 @@
-\"use server\";
+"use server";
 
 import { put } from "@vercel/blob";
 import { z } from "zod";
