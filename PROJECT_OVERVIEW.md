@@ -100,35 +100,40 @@
 
 #### Uploading & processing PDFs
 
-- Upload handled by UploadThing router in `src/app/api/uploadthing/core.ts`:
-  - Middleware:
-    - Rate limit by IP via `checkRateLimit(clientIP, "UPLOAD")`.
-    - Ensure the user is authenticated via Clerk.
-  - `onUploadComplete`:
-    - Creates a `File` row with `uploadStatus = "PROCESSING"`.
-    - Downloads the PDF from UploadThing’s URL (with timeout).
-    - Validates that it’s a non‑empty PDF.
-    - Uses LangChain `PDFLoader` to extract page‑level documents.
-    - Ensures a Pinecone index (e.g. `talkifydocs`) exists.
-    - Uses `OpenAIEmbeddings` + `PineconeStore.fromDocuments` to store vectors.
-    - Updates `File.uploadStatus` to `SUCCESS` or `FAILED`.
+- Upload handled by Server Action `uploadPDF` in `src/actions/upload.ts`:
+  - Validates file type (PDF only) and size (tier-based limits).
+  - Uploads to Vercel Blob storage.
+  - Creates a `File` row with `uploadStatus = "PROCESSING"`.
+  - Triggers `processPDF` function asynchronously.
+- Processing pipeline (`src/lib/upload/process-pdf.ts`):
+  - Downloads PDF from Vercel Blob.
+  - Validates and extracts text using LangChain `PDFLoader`.
+  - Generates thumbnail using `pdf-lib` and `sharp`.
+  - Extracts metadata (author, dates, page count) using `pdf-parse`.
+  - Generates summary using OpenAI `gpt-4o`.
+  - Extracts entities (people, orgs, dates) using OpenAI.
+  - Creates embeddings using OpenAI `text-embedding-3-small`.
+  - Stores vectors in Pinecone (namespaced by file ID).
+  - Updates `File` with `uploadStatus = "SUCCESS"` and all extracted data.
+- Real-time status updates via SSE (`/api/process-upload`).
 
-#### Asking questions / chatting with a PDF
+#### Asking questions / chatting with PDFs
 
-- Implemented in `src/app/api/message/route.ts`:
+- Implemented in `src/app/api/chat/route.ts`:
   - Validates request headers & size via `lib/security.validateRequest`.
   - Rate limits per IP via `checkRateLimit(clientIP, "MESSAGE")`.
-  - Validates body shape via `messageSchema` + `sendMessageValidator`.
-  - Authenticates user with Clerk (via `requireUser`) and verifies ownership of the requested `File`.
-  - Stores the user’s question as a `Message` row.
-  - Builds embeddings with OpenAI and loads `PineconeStore` for that file namespace.
-  - Executes `similaritySearch` to get the most relevant chunks.
+  - Authenticates user with Clerk (via `requireUser`).
+  - Loads conversation and associated files (supports multi-document).
+  - Stores the user's question as a `Message` row.
+  - Uses `hybridSearch` to find relevant chunks across all conversation files:
+    - Semantic search via Pinecone (multiple namespaces).
+    - BM25-style keyword re-ranking for better precision.
   - Fetches recent conversation history for context.
-  - Calls OpenAI’s chat completions API with:
-    - System prompt that enforces “only answer from context or say you don’t know”.
-    - User prompt with conversation + context + current question.
-  - Streams the answer back (`OpenAIStream` + `StreamingTextResponse`) and saves the assistant reply to DB.
-  - Adds security headers (CSP, XSS protections, etc.) via `getSecurityHeaders()`.
+  - Builds system prompt with context and conversation history.
+  - Calls OpenAI `gpt-4o` with streaming enabled.
+  - Streams the answer back (`OpenAIStream` + `StreamingTextResponse`).
+  - Saves assistant reply with citations (fileId, page, snippet) to DB.
+  - Citations are clickable and jump to the correct page in PDF viewer.
 
 #### Billing & plans (Stripe)
 

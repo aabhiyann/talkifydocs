@@ -7,7 +7,7 @@ tags: ai, nextjs, react, fullstack, machinelearning
 
 # TalkifyDocs: Building an AI-Powered PDF Assistant with Next.js, OpenAI, and Pinecone
 
-**TL;DR:** I built **TalkifyDocs**, a full-stack AI app where users upload PDFs and then chat with their documents. Under the hood it uses Next.js 14, Prisma, Clerk, Stripe, UploadThing, OpenAI, and Pinecone. This is what I learned about building production-ready AI apps vs. just hacking with the OpenAI API.
+**TL;DR:** I built **TalkifyDocs**, a full-stack AI app where users upload PDFs and then chat with their documents. Under the hood it uses Next.js 16, React 19, Prisma, Clerk, Stripe, Vercel Blob, OpenAI, Pinecone, and includes advanced features like multi-document conversations, highlights, admin dashboard, and production monitoring. This is what I learned about building production-ready AI apps vs. just hacking with the OpenAI API.
 
 > Replace these before posting:
 >
@@ -79,11 +79,12 @@ TalkifyDocs is built as a modern full-stack app on top of Next.js 14’s App Rou
 
 ### Tech Stack
 
-- **Frontend:** Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS, shadcn/Radix-style UI components
-- **Backend:** Next.js route handlers, tRPC, Prisma ORM
-- **AI & Search:** OpenAI Chat Completions, LangChain, Pinecone vector DB
-- **Auth & Billing:** Clerk (hosted auth with prebuilt SignIn/SignUp/UserButton + middleware), Stripe (subscriptions)
-- **Uploads & Storage:** UploadThing (file uploads), PostgreSQL (Neon/Railway/etc.)
+- **Frontend:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS, shadcn/Radix-style UI components
+- **Backend:** Next.js route handlers, Server Actions, Prisma ORM
+- **AI & Search:** OpenAI GPT-4o, LangChain, Pinecone vector DB, Hybrid Search (semantic + BM25)
+- **Auth & Billing:** Clerk (hosted auth with prebuilt components + middleware), Stripe (subscriptions)
+- **Storage & Caching:** Vercel Blob (file storage), Upstash Redis (caching)
+- **Monitoring:** Sentry (error tracking), Google Analytics (user behavior)
 
 ### High-Level Flow
 

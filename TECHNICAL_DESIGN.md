@@ -5,7 +5,7 @@
 ```text
 ┌─────────────────────────────────────────────────────────────┐
 │                         CLIENT LAYER                       │
-│  Next.js 15 App Router (React 19, TypeScript, Tailwind)    │
+│  Next.js 16 App Router (React 19, TypeScript, Tailwind)    │
 │  - Server Components for static content                    │
 │  - Client Components for interactive UI                    │
 │  - Streaming SSR for optimal performance                   │
@@ -80,16 +80,15 @@ model File {
   name              String
   key               String      @unique
   url               String
-  size              Int
+  size              BigInt      @db.BigInt
   pageCount         Int?
   uploadStatus      UploadStatus @default(PENDING)
-  processingError   String?
 
-  // New fields
+  // AI-extracted data
   thumbnailUrl      String?
   summary           String?     @db.Text
-  entities          Json?       // {people: [], dates: [], organizations: []}
-  metadata          Json?       // {author, createdDate, modifiedDate, etc}
+  entities          Json?       // {people: [], dates: [], organizations: [], key_terms: []}
+  metadata          Json?       // {author, title, createdAt, modifiedAt, wordCount, etc}
 
   userId            String
   user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -103,6 +102,7 @@ model File {
 
   @@index([userId])
   @@index([uploadStatus])
+  @@index([createdAt])
 }
 
 model Conversation {
@@ -122,17 +122,17 @@ model Conversation {
 }
 
 model ConversationFile {
-  id              String        @id @default(cuid())
-
   conversationId  String
   conversation    Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
   fileId          String
   file            File          @relation(fields: [fileId], references: [id], onDelete: Cascade)
 
-  addedAt         DateTime      @default(now())
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
-  @@unique([conversationId, fileId])
+  @@id([conversationId, fileId])
+  @@index([fileId])
 }
 
 model Message {
@@ -199,23 +199,23 @@ src/
 │   │   └── sign-up/[[...sign-up]]/page.tsx
 │   ├── (dashboard)/
 │   │   ├── dashboard/
-│   │   │   ├── page.tsx                    # Document grid
-│   │   │   └── loading.tsx
+│   │   │   └── page.tsx                    # Document grid with search
 │   │   ├── chat/
 │   │   │   └── [conversationId]/
-│   │   │       ├── page.tsx                # Split-screen chat
-│   │   │       └── loading.tsx
+│   │   │       └── page.tsx                # Multi-doc split-screen chat
 │   │   └── highlights/
-│   │       └── page.tsx                    # Saved Q&As
+│   │       └── page.tsx                    # Saved Q&As with search
 │   ├── (marketing)/
-│   │   ├── page.tsx                        # Landing page
-│   │   ├── demo/page.tsx                   # Public demo
+│   │   ├── page.tsx                        # Landing page with demo CTA
+│   │   ├── demo/
+│   │   │   ├── page.tsx                    # Public demo page
+│   │   │   └── chat/[fileId]/page.tsx     # Demo chat interface
 │   │   ├── pricing/page.tsx
-│   │   └── docs/page.tsx
+│   │   └── share/[token]/page.tsx         # Public shared conversations
 │   ├── (admin)/
 │   │   └── admin/
-│   │       ├── page.tsx                    # Admin dashboard
-│   │       └── users/page.tsx
+│   │       ├── page.tsx                    # Admin dashboard with metrics
+│   │       └── users/page.tsx             # User management
 │   ├── api/
 │   │   ├── uploadthing/route.ts
 │   │   ├── webhooks/
@@ -232,15 +232,24 @@ src/
 │   │   ├── UploadZone.tsx
 │   │   └── ProcessingStatus.tsx
 │   ├── chat/
-│   │   ├── ChatInterface.tsx
-│   │   ├── MessageList.tsx
-│   │   ├── MessageBubble.tsx
-│   │   ├── ChatInput.tsx
-│   │   ├── PDFViewer.tsx
-│   │   ├── CitationHighlight.tsx
-│   │   └── MultiDocSelector.tsx
+│   │   ├── ConversationChatShell.tsx      # Main chat container
+│   │   ├── ChatWrapper.tsx                # Chat context provider
+│   │   ├── Messages.tsx                    # Message list
+│   │   ├── Message.tsx                     # Individual message with citations
+│   │   ├── ChatInput.tsx                  # Input with voice support
+│   │   ├── ChatExportMenu.tsx             # Export/share menu
+│   │   ├── FileManagementDropdown.tsx     # Add/remove files
+│   │   ├── MultiDocSelector.tsx            # Start multi-doc conversation
+│   │   └── CitationHighlight.tsx          # PDF citation highlighting
 │   ├── highlights/
-│   │   └── HighlightCard.tsx
+│   │   ├── HighlightCard.tsx              # Individual highlight card
+│   │   └── HighlightsSearch.tsx           # Search/filter component
+│   ├── admin/
+│   │   ├── StatsCard.tsx                   # Metric cards
+│   │   ├── RecentUsersTable.tsx           # Recent users table
+│   │   ├── SystemMetrics.tsx              # System health metrics
+│   │   ├── ErrorLogViewer.tsx             # Error log viewer
+│   │   └── UserManagementTable.tsx        # Full user management
 │   ├── landing/
 │   │   ├── Hero.tsx
 │   │   ├── Features.tsx
@@ -251,16 +260,21 @@ src/
 │       ├── Footer.tsx
 │       └── ThemeToggle.tsx
 ├── lib/
-│   ├── db.ts                               # Prisma client
-│   ├── auth.ts                             # Clerk helpers
-│   ├── stripe.ts                           # Stripe client
-│   ├── redis.ts                            # Upstash Redis
+│   ├── db.ts                               # Prisma client singleton
+│   ├── auth.ts                             # Clerk helpers (getCurrentUser, requireUser, requireAdmin)
+│   ├── stripe.ts                           # Stripe client and helpers
+│   ├── cache.ts                            # Redis caching (Upstash + ioredis fallback)
+│   ├── sentry.ts                           # Sentry error tracking
+│   ├── analytics.ts                        # Google Analytics helpers
 │   ├── ai/
-│   │   ├── embeddings.ts                   # OpenAI embeddings
-│   │   ├── chat.ts                         # Chat completions
-│   │   ├── pinecone.ts                     # Vector store
-│   │   ├── hybrid-search.ts                # Semantic + keyword
-│   │   └── entity-extraction.ts            # NER
+│   │   ├── pinecone.ts                     # Pinecone client
+│   │   └── hybrid-search.ts                # Hybrid search (semantic + BM25)
+│   ├── upload/
+│   │   ├── process-pdf.ts                  # Main PDF processing pipeline
+│   │   ├── generate-thumbnail.ts            # PDF thumbnail generation
+│   │   ├── extract-metadata.ts             # PDF metadata extraction
+│   │   ├── extract-entities.ts             # Entity extraction (LLM-based)
+│   │   └── summarize-document.ts           # Document summarization (LLM-based)
 │   ├── upload/
 │   │   ├── process-pdf.ts                  # PDF parsing
 │   │   ├── generate-thumbnail.ts
@@ -277,10 +291,11 @@ src/
 │   ├── useHighlights.ts
 │   └── useSubscription.ts
 ├── actions/
-│   ├── upload.ts                           # Server Actions
-│   ├── chat.ts
-│   ├── highlights.ts
-│   └── admin.ts
+│   ├── upload.ts                           # uploadPDF server action
+│   ├── conversations.ts                   # createConversation, addFileToConversation, removeFileFromConversation
+│   ├── highlights.ts                      # saveAsHighlight, getHighlights, deleteHighlight
+│   ├── export.ts                           # exportChatAsMarkdown, createShareableLink, revokeShareableLink
+│   └── admin.ts                            # updateUserTier, deleteUser, getSystemMetrics
 └── types/
     ├── index.ts
     ├── api.ts
