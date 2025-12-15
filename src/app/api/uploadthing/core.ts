@@ -14,8 +14,8 @@ import { validateFileUpload } from "@/lib/validation";
 const f = createUploadthing();
 
 export const ourFileRouter = {
-  pdfUploader: f({ pdf: { maxFileSize: "4MB" } })
-    .middleware(async ({ req }) => {
+  pdfUploader: f({ pdf: { maxFileSize: "200MB" } }) // Max size, will check plan limits in middleware
+    .middleware(async ({ req, files }) => {
       const clientIP = getClientIP(req);
 
       // Check rate limit for uploads
@@ -28,7 +28,21 @@ export const ourFileRouter = {
 
       if (!user.id) throw new Error("Unauthorized");
 
-      return { userId: user.id };
+      // Check user plan limits (placeholder for now)
+      // TODO: Get actual user plan from database
+      const isProUser = false; // Will be replaced with actual plan check
+      const maxFileSize = isProUser ? 200 * 1024 * 1024 : 50 * 1024 * 1024;
+      
+      // Validate file sizes
+      for (const file of files) {
+        if (file.size > maxFileSize) {
+          throw new Error(
+            `File ${file.name} exceeds the ${isProUser ? "200MB" : "50MB"} limit for your plan.`
+          );
+        }
+      }
+
+      return { userId: user.id, userPlan: isProUser ? "pro" : "free" };
     })
     .onUploadComplete(async ({ metadata, file }) => {
       try {
@@ -49,6 +63,14 @@ export const ourFileRouter = {
         });
 
         console.log(`File created in database with ID: ${createdFile.id}`);
+        
+        // Return file info immediately for client status tracking
+        // Processing will continue in background
+        const fileInfo = {
+          id: createdFile.id,
+          name: file.name,
+          status: "PROCESSING",
+        };
 
         try {
           console.log(`Starting file processing for ${file.name}...`);
