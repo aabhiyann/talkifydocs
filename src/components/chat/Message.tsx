@@ -63,6 +63,47 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
             ) : (
               message.text
             )}
+
+            {/* Optional citations / sources */}
+            {Array.isArray((message as any).citations) &&
+              (message as any).citations.length > 0 && (
+                <div
+                  className={cn(
+                    "mt-2 text-xs",
+                    message.isUserMessage
+                      ? "text-primary-100"
+                      : "text-gray-600 dark:text-gray-300"
+                  )}
+                >
+                  <span className="font-medium mr-1">Sources:</span>
+                  {(message as any).citations
+                    .map((c: any) => {
+                      if (!c) return null;
+                      const page =
+                        c.pageNumber ??
+                        c.page ??
+                        (typeof c.pageIndex === "number"
+                          ? c.pageIndex + 1
+                          : undefined);
+                      const labelParts = [
+                        c.filename || c.fileName || c.title,
+                        page ? `p.${page}` : null,
+                      ].filter(Boolean);
+                      const snippet =
+                        typeof c.snippet === "string"
+                          ? `“${c.snippet.slice(0, 80)}${
+                              c.snippet.length > 80 ? "…" : ""
+                            }”`
+                          : null;
+                      return [labelParts.join(" "), snippet]
+                        .filter(Boolean)
+                        .join(" - ");
+                    })
+                    .filter(Boolean)
+                    .join("; ")}
+                </div>
+              )}
+
             {message.id !== "loading-message" ? (
               <div
                 className={cn("text-xs select-none mt-2 w-full text-right", {
