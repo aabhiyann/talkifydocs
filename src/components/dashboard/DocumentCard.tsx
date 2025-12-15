@@ -131,9 +131,10 @@ export const DocumentCard = ({ file, viewMode, onDelete, onRetry, isDemo = false
                   <span>Delete</span>
                 </DropdownMenuItem>
               )}
-            </div>
-          </div>
-        </CardHeader>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </CardHeader>
 
       <CardContent className="pt-0">
         <div className="space-y-3">
