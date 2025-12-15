@@ -1,9 +1,9 @@
 import UploadButton from "../UploadButton";
 
 /**
- * Thin wrapper around the existing UploadButton-based dialog/dropzone.
- * This keeps the dashboard layout clean and matches the v2 component
- * architecture described in the technical design doc.
+ * UploadZone component for the dashboard.
+ * Uses the UploadButton (which embeds the drag-and-drop area and dialog).
+ * This matches the spec while reusing the existing upload UX.
  */
 export const UploadZone = () => {
   return <UploadButton />;

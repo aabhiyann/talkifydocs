@@ -273,6 +273,17 @@ const Dashboard = memo(() => {
             files={filteredAndSortedFiles as any}
             viewMode={viewMode}
             onDelete={handleDeleteFile}
+            onRetry={async (fileId) => {
+              await fetch("/api/process-upload", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ fileId }),
+              });
+              // getUserFiles query will pick up updated status via refetch
+              utils.getUserFiles.invalidate();
+            }}
           />
         ) : (
           <div className="text-center py-16 animate-fade-in">

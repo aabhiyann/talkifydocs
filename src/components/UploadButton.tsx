@@ -22,13 +22,12 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { Progress } from "./ui/progress";
-import { useUploadThing } from "@/lib/uploadthing";
 import { useToast } from "./ui/use-toast";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { useUploadStatusStore } from "@/hooks/useUploadStatus";
-import { getUserSubscriptionPlan } from "@/lib/stripe";
+import { uploadPDF } from "@/actions";
 
 const UploadDropzone = () => {
   const router = useRouter();
@@ -47,60 +46,50 @@ const UploadDropzone = () => {
     hasActiveUploads,
   } = useUploadStatusStore();
 
-  const { startUpload } = useUploadThing("pdfUploader");
-
   const listenForProcessing = useCallback(
     (uploadId: string, fileId: string, fileName: string) => {
       const eventSource = new EventSource(
-        `/api/process-upload?fileId=${encodeURIComponent(fileId)}`
+        `/api/upload-status?fileId=${encodeURIComponent(fileId)}`
       );
 
       eventSource.onmessage = (event) => {
         try {
-          const data = JSON.parse(event.data) as {
-            status: string;
-            file?: {
-              id: string;
-              name: string;
-              uploadStatus: string;
-              thumbnailUrl: string | null;
-              pageCount: number | null;
-              metadata?: Record<string, any> | null;
-            };
-          };
+          const file = JSON.parse(event.data) as {
+            id: string;
+            name: string;
+            uploadStatus: "PENDING" | "PROCESSING" | "SUCCESS" | "FAILED";
+            thumbnailUrl?: string | null;
+            pageCount?: number | null;
+            metadata?: Record<string, any> | null;
+          } | null;
 
-          if (!data || !data.status) return;
-
-          if (data.status === "NOT_FOUND" || data.status === "ERROR") {
+          if (!file) {
             updateUpload(uploadId, {
               status: "error",
-              error:
-                data.status === "NOT_FOUND"
-                  ? "File not found. Please try uploading again."
-                  : "An error occurred while processing the file.",
+              error: "File not found. Please try uploading again.",
             });
             eventSource.close();
             return;
           }
 
-          const isSuccess = data.status === "SUCCESS";
-          const isFailed = data.status === "FAILED";
+          const isSuccess = file.uploadStatus === "SUCCESS";
+          const isFailed = file.uploadStatus === "FAILED";
 
-          if (isSuccess && data.file) {
+          if (isSuccess) {
             updateUpload(uploadId, {
               status: "success",
-              dbFileId: data.file.id,
+              dbFileId: file.id,
             });
 
             const allUploads = getAllUploads();
             if (allUploads.length === 1) {
               setTimeout(() => {
-                router.push(`/dashboard/${data.file!.id}`);
+                router.push(`/dashboard/${file.id}`);
               }, 1000);
             } else {
               toast({
                 title: "Upload complete",
-                description: `${data.file.name} has been processed successfully.`,
+                description: `${file.name} has been processed successfully.`,
               });
             }
 
@@ -111,7 +100,6 @@ const UploadDropzone = () => {
           if (isFailed) {
             updateUpload(uploadId, {
               status: "error",
-              dbFileId: data.file?.id,
               error:
                 "We couldn't process this file. Please check the file and try again.",
             });
@@ -156,22 +144,13 @@ const UploadDropzone = () => {
           }
         }, 300);
 
-        // Start actual upload
-        const res = await startUpload([file]);
+        // Build FormData for server action
+        const formData = new FormData();
+        formData.append("file", file);
+
+        // Start actual upload via Server Action
+        const result = await uploadPDF(formData);
         clearInterval(progressInterval);
-
-        if (!res || !res[0]) {
-          throw new Error("Upload failed");
-        }
-
-        const fileResponse = res[0];
-        const serverData = (fileResponse as any).serverData as
-          | { id: string; name?: string; status?: string }
-          | undefined;
-
-        if (!serverData || !serverData.id) {
-          throw new Error("Upload completed but no file ID was returned");
-        }
 
         updateUpload(uploadId, {
           status: "processing",
@@ -181,8 +160,8 @@ const UploadDropzone = () => {
         // Start listening for processing status via SSE
         listenForProcessing(
           uploadId,
-          serverData.id,
-          serverData.name || file.name
+          result.fileId,
+          file.name
         );
       } catch (error) {
         updateUpload(uploadId, {

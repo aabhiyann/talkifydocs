@@ -13,13 +13,33 @@ type ProcessPdfParams = {
 };
 
 /**
- * End-to-end PDF processing pipeline:
- * 1. Download PDF from storage
- * 2. Validate content & type
- * 3. Extract metadata (page count, etc.)
- * 4. Generate thumbnail (best-effort, optional)
- * 5. Create embeddings in Pinecone
- * 6. Update File record with SUCCESS / FAILED status and metadata
+ * High-level API matching the spec: process a PDF by fileId.
+ */
+export async function processPDF(fileId: string): Promise<void> {
+  const file = await db.file.findUnique({
+    where: { id: fileId },
+  });
+
+  if (!file) {
+    throw new Error("File not found");
+  }
+
+  await processPdfFile({
+    fileId: file.id,
+    fileUrl: file.url,
+    fileName: file.name,
+  });
+}
+
+/**
+ * Internal implementation of the PDF processing pipeline:
+ * 1. Mark as PROCESSING
+ * 2. Download PDF from storage
+ * 3. Validate content & type
+ * 4. Enforce plan-specific page limits
+ * 5. Extract metadata and generate thumbnail
+ * 6. Create embeddings in Pinecone
+ * 7. Update File record with SUCCESS / FAILED status and metadata
  */
 export async function processPdfFile({
   fileId,
@@ -28,6 +48,12 @@ export async function processPdfFile({
 }: ProcessPdfParams): Promise<void> {
   try {
     console.log(`[upload] Starting processing for file ${fileName} (${fileId})`);
+
+    // Mark as processing
+    await db.file.update({
+      where: { id: fileId },
+      data: { uploadStatus: "PROCESSING" },
+    });
 
     // Download file (with timeout)
     const controller = new AbortController();

@@ -1,6 +1,6 @@
 "use server";
 
 export { initializeCurrentUser } from "./auth";
-export { prepareUpload } from "./upload";
+export { prepareUpload, uploadPDF } from "./upload";
 
 
