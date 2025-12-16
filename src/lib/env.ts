@@ -7,6 +7,9 @@ const envSchema = z.object({
   // OpenAI
   OPENAI_API_KEY: z.string().min(1, "OpenAI API key is required"),
 
+  // Groq
+  GROQ_API_KEY: z.string().optional(),
+
   // Pinecone
   PINECONE_API_KEY: z.string().min(1, "Pinecone API key is required"),
   PINECONE_ENVIRONMENT: z.string().min(1, "Pinecone environment is required"),
@@ -26,9 +29,7 @@ const envSchema = z.object({
 
   // Clerk Auth
   CLERK_SECRET_KEY: z.string().min(1, "Clerk secret key is required"),
-  CLERK_WEBHOOK_SECRET: z
-    .string()
-    .min(1, "Clerk webhook secret is required for user sync"),
+  CLERK_WEBHOOK_SECRET: z.string().min(1, "Clerk webhook secret is required for user sync"),
 
   // Clerk public configuration
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z
@@ -40,9 +41,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string().default("/dashboard"),
 
   // App
-  NODE_ENV: z
-    .enum(["development", "production", "test"])
-    .default("development"),
+  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   PORT: z.string().default("3000"),
   VERCEL_URL: z.string().optional(),
   NEXT_PUBLIC_APP_URL: z.string().url().optional(),
@@ -72,9 +71,9 @@ try {
 } catch (error) {
   // During build time or when env vars are missing, use defaults
   env = {
-    DATABASE_URL:
-      process.env.DATABASE_URL || "postgresql://localhost:5432/talkifydocs",
+    DATABASE_URL: process.env.DATABASE_URL || "postgresql://localhost:5432/talkifydocs",
     OPENAI_API_KEY: process.env.OPENAI_API_KEY || "",
+    GROQ_API_KEY: process.env.GROQ_API_KEY || "",
     PINECONE_API_KEY: process.env.PINECONE_API_KEY || "",
     PINECONE_ENVIRONMENT: process.env.PINECONE_ENVIRONMENT || "gcp-starter",
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
@@ -82,14 +81,11 @@ try {
     UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET || "",
     UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID || "",
     BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN || "",
-    CLERK_SECRET_KEY: process.env.CLerk_SECRET_KEY || "",
+    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY || "",
     CLERK_WEBHOOK_SECRET: process.env.CLERK_WEBHOOK_SECRET || "",
-    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
-      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "",
-    NEXT_PUBLIC_CLERK_SIGN_IN_URL:
-      process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL || "/sign-in",
-    NEXT_PUBLIC_CLERK_SIGN_UP_URL:
-      process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL || "/sign-up",
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "",
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL || "/sign-in",
+    NEXT_PUBLIC_CLERK_SIGN_UP_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL || "/sign-up",
     NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL:
       process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL || "/dashboard",
     NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL:

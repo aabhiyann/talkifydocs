@@ -63,9 +63,7 @@ export async function uploadPDF(formData: FormData) {
   const freeMaxBytes = 50 * 1024 * 1024;
 
   if (!isProOrAdmin && file.size > freeMaxBytes) {
-    throw new Error(
-      "Free plan supports files up to 50MB. Upgrade to Pro for larger uploads."
-    );
+    throw new Error("Free plan supports files up to 50MB. Upgrade to Pro for larger uploads.");
   }
 
   // Upload to Vercel Blob
@@ -81,6 +79,7 @@ export async function uploadPDF(formData: FormData) {
       key: blob.pathname ?? blob.url,
       url: blob.url,
       size: BigInt(file.size),
+      pageCount: null,
       uploadStatus: "PENDING",
       userId: user.id,
     },
@@ -94,5 +93,3 @@ export async function uploadPDF(formData: FormData) {
     url: created.url,
   };
 }
-
-

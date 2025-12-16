@@ -12,8 +12,7 @@ export const DEMO_DOCUMENTS: DemoDocument[] = [
     id: "demo-1",
     name: "Introduction to Machine Learning.pdf",
     url: "https://your-bucket.s3.amazonaws.com/demo/ml-intro.pdf",
-    summary:
-      "An overview of machine learning concepts, algorithms, and applications.",
+    summary: "An overview of machine learning concepts, algorithms, and applications.",
     pageCount: 25,
     thumbnailUrl: "/demo/ml-thumb.png",
   },
@@ -29,8 +28,7 @@ export const DEMO_DOCUMENTS: DemoDocument[] = [
     id: "demo-3",
     name: "Product Management Framework.pdf",
     url: "https://your-bucket.s3.amazonaws.com/demo/pm-framework.pdf",
-    summary:
-      "Framework for product development and stakeholder management.",
+    summary: "Framework for product development and stakeholder management.",
     pageCount: 32,
     thumbnailUrl: "/demo/pm-thumb.png",
   },

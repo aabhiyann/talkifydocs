@@ -13,11 +13,7 @@ import { useState } from "react";
 interface MessageProps {
   message: ExtendedMessage;
   isNextMessageSamePerson: boolean;
-  onCitationClick?: (payload: {
-    fileId: string;
-    page?: number;
-    citation?: any;
-  }) => void;
+  onCitationClick?: (payload: { fileId: string; page?: number; citation?: any }) => void;
   previousUserMessage?: string;
   fileId?: string;
 }
@@ -43,7 +39,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
           previousUserMessage,
           message.text,
           fileId,
-          Array.isArray((message as any).citations) ? (message as any).citations : undefined
+          Array.isArray((message as any).citations) ? (message as any).citations : undefined,
         );
         toast({
           title: "Highlight saved",
@@ -68,32 +64,30 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
         })}
       >
         <div
-          className={cn(
-            "relative flex h-6 w-6 aspect-square items-center justify-center",
-            {
-              "order-2 bg-primary-600 rounded-sm": message.isUserMessage,
-              "order-1 bg-gray-800 rounded-sm": !message.isUserMessage,
-              invisible: isNextMessageSamePerson,
-            }
-          )}
+          className={cn("relative flex aspect-square h-6 w-6 items-center justify-center", {
+            "order-2 rounded-sm bg-primary-600": message.isUserMessage,
+            "order-1 rounded-sm bg-gray-800": !message.isUserMessage,
+            invisible: isNextMessageSamePerson,
+          })}
         >
           {message.isUserMessage ? (
-            <Icons.user className="fill-secondary-50 text-secondary-50 h-3/4 w-3/4" />
+            <Icons.user className="h-3/4 w-3/4 fill-secondary-50 text-secondary-50" />
           ) : (
-            <Icons.logo className="fill-gray-300 h-3/4 w-3/4" />
+            <Icons.logo className="h-3/4 w-3/4 fill-gray-300" />
           )}
         </div>
 
         <div
-          className={cn("flex flex-col space-y-2 text-base max-w-md mx-2", {
+          className={cn("mx-2 flex max-w-md flex-col space-y-2 text-base", {
             "order-1 items-end": message.isUserMessage,
             "order-2 items-start": !message.isUserMessage,
           })}
         >
           <div
-            className={cn("px-4 py-3 rounded-2xl inline-block shadow-sm", {
-              "bg-primary-600 text-white ml-auto": message.isUserMessage,
-              "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 mr-auto": !message.isUserMessage,
+            className={cn("inline-block rounded-2xl px-4 py-3 shadow-sm", {
+              "ml-auto bg-primary-600 text-white": message.isUserMessage,
+              "mr-auto bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100":
+                !message.isUserMessage,
               "rounded-tr-sm": message.isUserMessage,
               "rounded-tl-sm": !message.isUserMessage,
             })}
@@ -111,67 +105,57 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
             )}
 
             {/* Optional citations / sources */}
-            {Array.isArray((message as any).citations) &&
-              (message as any).citations.length > 0 && (
-                <div
-                  className={cn(
-                    "mt-2 text-xs flex flex-wrap gap-1",
-                    message.isUserMessage
-                      ? "text-primary-100"
-                      : "text-gray-600 dark:text-gray-300"
-                  )}
-                >
-                  <span className="font-medium mr-1 whitespace-nowrap">
-                    Sources:
-                  </span>
-                  {(message as any).citations.map((c: any, idx: number) => {
-                    if (!c) return null;
-                    const page =
-                      c.pageNumber ??
-                      c.page ??
-                      (typeof c.pageIndex === "number"
-                        ? c.pageIndex + 1
-                        : undefined);
-                    const labelParts = [
-                      c.filename || c.fileName || c.title,
-                      page ? `p.${page}` : null,
-                    ].filter(Boolean);
-                    const label = labelParts.join(" ");
+            {Array.isArray((message as any).citations) && (message as any).citations.length > 0 && (
+              <div
+                className={cn(
+                  "mt-2 flex flex-wrap gap-1 text-xs",
+                  message.isUserMessage ? "text-primary-100" : "text-gray-600 dark:text-gray-300",
+                )}
+              >
+                <span className="mr-1 whitespace-nowrap font-medium">Sources:</span>
+                {(message as any).citations.map((c: any, idx: number) => {
+                  if (!c) return null;
+                  const page =
+                    c.pageNumber ??
+                    c.page ??
+                    (typeof c.pageIndex === "number" ? c.pageIndex + 1 : undefined);
+                  const labelParts = [
+                    c.filename || c.fileName || c.title,
+                    page ? `p.${page}` : null,
+                  ].filter(Boolean);
+                  const label = labelParts.join(" ");
 
-                    const handleClick = () => {
-                      if (!onCitationClick) return;
-                      const targetFileId =
-                        c.fileId || c.file_id || (message as any).fileId;
-                      onCitationClick({
-                        fileId: targetFileId,
-                        page,
-                        citation: c,
-                      });
-                    };
+                  const handleClick = () => {
+                    if (!onCitationClick) return;
+                    const targetFileId = c.fileId || c.file_id || (message as any).fileId;
+                    onCitationClick({
+                      fileId: targetFileId,
+                      page,
+                      citation: c,
+                    });
+                  };
 
-                    return (
-                      <button
-                        key={`${(c.id as string) || idx}`}
-                        type="button"
-                        onClick={handleClick}
-                        className={cn(
-                          "underline-offset-2 hover:underline rounded px-1 py-0.5",
-                          !message.isUserMessage &&
-                            "hover:bg-gray-100 dark:hover:bg-gray-800",
-                          message.isUserMessage &&
-                            "hover:bg-primary-700/60 text-primary-50"
-                        )}
-                      >
-                        {label || `Source ${idx + 1}`}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
+                  return (
+                    <button
+                      key={`${(c.id as string) || idx}`}
+                      type="button"
+                      onClick={handleClick}
+                      className={cn(
+                        "rounded px-1 py-0.5 underline-offset-2 hover:underline",
+                        !message.isUserMessage && "hover:bg-gray-100 dark:hover:bg-gray-800",
+                        message.isUserMessage && "hover:bg-primary-700/60 text-primary-50",
+                      )}
+                    >
+                      {label || `Source ${idx + 1}`}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
 
             {message.id !== "loading-message" ? (
-              <div className="flex items-center justify-between mt-2">
-                <div className="text-xs select-none">
+              <div className="mt-2 flex items-center justify-between">
+                <div className="select-none text-xs">
                   {format(new Date(message.createdAt), "HH:mm")}
                 </div>
                 {!message.isUserMessage &&
@@ -185,10 +169,10 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                       disabled={isSaving}
                       className={cn(
                         "h-7 px-2 text-xs",
-                        "text-muted-foreground hover:text-foreground"
+                        "text-muted-foreground hover:text-foreground",
                       )}
                     >
-                      <Save className="h-3 w-3 mr-1" />
+                      <Save className="mr-1 h-3 w-3" />
                       {isSaving ? "Saving..." : "Save"}
                     </Button>
                   )}
@@ -198,7 +182,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 
 Message.displayName = "Message";

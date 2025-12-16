@@ -29,7 +29,7 @@ type PdfViewerRef = {
  */
 export function useCitationHighlight(
   message: MessageWithCitations,
-  pdfViewerRef: React.RefObject<PdfViewerRef | null>
+  pdfViewerRef: React.RefObject<PdfViewerRef | null>,
 ) {
   useEffect(() => {
     if (!message?.content || !Array.isArray(message.citations)) return;
@@ -63,5 +63,3 @@ export function useCitationHighlight(
     });
   }, [message, pdfViewerRef]);
 }
-
-

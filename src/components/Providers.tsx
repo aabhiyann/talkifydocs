@@ -13,16 +13,14 @@ const Providers = ({ children }: PropsWithChildren) => {
   const [trpcClient] = useState(() =>
     trpc.createClient({
       links: [httpBatchLink({ url: "/api/trpc" })],
-    })
+    }),
   );
 
   return (
     <ThemeProvider defaultTheme="system" storageKey="talkifydocs-ui-theme">
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
-          <KeyboardShortcutsProvider>
-            {children}
-          </KeyboardShortcutsProvider>
+          <KeyboardShortcutsProvider>{children}</KeyboardShortcutsProvider>
         </QueryClientProvider>
       </trpc.Provider>
     </ThemeProvider>

@@ -15,7 +15,7 @@ export default async function HighlightsPage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-display-lg font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-2">
+          <h1 className="text-display-lg mb-2 bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text font-bold text-transparent">
             Saved Highlights
           </h1>
           <p className="text-body-lg text-gray-600 dark:text-gray-300">
@@ -24,8 +24,8 @@ export default async function HighlightsPage() {
         </div>
 
         {highlights.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+          <div className="py-16 text-center">
+            <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
               <svg
                 className="h-12 w-12 text-gray-400"
                 fill="none"
@@ -40,10 +40,10 @@ export default async function HighlightsPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-heading-lg font-semibold text-foreground mb-2">
+            <h3 className="text-heading-lg mb-2 font-semibold text-foreground">
               No highlights saved yet
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mb-4">
+            <p className="mx-auto mb-4 max-w-md text-gray-600 dark:text-gray-400">
               Save important Q&A pairs from your chats to reference later
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -57,4 +57,3 @@ export default async function HighlightsPage() {
     </div>
   );
 }
-

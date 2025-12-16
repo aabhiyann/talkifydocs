@@ -13,12 +13,11 @@ interface PageProps {
 
 function DemoBanner() {
   return (
-    <div className="bg-blue-50 dark:bg-blue-900/30 border-b border-blue-200 dark:border-blue-800 p-3 text-center text-sm text-blue-800 dark:text-blue-100">
+    <div className="border-b border-blue-200 bg-blue-50 p-3 text-center text-sm text-blue-800 dark:border-blue-800 dark:bg-blue-900/30 dark:text-blue-100">
       You&apos;re in demo mode.
-      <Link href="/sign-up" className="font-medium text-blue-600 dark:text-blue-300 ml-1">
+      <Link href="/sign-up" className="ml-1 font-medium text-blue-600 dark:text-blue-300">
         Sign up free
-      </Link>
-      {" "}
+      </Link>{" "}
       to upload your own PDFs and save your conversations.
     </div>
   );
@@ -32,21 +31,21 @@ export default function DemoChatPage({ params }: PageProps) {
   const conversation = DEMO_CONVERSATIONS.find((c) => c.fileId === params.fileId);
 
   return (
-    <div className="flex flex-col h-screen bg-background">
+    <div className="flex h-screen flex-col bg-background">
       <DemoBanner />
       <div className="flex flex-1 flex-col lg:flex-row">
         {/* Left: PDF viewer */}
-        <div className="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-border flex flex-col">
+        <div className="flex w-full flex-col border-b border-border lg:w-1/2 lg:border-b-0 lg:border-r">
           <div className="flex-1 px-4 py-4 lg:px-6 lg:py-6">
             <PdfRenderer url={file.url} />
           </div>
         </div>
 
         {/* Right: Chat (read-only demo using preloaded messages) */}
-        <div className="w-full lg:w-1/2 flex flex-col">
-          <div className="border-b p-4 bg-background/95 backdrop-blur-sm flex items-center justify-between">
+        <div className="flex w-full flex-col lg:w-1/2">
+          <div className="bg-background/95 flex items-center justify-between border-b p-4 backdrop-blur-sm">
             <div>
-              <h2 className="font-semibold text-lg">Demo Chat</h2>
+              <h2 className="text-lg font-semibold">Demo Chat</h2>
               <p className="text-xs text-muted-foreground">
                 Responses are based on a fixed demo conversation.
               </p>
@@ -58,7 +57,7 @@ export default function DemoChatPage({ params }: PageProps) {
             </Link>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex-1 space-y-4 overflow-y-auto p-4">
             {conversation ? (
               conversation.messages.map((m, idx) => (
                 <div
@@ -67,9 +66,7 @@ export default function DemoChatPage({ params }: PageProps) {
                 >
                   <div
                     className={`max-w-[75%] rounded-lg px-3 py-2 text-sm ${
-                      m.role === "user"
-                        ? "bg-primary-600 text-white"
-                        : "bg-muted text-foreground"
+                      m.role === "user" ? "bg-primary-600 text-white" : "bg-muted text-foreground"
                     }`}
                   >
                     {m.content}
@@ -77,16 +74,15 @@ export default function DemoChatPage({ params }: PageProps) {
                 </div>
               ))
             ) : (
-              <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                <AlertCircle className="w-8 h-8 mb-2" />
+              <div className="flex h-full flex-col items-center justify-center text-muted-foreground">
+                <AlertCircle className="mb-2 h-8 w-8" />
                 <p>No demo conversation available for this document yet.</p>
               </div>
             )}
           </div>
 
-          <div className="border-t p-4 bg-background/95 backdrop-blur-sm text-center text-xs text-muted-foreground">
-            Live chat is disabled in demo mode. Sign up to chat with your own
-            documents.
+          <div className="bg-background/95 border-t p-4 text-center text-xs text-muted-foreground backdrop-blur-sm">
+            Live chat is disabled in demo mode. Sign up to chat with your own documents.
           </div>
         </div>
       </div>

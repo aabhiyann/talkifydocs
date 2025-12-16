@@ -66,9 +66,9 @@ export function NotificationItem({ notification, onDismiss }: NotificationProps)
   return (
     <div
       className={cn(
-        "relative max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden transform transition-all duration-300 ease-in-out",
+        "pointer-events-auto relative w-full max-w-sm transform overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition-all duration-300 ease-in-out",
         isVisible && !isLeaving ? "translate-x-0 opacity-100" : "translate-x-full opacity-0",
-        styles[notification.type]
+        styles[notification.type],
       )}
     >
       <div className="p-4">
@@ -92,10 +92,10 @@ export function NotificationItem({ notification, onDismiss }: NotificationProps)
               </div>
             )}
           </div>
-          <div className="ml-4 flex-shrink-0 flex">
+          <div className="ml-4 flex flex-shrink-0">
             <button
               onClick={handleDismiss}
-              className="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >
               <span className="sr-only">Close</span>
               <X className="h-5 w-5" />
@@ -116,9 +116,9 @@ export function NotificationContainer({ notifications, onDismiss }: Notification
   return (
     <div
       aria-live="assertive"
-      className="fixed inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start sm:justify-end z-50"
+      className="pointer-events-none fixed inset-0 z-50 flex items-end justify-center px-4 py-6 sm:items-start sm:justify-end sm:p-6"
     >
-      <div className="w-full flex flex-col items-center space-y-4 sm:items-end">
+      <div className="flex w-full flex-col items-center space-y-4 sm:items-end">
         {notifications.map((notification) => (
           <NotificationItem
             key={notification.id}

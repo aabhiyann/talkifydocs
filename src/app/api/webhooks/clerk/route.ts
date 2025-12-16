@@ -7,14 +7,12 @@ import { db } from "@/lib/db";
 const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
 if (!WEBHOOK_SECRET) {
-  console.warn(
-    "[Clerk Webhook] CLERK_WEBHOOK_SECRET is not set. Webhook verification will fail."
-  );
+  console.warn("[Clerk Webhook] CLERK_WEBHOOK_SECRET is not set. Webhook verification will fail.");
 }
 
 export async function POST(req: Request) {
   const payload = await req.text();
-  const headerPayload = headers();
+  const headerPayload = await headers();
 
   const svix_id = headerPayload.get("svix-id");
   const svix_timestamp = headerPayload.get("svix-timestamp");
@@ -52,8 +50,7 @@ export async function POST(req: Request) {
       const { id, email_addresses, image_url, first_name, last_name } = evt.data;
 
       const primaryEmail = email_addresses?.[0]?.email_address ?? "";
-      const fullName =
-        [first_name, last_name].filter((part) => !!part).join(" ") || null;
+      const fullName = [first_name, last_name].filter((part) => !!part).join(" ") || null;
 
       await db.user.upsert({
         where: { clerkId: id },
@@ -64,6 +61,7 @@ export async function POST(req: Request) {
           imageUrl: image_url ?? null,
         },
         update: {
+          clerkId: id,
           email: primaryEmail,
           name: fullName,
           imageUrl: image_url ?? null,
@@ -88,5 +86,3 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ received: true });
 }
-
-

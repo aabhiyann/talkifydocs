@@ -8,7 +8,7 @@ export async function saveAsHighlight(
   question: string,
   answer: string,
   fileId: string,
-  citations?: unknown[]
+  citations?: unknown[],
 ) {
   const user = await requireUser();
 
@@ -97,19 +97,14 @@ export async function createHighlight(params: {
     params.question,
     params.answer,
     params.fileId,
-    Array.isArray(params.citations) ? params.citations : undefined
+    Array.isArray(params.citations) ? params.citations : undefined,
   );
 }
 
-export async function listHighlights(params: {
-  userId: string;
-  fileId?: string;
-}) {
+export async function listHighlights(params: { userId: string; fileId?: string }) {
   const user = await requireUser();
   if (user.id !== params.userId) {
     throw new Error("Unauthorized");
   }
   return getHighlights(params.fileId);
 }
-
-

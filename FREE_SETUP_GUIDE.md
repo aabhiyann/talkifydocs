@@ -3,6 +3,7 @@
 This guide will help you set up all required services for **FREE** to get your PDF chat application running.
 
 ## 📋 Prerequisites
+
 - GitHub account (free)
 - Email address
 - Credit card (for verification only, no charges)
@@ -12,6 +13,7 @@ This guide will help you set up all required services for **FREE** to get your P
 ## 🔑 Step 1: OpenAI API Key (FREE)
 
 ### Get $5 FREE credit (enough for testing)
+
 1. Go to [OpenAI Platform](https://platform.openai.com/)
 2. Sign up with your email
 3. Add a credit card for verification (you get $5 free credit)
@@ -26,6 +28,7 @@ This guide will help you set up all required services for **FREE** to get your P
 ## 🌲 Step 2: Pinecone (FREE)
 
 ### Get free vector database
+
 1. Go to [Pinecone Console](https://app.pinecone.io/)
 2. Sign up with your email
 3. Create a new project
@@ -41,6 +44,7 @@ This guide will help you set up all required services for **FREE** to get your P
 ## 📁 Step 3: UploadThing (FREE)
 
 ### Get free file storage
+
 1. Go to [UploadThing](https://uploadthing.com/)
 2. Sign up with GitHub
 3. Create a new app
@@ -54,6 +58,7 @@ This guide will help you set up all required services for **FREE** to get your P
 ## 🔐 Step 4: Clerk Auth (FREE)
 
 ### Get free authentication
+
 1. Go to [Clerk](https://clerk.com/)
 2. Sign up with your email or GitHub
 3. Create a new application
@@ -70,6 +75,7 @@ This guide will help you set up all required services for **FREE** to get your P
 ## 💳 Step 5: Stripe (FREE)
 
 ### Get free payment processing
+
 1. Go to [Stripe Dashboard](https://dashboard.stripe.com/)
 2. Sign up with your email
 3. Complete account verification
@@ -86,6 +92,7 @@ This guide will help you set up all required services for **FREE** to get your P
 ## 🗄️ Step 6: Database (FREE)
 
 ### Option A: Supabase (Recommended)
+
 1. Go to [Supabase](https://supabase.com/)
 2. Sign up with GitHub
 3. Create a new project
@@ -94,6 +101,7 @@ This guide will help you set up all required services for **FREE** to get your P
 6. Replace `[YOUR-PASSWORD]` with your database password
 
 ### Option B: Railway (Alternative)
+
 1. Go to [Railway](https://railway.app/)
 2. Sign up with GitHub
 3. Create a new PostgreSQL database
@@ -163,6 +171,7 @@ npx prisma db seed
 ## 🎯 Step 9: Test Your Setup
 
 1. Start your development server:
+
    ```bash
    npm run dev
    ```
@@ -191,12 +200,14 @@ npx prisma db seed
 ## 🔧 Troubleshooting
 
 ### If PDF processing still fails:
+
 1. Check your server logs for specific error messages
 2. Verify all environment variables are set correctly
 3. Make sure your OpenAI API key has credits
 4. Ensure your Pinecone index is created and accessible
 
 ### Common Issues:
+
 - **"OpenAI API error"**: Check your API key and credits
 - **"Pinecone error"**: Verify your API key and environment
 - **"UploadThing error"**: Check your secret and app ID

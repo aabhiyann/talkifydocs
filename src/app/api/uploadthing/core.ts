@@ -8,7 +8,7 @@ import { processPdfFile } from "@/lib/upload/process-pdf";
 const f = createUploadthing();
 
 export const ourFileRouter = {
-  pdfUploader: f({ pdf: { maxFileSize: "200MB" } }) // Max size, will check plan limits in middleware
+  pdfUploader: f({ pdf: { maxFileSize: "16MB" } }) // Max size, will check plan limits in middleware
     .middleware(async ({ req, files }) => {
       const clientIP = getClientIP(req);
 
@@ -30,12 +30,12 @@ export const ourFileRouter = {
 
       const isProUser = dbUser?.tier === "PRO" || dbUser?.tier === "ADMIN";
       const maxFileSize = isProUser ? 200 * 1024 * 1024 : 50 * 1024 * 1024;
-      
+
       // Validate file sizes
       for (const file of files) {
         if (file.size > maxFileSize) {
           throw new Error(
-            `File ${file.name} exceeds the ${isProUser ? "200MB" : "50MB"} limit for your plan.`
+            `File ${file.name} exceeds the ${isProUser ? "200MB" : "50MB"} limit for your plan.`,
           );
         }
       }
@@ -44,9 +44,7 @@ export const ourFileRouter = {
     })
     .onUploadComplete(async ({ metadata, file }) => {
       try {
-        console.log(
-          `[upload] Upload completed for file: ${file.name}, key=${file.key}`
-        );
+        console.log(`[upload] Upload completed for file: ${file.name}, key=${file.key}`);
         console.log(`[upload] File URL: ${file.url}`);
         console.log(`[upload] User ID: ${metadata.userId}`);
 
@@ -56,13 +54,13 @@ export const ourFileRouter = {
             name: file.name,
             userId: metadata.userId,
             url: file.url,
+            size: BigInt(file.size),
+            pageCount: null,
             uploadStatus: "PROCESSING",
           },
         });
 
-        console.log(
-          `[upload] File created in database with ID: ${createdFile.id}`
-        );
+        console.log(`[upload] File created in database with ID: ${createdFile.id}`);
 
         // Kick off processing (awaited so failures surface in logs, but the client
         // already has a response and will track status separately).
@@ -79,10 +77,7 @@ export const ourFileRouter = {
           status: createdFile.uploadStatus,
         };
       } catch (outerError) {
-        console.error(
-          `[upload] Outer error in onUploadComplete for ${file.name}:`,
-          outerError
-        );
+        console.error(`[upload] Outer error in onUploadComplete for ${file.name}:`, outerError);
         return {
           id: null,
           name: file.name,

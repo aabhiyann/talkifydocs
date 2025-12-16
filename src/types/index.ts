@@ -6,5 +6,3 @@ export type PdfFile = {
 };
 
 export type UserRole = "FREE" | "PRO" | "ADMIN";
-
-

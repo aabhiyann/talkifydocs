@@ -67,29 +67,36 @@ TalkifyDocs is an AI-powered PDF assistant built with Next.js 15, allowing users
 ## Environment Variables
 
 **Database**
+
 - `DATABASE_URL=`
 
 **Clerk**
+
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=`
 - `CLERK_SECRET_KEY=`
 
 **OpenAI**
+
 - `OPENAI_API_KEY=`
 
 **Pinecone**
+
 - `PINECONE_API_KEY=`
 - `PINECONE_ENVIRONMENT=`
 - `PINECONE_INDEX=`
 
 **Stripe**
+
 - `STRIPE_SECRET_KEY=`
 - `STRIPE_WEBHOOK_SECRET=`
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=`
 
 **Vercel Blob**
+
 - `BLOB_READ_WRITE_TOKEN=`
 
 **Sentry (optional)**
+
 - `SENTRY_DSN=`
 
 ## Current Implementation Status
@@ -126,5 +133,3 @@ TalkifyDocs is an AI-powered PDF assistant built with Next.js 15, allowing users
 - **Integration tests**: Vitest for API routes
 - **E2E tests**: Playwright for critical user flows
 - **Target**: 80% coverage on critical paths
-
-

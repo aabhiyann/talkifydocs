@@ -25,17 +25,16 @@ const ConversationChatShell = ({
   files,
   availableFiles = [],
 }: ConversationChatShellProps) => {
-  const [activeFileId, setActiveFileId] = useState<string>(
-    files[0]?.fileId ?? ""
-  );
+  const [activeFileId, setActiveFileId] = useState<string>(files[0]?.fileId ?? "");
   const [currentPage, setCurrentPage] = useState<number | undefined>(1);
   const [currentFiles, setCurrentFiles] = useState<ConversationFile[]>(files);
 
-  const activeFile = currentFiles.find((cf) => cf.fileId === activeFileId)?.file ?? currentFiles[0]?.file;
+  const activeFile =
+    currentFiles.find((cf) => cf.fileId === activeFileId)?.file ?? currentFiles[0]?.file;
 
   if (!activeFile) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex h-full items-center justify-center">
         <p className="text-muted-foreground">No files in conversation</p>
       </div>
     );
@@ -57,21 +56,21 @@ const ConversationChatShell = ({
   };
 
   return (
-    <div className="flex flex-col lg:flex-row h-full bg-background">
+    <div className="flex h-full flex-col bg-background lg:flex-row">
       {/* Left: PDF viewer with file tabs */}
-      <div className="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-border flex flex-col">
+      <div className="flex w-full flex-col border-b border-border lg:w-1/2 lg:border-b-0 lg:border-r">
         {/* File selector */}
-        <div className="border-b border-border px-3 py-2 flex gap-2 overflow-x-auto bg-muted/40">
+        <div className="flex gap-2 overflow-x-auto border-b border-border px-3 py-2">
           {currentFiles.map((cf) => (
             <button
               key={cf.fileId}
               type="button"
               onClick={() => setActiveFileId(cf.fileId)}
               className={cn(
-                "px-3 py-1 text-sm rounded-full whitespace-nowrap transition-colors",
+                "whitespace-nowrap rounded-md px-3 py-1 text-sm transition-colors",
                 activeFileId === cf.fileId
-                  ? "bg-primary-600 text-white"
-                  : "bg-background text-foreground hover:bg-muted"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary/50 text-secondary-foreground hover:bg-secondary",
               )}
             >
               {cf.file.name}
@@ -80,7 +79,7 @@ const ConversationChatShell = ({
         </div>
 
         {/* PDF viewer */}
-        <div className="flex-1 px-4 py-4 lg:px-6 lg:py-6">
+        <div className="flex-1 p-4">
           <PdfRenderer
             url={activeFile.url}
             page={currentPage}
@@ -90,10 +89,10 @@ const ConversationChatShell = ({
       </div>
 
       {/* Right: Chat */}
-      <div className="w-full lg:w-1/2 flex flex-col">
-        <div className="border-b p-4 bg-background/95 backdrop-blur-sm">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="font-semibold text-lg">Chat</h2>
+      <div className="flex w-full flex-col lg:w-1/2">
+        <div className="border-b p-4">
+          <div className="mb-2 flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Chat</h2>
             <div className="flex items-center gap-2">
               <ChatExportMenu conversationId={conversationId} />
               {availableFiles.length > 0 && (
@@ -110,7 +109,7 @@ const ConversationChatShell = ({
 
           {/* File badges */}
           {currentFiles.length > 1 && (
-            <div className="flex gap-2 flex-wrap mt-2">
+            <div className="mt-2 flex flex-wrap gap-2">
               {currentFiles.map((cf) => (
                 <Badge
                   key={cf.fileId}
@@ -146,5 +145,3 @@ const ConversationChatShell = ({
 };
 
 export default ConversationChatShell;
-
-

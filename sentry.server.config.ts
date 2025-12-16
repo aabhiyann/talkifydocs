@@ -16,9 +16,5 @@ Sentry.init({
     }
     return event;
   },
-  integrations: [
-    Sentry.prismaIntegration(),
-    Sentry.httpIntegration(),
-  ],
+  integrations: [Sentry.prismaIntegration(), Sentry.httpIntegration()],
 });
-

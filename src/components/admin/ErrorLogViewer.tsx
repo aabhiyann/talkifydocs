@@ -45,36 +45,34 @@ export function ErrorLogViewer() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
-            <AlertCircle className="w-5 h-5" />
+            <AlertCircle className="h-5 w-5" />
             Recent Errors
           </CardTitle>
           <Button variant="ghost" size="sm" onClick={fetchLogs} disabled={isLoading}>
-            <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
+            <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
           </Button>
         </div>
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="text-center py-8 text-muted-foreground">Loading...</div>
+          <div className="py-8 text-center text-muted-foreground">Loading...</div>
         ) : logs.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            No recent errors
-          </div>
+          <div className="py-8 text-center text-muted-foreground">No recent errors</div>
         ) : (
-          <div className="space-y-3 max-h-96 overflow-y-auto">
+          <div className="max-h-96 space-y-3 overflow-y-auto">
             {logs.slice(0, 10).map((log) => (
               <div
                 key={log.id}
-                className="p-3 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors"
+                className="bg-muted/30 hover:bg-muted/50 rounded-lg border p-3 transition-colors"
               >
-                <div className="flex items-start justify-between mb-2">
+                <div className="mb-2 flex items-start justify-between">
                   <Badge
                     variant={
                       log.level === "error"
                         ? "destructive"
                         : log.level === "warn"
-                        ? "secondary"
-                        : "outline"
+                          ? "secondary"
+                          : "outline"
                     }
                   >
                     {log.level}
@@ -83,13 +81,13 @@ export function ErrorLogViewer() {
                     {format(new Date(log.timestamp), "MMM d, HH:mm:ss")}
                   </span>
                 </div>
-                <p className="text-sm font-mono break-words">{log.message}</p>
+                <p className="break-words font-mono text-sm">{log.message}</p>
                 {log.context && Object.keys(log.context).length > 0 && (
                   <details className="mt-2">
-                    <summary className="text-xs text-muted-foreground cursor-pointer">
+                    <summary className="cursor-pointer text-xs text-muted-foreground">
                       Context
                     </summary>
-                    <pre className="mt-1 text-xs bg-background p-2 rounded overflow-x-auto">
+                    <pre className="mt-1 overflow-x-auto rounded bg-background p-2 text-xs">
                       {JSON.stringify(log.context, null, 2)}
                     </pre>
                   </details>
@@ -102,4 +100,3 @@ export function ErrorLogViewer() {
     </Card>
   );
 }
-

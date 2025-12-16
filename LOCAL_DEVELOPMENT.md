@@ -167,6 +167,7 @@ curl http://localhost:3000/api/health
 ```
 
 Expected response:
+
 ```json
 {
   "status": "healthy",
@@ -202,6 +203,7 @@ npm run test:smoke
 **Error**: `Can't reach database server`
 
 **Solution**:
+
 - Verify PostgreSQL is running: `pg_isready` or `psql -U postgres`
 - Check `DATABASE_URL` format: `postgresql://user:password@host:port/database`
 - For cloud databases, check firewall rules
@@ -211,6 +213,7 @@ npm run test:smoke
 **Error**: `Clerk: Missing publishable key`
 
 **Solution**:
+
 - Verify `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` is set
 - Restart the dev server after adding env vars
 - Check Clerk dashboard for correct keys
@@ -220,6 +223,7 @@ npm run test:smoke
 **Error**: `Pinecone API error`
 
 **Solution**:
+
 - Verify `PINECONE_API_KEY` and `PINECONE_INDEX` are correct
 - Check Pinecone dashboard to ensure index exists
 - Verify index dimensions match (1536 for OpenAI embeddings)
@@ -229,6 +233,7 @@ npm run test:smoke
 **Error**: `Blob storage error`
 
 **Solution**:
+
 - Verify `BLOB_READ_WRITE_TOKEN` is set
 - Check Vercel Blob storage is active
 - Verify token has read/write permissions
@@ -238,6 +243,7 @@ npm run test:smoke
 **Error**: TypeScript or build errors
 
 **Solution**:
+
 ```bash
 # Clear cache and reinstall
 rm -rf .next node_modules
@@ -353,4 +359,3 @@ talkifydocs/
 5. **Use Prisma Studio**: Great for viewing database data: `npm run db:studio`
 
 Happy coding! 🚀
-

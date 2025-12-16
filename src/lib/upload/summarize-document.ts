@@ -1,4 +1,4 @@
-import { ChatOpenAI } from "langchain/chat_models/openai";
+import { ChatOpenAI } from "@langchain/openai";
 
 export async function summarizeDocument(text: string): Promise<string> {
   const model = new ChatOpenAI({
@@ -15,8 +15,5 @@ Summary:`;
 
   const response = await model.invoke(prompt);
 
-  // @ts-expect-error: response.content is a string in ChatOpenAI
   return (response.content as string) ?? "";
 }
-
-

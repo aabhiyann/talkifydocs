@@ -27,9 +27,7 @@ export async function exportChatAsMarkdown(conversationId: string) {
     throw new Error("Unauthorized");
   }
 
-  const fileNames = conversation.conversationFiles
-    .map((cf) => cf.file.name)
-    .join(", ");
+  const fileNames = conversation.conversationFiles.map((cf) => cf.file.name).join(", ");
 
   const markdown = `# Chat Export - ${conversation.title}
 
@@ -46,14 +44,17 @@ ${conversation.messages
     const citations = Array.isArray(msg.citations)
       ? msg.citations
       : msg.citations
-      ? [msg.citations]
-      : [];
+        ? [msg.citations]
+        : [];
 
     let citationText = "";
     if (citations.length > 0) {
       const citationList = citations
         .map((c: any) => {
-          const page = c.pageNumber ?? c.page ?? (typeof c.pageIndex === "number" ? c.pageIndex + 1 : undefined);
+          const page =
+            c.pageNumber ??
+            c.page ??
+            (typeof c.pageIndex === "number" ? c.pageIndex + 1 : undefined);
           const filename = c.filename || c.fileName || c.title || "Document";
           return page ? `${filename} (p.${page})` : filename;
         })
@@ -96,8 +97,7 @@ export async function createShareableLink(conversationId: string) {
   });
 
   const baseUrl =
-    process.env.NEXT_PUBLIC_APP_URL ||
-    process.env.VERCEL_URL
+    process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
       : "http://localhost:3000";
 
@@ -142,11 +142,9 @@ export async function getShareableLink(conversationId: string) {
   }
 
   const baseUrl =
-    process.env.NEXT_PUBLIC_APP_URL ||
-    process.env.VERCEL_URL
+    process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
       : "http://localhost:3000";
 
   return `${baseUrl}/share/${conversation.shareToken}`;
 }
-

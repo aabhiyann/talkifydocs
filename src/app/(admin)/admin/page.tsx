@@ -11,12 +11,7 @@ export default async function AdminDashboard() {
   await requireAdmin();
 
   // Fetch stats
-  const [
-    totalUsers,
-    totalFiles,
-    totalMessages,
-    proUsers,
-  ] = await Promise.all([
+  const [totalUsers, totalFiles, totalMessages, proUsers] = await Promise.all([
     db.user.count(),
     db.file.count(),
     db.message.count(),
@@ -41,7 +36,7 @@ export default async function AdminDashboard() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="container mx-auto px-4 py-8 md:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-display-lg font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-2">
+          <h1 className="text-display-lg mb-2 bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text font-bold text-transparent">
             Admin Dashboard
           </h1>
           <p className="text-body-lg text-gray-600 dark:text-gray-300">
@@ -50,39 +45,39 @@ export default async function AdminDashboard() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+        <div className="mb-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <StatsCard
             title="Total Users"
             value={totalUsers}
             change="+12%"
             trend="up"
-            icon={<Users className="w-5 h-5" />}
+            icon={<Users className="h-5 w-5" />}
           />
           <StatsCard
             title="Pro Users"
             value={proUsers}
             change="+8%"
             trend="up"
-            icon={<Crown className="w-5 h-5" />}
+            icon={<Crown className="h-5 w-5" />}
           />
           <StatsCard
             title="Documents"
             value={totalFiles}
             change="+23%"
             trend="up"
-            icon={<FileText className="w-5 h-5" />}
+            icon={<FileText className="h-5 w-5" />}
           />
           <StatsCard
             title="Messages"
             value={totalMessages}
             change="+45%"
             trend="up"
-            icon={<MessageSquare className="w-5 h-5" />}
+            icon={<MessageSquare className="h-5 w-5" />}
           />
         </div>
 
         {/* System Metrics and Error Logs */}
-        <div className="grid gap-6 md:grid-cols-2 mb-8">
+        <div className="mb-8 grid gap-6 md:grid-cols-2">
           <SystemMetrics initialMetrics={metrics} />
           <ErrorLogViewer />
         </div>
@@ -93,5 +88,3 @@ export default async function AdminDashboard() {
     </div>
   );
 }
-
-

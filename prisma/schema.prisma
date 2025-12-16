@@ -62,7 +62,7 @@ model File {
   key         String        @unique
   url         String
   size        BigInt        @db.BigInt
-  pageCount   Int
+  pageCount   Int?
   uploadStatus UploadStatus @default(PENDING)
   thumbnailUrl String?
 

@@ -13,7 +13,7 @@ export async function generateThumbnail(pdfUrl: string): Promise<string> {
   const response = await fetch(pdfUrl);
   if (!response.ok) {
     throw new Error(
-      `Failed to download PDF for thumbnail: ${response.status} ${response.statusText}`
+      `Failed to download PDF for thumbnail: ${response.status} ${response.statusText}`,
     );
   }
 
@@ -35,4 +35,3 @@ export async function generateThumbnail(pdfUrl: string): Promise<string> {
 
   return blob.url;
 }
-

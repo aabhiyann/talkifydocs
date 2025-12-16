@@ -10,34 +10,30 @@ interface StatsCardProps {
   icon?: React.ReactNode;
 }
 
-export function StatsCard({
-  title,
-  value,
-  change,
-  trend,
-  icon,
-}: StatsCardProps) {
+export function StatsCard({ title, value, change, trend, icon }: StatsCardProps) {
   return (
-    <Card className="hover:shadow-lg transition-shadow">
+    <Card className="transition-shadow hover:shadow-lg">
       <CardContent className="p-6">
-        <div className="flex items-center justify-between mb-2">
+        <div className="mb-2 flex items-center justify-between">
           <p className="text-sm font-medium text-muted-foreground">{title}</p>
           {icon && <div className="text-muted-foreground">{icon}</div>}
         </div>
-        <p className="text-3xl font-bold mb-2">
+        <p className="mb-2 text-3xl font-bold">
           {typeof value === "number" ? value.toLocaleString() : value}
         </p>
         {change && trend && (
           <div
             className={cn(
               "flex items-center text-sm font-medium",
-              trend === "up" ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
+              trend === "up"
+                ? "text-green-600 dark:text-green-400"
+                : "text-red-600 dark:text-red-400",
             )}
           >
             {trend === "up" ? (
-              <ArrowUp className="w-4 h-4 mr-1" />
+              <ArrowUp className="mr-1 h-4 w-4" />
             ) : (
-              <ArrowDown className="w-4 h-4 mr-1" />
+              <ArrowDown className="mr-1 h-4 w-4" />
             )}
             <span>{change}</span>
           </div>
@@ -46,4 +42,3 @@ export function StatsCard({
     </Card>
   );
 }
-

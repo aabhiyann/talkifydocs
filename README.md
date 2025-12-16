@@ -3,6 +3,7 @@
 AI-powered PDF assistant that lets you upload documents and chat with them using natural language. Built with Next.js 16, React 19, Clerk authentication, and advanced AI capabilities including multi-document conversations, highlights, and admin dashboard.
 
 **Key Features:**
+
 - 📄 Upload and chat with PDFs using AI
 - 🔀 Multi-document conversations (up to 5 files)
 - ⭐ Save highlights and bookmarks
@@ -27,23 +28,27 @@ AI-powered PDF assistant that lets you upload documents and chat with them using
 ### Quick Start
 
 1. **Install dependencies:**
+
    ```bash
    npm install
    ```
 
 2. **Set up environment variables:**
+
    ```bash
    # Copy the example or create .env.local manually
    # See LOCAL_DEVELOPMENT.md for all required variables
    ```
 
 3. **Set up database:**
+
    ```bash
    npm run db:generate
    npm run db:push
    ```
 
 4. **Start development server:**
+
    ```bash
    npm run dev
    ```

@@ -1,22 +1,17 @@
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
-import type { Document } from "langchain/document";
+import { Document } from "@langchain/core/documents";
 import { getPineconeIndex } from "./pinecone";
+import { DocumentMetadata } from "@/types/chat";
+import { Index as PineconeIndex } from "@pinecone-database/pinecone";
 
 type AnyDocument = Document & {
-  metadata: Record<string, any>;
+  metadata: DocumentMetadata;
 };
 
 // Very simple BM25-style keyword scoring over a small candidate set
-function bm25Search(
-  query: string,
-  documents: AnyDocument[],
-  k: number
-): AnyDocument[] {
-  const terms = query
-    .toLowerCase()
-    .split(/\s+/)
-    .filter(Boolean);
+function bm25Search(query: string, documents: AnyDocument[], k: number): AnyDocument[] {
+  const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
 
   if (terms.length === 0 || documents.length === 0) {
     return documents.slice(0, k);
@@ -28,8 +23,9 @@ function bm25Search(
 
     terms.forEach((term) => {
       if (!term) return;
-      const freq = (content.match(new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")) || [])
-        .length;
+      const freq = (
+        content.match(new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")) || []
+      ).length;
       if (freq > 0) {
         score += freq * Math.log(1 + documents.length / (freq + 1));
       }
@@ -47,7 +43,7 @@ function bm25Search(
 export async function hybridSearch(
   query: string,
   fileIds: string[],
-  k: number = 4
+  k: number = 4,
 ): Promise<AnyDocument[]> {
   if (!fileIds || fileIds.length === 0) {
     return [];
@@ -57,26 +53,20 @@ export async function hybridSearch(
     modelName: "text-embedding-3-small",
   });
 
-  const pineconeIndex = getPineconeIndex();
+  const pineconeIndex: PineconeIndex = getPineconeIndex();
 
   // Search across all file namespaces
   const allResults = await Promise.all(
     fileIds.map(async (fileId) => {
       try {
-        const vectorStore = await PineconeStore.fromExistingIndex(
-          embeddings as any,
-          {
-            pineconeIndex: pineconeIndex as any,
-            namespace: fileId,
-          }
-        );
+        const vectorStore = (await PineconeStore.fromExistingIndex(embeddings, {
+          pineconeIndex,
+          namespace: fileId,
+        })) as PineconeStore;
 
         // Get candidates per file (distribute k across files)
         const perFileK = Math.max(1, Math.ceil(k / fileIds.length));
-        const results = (await vectorStore.similaritySearch(
-          query,
-          perFileK * 2
-        )) as AnyDocument[];
+        const results = (await vectorStore.similaritySearch(query, perFileK * 2)) as AnyDocument[];
 
         // Ensure fileId is in metadata
         return results.map((doc) => ({
@@ -90,7 +80,7 @@ export async function hybridSearch(
         console.error(`Error searching namespace ${fileId}:`, error);
         return [];
       }
-    })
+    }),
   );
 
   // Flatten all results
@@ -122,5 +112,3 @@ export async function hybridSearch(
 
   return final.slice(0, k);
 }
-
-

@@ -47,8 +47,7 @@ type Props = {
 };
 
 export const DocumentCard = ({ file, viewMode, onDelete, onRetry, isDemo = false }: Props) => {
-  const createdAt =
-    file.createdAt instanceof Date ? file.createdAt : new Date(file.createdAt);
+  const createdAt = file.createdAt instanceof Date ? file.createdAt : new Date(file.createdAt);
 
   const summary =
     file.summary && file.summary.length > 220
@@ -60,27 +59,27 @@ export const DocumentCard = ({ file, viewMode, onDelete, onRetry, isDemo = false
   const topKeyTerms = keyTerms.slice(0, 3);
 
   return (
-    <Card className="group hover:shadow-xl hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-300 cursor-pointer hover:-translate-y-1">
+    <Card className="group cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-primary-300 hover:shadow-xl dark:hover:border-primary-700">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-start space-x-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-200 overflow-hidden">
+            <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 transition-transform duration-200 group-hover:scale-110">
               {file.thumbnailUrl ? (
                 <img
                   src={file.thumbnailUrl}
                   alt={file.name}
-                  className="w-full h-full object-cover"
+                  className="h-full w-full object-cover"
                 />
               ) : (
-                <FileText className="w-5 h-5 text-white" />
+                <FileText className="h-5 w-5 text-white" />
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <CardTitle className="text-heading-sm card-title group-hover:text-primary-600 transition-colors duration-200 line-clamp-2 font-serif">
+              <CardTitle className="text-heading-sm card-title line-clamp-2 font-serif transition-colors duration-200 group-hover:text-primary-600">
                 {file.name}
               </CardTitle>
-              <div className="flex items-center space-x-2 text-body-sm text-gray-500 dark:text-gray-400 mt-1">
-                <Calendar className="w-4 h-4" />
+              <div className="text-body-sm mt-1 flex items-center space-x-2 text-gray-500 dark:text-gray-400">
+                <Calendar className="h-4 w-4" />
                 <span>{format(createdAt, "MMM dd, yyyy")}</span>
                 {typeof file._count?.messages === "number" && (
                   <>
@@ -97,28 +96,31 @@ export const DocumentCard = ({ file, viewMode, onDelete, onRetry, isDemo = false
               <Button
                 variant="ghost"
                 size="sm"
-                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
               >
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem asChild>
-                <Link href={isDemo ? `/demo/chat/${file.id}` : `/dashboard/${file.id}`} className="flex items-center">
-                  <Eye className="w-4 h-4 mr-2" />
+                <Link
+                  href={isDemo ? `/demo/chat/${file.id}` : `/dashboard/${file.id}`}
+                  className="flex items-center"
+                >
+                  <Eye className="mr-2 h-4 w-4" />
                   <span>View &amp; Chat</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Download className="w-4 h-4 mr-2" />
+                <Download className="mr-2 h-4 w-4" />
                 <span>Download</span>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Share2 className="w-4 h-4 mr-2" />
+                <Share2 className="mr-2 h-4 w-4" />
                 <span>Share</span>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Star className="w-4 h-4 mr-2" />
+                <Star className="mr-2 h-4 w-4" />
                 <span>Add to Favorites</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -127,7 +129,7 @@ export const DocumentCard = ({ file, viewMode, onDelete, onRetry, isDemo = false
                   onClick={() => onDelete(file.id)}
                   className="text-red-600 focus:text-red-600"
                 >
-                  <Trash className="w-4 h-4 mr-2" />
+                  <Trash className="mr-2 h-4 w-4" />
                   <span>Delete</span>
                 </DropdownMenuItem>
               )}
@@ -141,22 +143,22 @@ export const DocumentCard = ({ file, viewMode, onDelete, onRetry, isDemo = false
           <div className="flex items-center justify-between">
             <ProcessingStatus dbStatus={file.uploadStatus} />
             <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-              <Clock className="w-3 h-3 mr-1" />
+              <Clock className="mr-1 h-3 w-3" />
               <span>
                 {file.uploadStatus === "SUCCESS"
                   ? "Processed"
                   : file.uploadStatus === "PROCESSING"
-                  ? "Processing…"
-                  : file.uploadStatus === "FAILED"
-                  ? "Failed"
-                  : "Queued"}
+                    ? "Processing…"
+                    : file.uploadStatus === "FAILED"
+                      ? "Failed"
+                      : "Queued"}
               </span>
             </div>
           </div>
 
-          <div className="flex items-center space-x-4 text-body-sm text-gray-600 dark:text-gray-400">
+          <div className="text-body-sm flex items-center space-x-4 text-gray-600 dark:text-gray-400">
             <div className="flex items-center space-x-1">
-              <MessagesSquare className="w-4 h-4" />
+              <MessagesSquare className="h-4 w-4" />
               <span>
                 {file.uploadStatus === "SUCCESS"
                   ? "Ready to ask questions"
@@ -173,9 +175,7 @@ export const DocumentCard = ({ file, viewMode, onDelete, onRetry, isDemo = false
           </div>
 
           {summary && (
-            <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-3">
-              {summary}
-            </p>
+            <p className="line-clamp-3 text-xs text-gray-600 dark:text-gray-400">{summary}</p>
           )}
 
           {topKeyTerms.length > 0 && (
@@ -183,7 +183,7 @@ export const DocumentCard = ({ file, viewMode, onDelete, onRetry, isDemo = false
               {topKeyTerms.map((term) => (
                 <span
                   key={term}
-                  className="rounded-full bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 px-2 py-0.5 text-[10px] font-medium"
+                  className="dark:bg-primary-900/30 rounded-full bg-primary-50 px-2 py-0.5 text-[10px] font-medium text-primary-700 dark:text-primary-300"
                 >
                   {term}
                 </span>
@@ -191,11 +191,14 @@ export const DocumentCard = ({ file, viewMode, onDelete, onRetry, isDemo = false
             </div>
           )}
 
-          <div className="pt-2 flex items-center justify-between gap-2">
+          <div className="flex items-center justify-between gap-2 pt-2">
             {file.uploadStatus === "SUCCESS" ? (
-              <Link href={isDemo ? `/demo/chat/${file.id}` : `/dashboard/${file.id}`} className="flex-1">
-                <Button className="w-full group-hover:bg-primary-600 transition-colors duration-200">
-                  <MessagesSquare className="w-4 h-4 mr-2" />
+              <Link
+                href={isDemo ? `/demo/chat/${file.id}` : `/dashboard/${file.id}`}
+                className="flex-1"
+              >
+                <Button className="w-full transition-colors duration-200 group-hover:bg-primary-600">
+                  <MessagesSquare className="mr-2 h-4 w-4" />
                   {isDemo ? "Try Demo" : "Start Chatting"}
                 </Button>
               </Link>
@@ -214,8 +217,8 @@ export const DocumentCard = ({ file, viewMode, onDelete, onRetry, isDemo = false
                   {file.uploadStatus === "PROCESSING"
                     ? "Processing…"
                     : file.uploadStatus === "FAILED"
-                    ? "Retry processing"
-                    : "Queued for processing"}
+                      ? "Retry processing"
+                      : "Queued for processing"}
                 </Button>
               </>
             )}
@@ -225,5 +228,3 @@ export const DocumentCard = ({ file, viewMode, onDelete, onRetry, isDemo = false
     </Card>
   );
 };
-
-

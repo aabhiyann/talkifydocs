@@ -6,6 +6,7 @@ export function getPineconeClient() {
   if (!pinecone) {
     pinecone = new Pinecone({
       apiKey: process.env.PINECONE_API_KEY!,
+      environment: process.env.PINECONE_ENVIRONMENT!,
     });
   }
   return pinecone;
@@ -16,5 +17,3 @@ export function getPineconeIndex() {
   const indexName = process.env.PINECONE_INDEX || "talkifydocs";
   return client.Index(indexName);
 }
-
-

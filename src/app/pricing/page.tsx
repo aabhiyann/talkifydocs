@@ -2,12 +2,7 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import UpgradeButton from "@/components/UpgradeButton";
 import { buttonVariants } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { PLANS } from "@/config/stripe";
 import { getCurrentUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
@@ -74,56 +69,56 @@ const Page = async () => {
 
   return (
     <>
-      <MaxWidthWrapper className="mb-8 mt-24 text-center max-w-5xl">
-        <div className="mx-auto mb-12 sm:max-w-2xl text-center">
+      <MaxWidthWrapper className="mb-8 mt-24 max-w-5xl text-center">
+        <div className="mx-auto mb-12 text-center sm:max-w-2xl">
           <h1 className="text-display-lg font-extrabold text-secondary-900 dark:text-secondary-100">
             Simple, transparent pricing
           </h1>
-          <p className="mt-6 text-body-lg text-secondary-600 dark:text-secondary-300 leading-relaxed">
-            Choose the perfect plan for your document analysis needs. Start with
-            our free tier or upgrade for advanced features and higher limits.
+          <p className="text-body-lg mt-6 leading-relaxed text-secondary-600 dark:text-secondary-300">
+            Choose the perfect plan for your document analysis needs. Start with our free tier or
+            upgrade for advanced features and higher limits.
           </p>
         </div>
 
-        <div className="pt-12 grid grid-cols-1 gap-10 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-10 pt-12 lg:grid-cols-2">
           <TooltipProvider>
             {pricingItems.map(({ plan, tagline, quota, features }) => {
-              const price =
-                PLANS.find((p) => p.slug === plan.toLowerCase())?.price
-                  .amount || 0;
+              const price = PLANS.find((p) => p.slug === plan.toLowerCase())?.price.amount || 0;
 
               return (
                 <div
                   key={plan}
-                  className={cn("relative rounded-2xl glass shadow-medium hover:shadow-strong transition-all duration-300", {
-                    "border-2 border-primary-600 shadow-primary-200/50":
-                      plan === "Pro",
-                    "border border-secondary-200 dark:border-secondary-700": plan !== "Pro",
-                  })}
+                  className={cn(
+                    "glass shadow-medium hover:shadow-strong relative rounded-2xl transition-all duration-300",
+                    {
+                      "shadow-primary-200/50 border-2 border-primary-600": plan === "Pro",
+                      "border border-secondary-200 dark:border-secondary-700": plan !== "Pro",
+                    },
+                  )}
                 >
                   {plan === "Pro" && (
-                    <div className="absolute -top-5 left-0 right-0 mx-auto w-32 rounded-full gradient-primary px-3 py-2 text-sm font-medium text-white">
+                    <div className="gradient-primary absolute -top-5 left-0 right-0 mx-auto w-32 rounded-full px-3 py-2 text-sm font-medium text-white">
                       Upgrade now
                     </div>
                   )}
 
                   <div className="p-5">
-                    <h3 className="my-3 text-center text-heading-xl font-bold text-secondary-900 dark:text-secondary-100">
+                    <h3 className="text-heading-xl my-3 text-center font-bold text-secondary-900 dark:text-secondary-100">
                       {plan}
                     </h3>
                     <p className="text-secondary-600 dark:text-secondary-400">{tagline}</p>
-                    <p className="my-5 text-display-lg font-semibold text-primary-600">
-                      ${price}
-                    </p>
+                    <p className="text-display-lg my-5 font-semibold text-primary-600">${price}</p>
                     <p className="text-secondary-600 dark:text-secondary-400">Per Month</p>
                   </div>
 
-                  <div className="flex h-20 items-center justify-center border-b border-t border-secondary-200 dark:border-secondary-700 bg-secondary-50 dark:bg-secondary-800">
+                  <div className="flex h-20 items-center justify-center border-b border-t border-secondary-200 bg-secondary-50 dark:border-secondary-700 dark:bg-secondary-800">
                     <div className="flex items-center space-x-1">
-                      <p className="text-secondary-700 dark:text-secondary-300">{quota.toLocaleString()} PDFs/month included</p>
+                      <p className="text-secondary-700 dark:text-secondary-300">
+                        {quota.toLocaleString()} PDFs/month included
+                      </p>
 
                       <Tooltip delayDuration={300}>
-                        <TooltipTrigger className="cursor-default ml-1.5">
+                        <TooltipTrigger className="ml-1.5 cursor-default">
                           <HelpCircle className="h-4 w-4 text-secondary-500" />
                         </TooltipTrigger>
                         <TooltipContent className="w-80 p-2">
@@ -135,7 +130,7 @@ const Page = async () => {
 
                   <ul className="my-10 space-y-5 px-8">
                     {features.map(({ text, footnote, negative }) => (
-                      <li key={text} className="flex space-x5">
+                      <li key={text} className="space-x5 flex">
                         <div className="flex-shrink-0">
                           {negative ? (
                             <Minus className="h-6 w-6 text-secondary-300" />
@@ -153,12 +148,10 @@ const Page = async () => {
                               {text}
                             </p>
                             <Tooltip delayDuration={300}>
-                              <TooltipTrigger className="cursor-default ml-1.5">
+                              <TooltipTrigger className="ml-1.5 cursor-default">
                                 <HelpCircle className="h-4 w-4 text-secondary-500" />
                               </TooltipTrigger>
-                              <TooltipContent className="w-80 p-2">
-                                {footnote}
-                              </TooltipContent>
+                              <TooltipContent className="w-80 p-2">{footnote}</TooltipContent>
                             </Tooltip>
                           </div>
                         ) : (
@@ -185,7 +178,7 @@ const Page = async () => {
                         })}
                       >
                         {user ? "Upgrade now" : "Sign up"}
-                        <ArrowRight className="h-5 w-5 ml-1.5" />
+                        <ArrowRight className="ml-1.5 h-5 w-5" />
                       </Link>
                     ) : user ? (
                       <UpgradeButton />
@@ -197,7 +190,7 @@ const Page = async () => {
                         })}
                       >
                         {user ? "Upgrade now" : "Sign up"}
-                        <ArrowRight className="h-5 w-5 ml-1.5" />
+                        <ArrowRight className="ml-1.5 h-5 w-5" />
                       </Link>
                     )}
                   </div>

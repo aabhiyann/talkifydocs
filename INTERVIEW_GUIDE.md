@@ -115,6 +115,7 @@ Explain:
 4. “Finally, we update `File.uploadStatus` to `SUCCESS` or `FAILED` depending on the outcome.”
 
 **Emphasize:**
+
 - Rate limiting to protect from abuse.
 - Validation and error logging to handle bad PDFs.
 - Separation between **upload** (fast) and **processing** (can be slower).
@@ -139,6 +140,7 @@ Explain:
 5. “We stream the response back to the client, and once it’s complete we save that answer as another `Message` row.”
 
 **Highlight:**
+
 - Retrieval‑augmented generation (RAG) pattern.
 - Streaming responses for better UX.
 - Storing both sides of the conversation.
@@ -160,6 +162,7 @@ Explain:
    - “Stripe sends webhooks on `checkout.session.completed` and `invoice.payment_succeeded`. The webhook handler validates the signature and updates `User` with subscription details.”
 
 **Emphasize:**
+
 - Dynamic imports of Stripe modules to avoid bundling issues.
 - Safe fallback when Stripe isn’t configured (e.g. local dev).
 
@@ -254,5 +257,3 @@ Short script:
     4. Key flows.
 - **Afterwards**:
   - Adjust your wording based on which questions you actually get and what resonated with interviewers.
-
-

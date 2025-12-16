@@ -48,28 +48,26 @@ export function SystemMetrics({ initialMetrics }: SystemMetricsProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Activity className="w-5 h-5" />
+          <Activity className="h-5 w-5" />
           System Metrics
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+          <div className="bg-muted/50 flex items-center justify-between rounded-lg p-3">
             <div className="flex items-center gap-3">
-              <Server className="w-5 h-5 text-muted-foreground" />
+              <Server className="h-5 w-5 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">Storage Used</p>
                 <p className="text-xs text-muted-foreground">Total file storage</p>
               </div>
             </div>
-            <p className="text-lg font-semibold">
-              {formatBytes(metrics.storageUsed)}
-            </p>
+            <p className="text-lg font-semibold">{formatBytes(metrics.storageUsed)}</p>
           </div>
 
-          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+          <div className="bg-muted/50 flex items-center justify-between rounded-lg p-3">
             <div className="flex items-center gap-3">
-              <Database className="w-5 h-5 text-muted-foreground" />
+              <Database className="h-5 w-5 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">Failed Uploads</p>
                 <p className="text-xs text-muted-foreground">Last 24 hours</p>
@@ -78,40 +76,36 @@ export function SystemMetrics({ initialMetrics }: SystemMetricsProps) {
             <p className="text-lg font-semibold">{metrics.failedUploads ?? 0}</p>
           </div>
 
-          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+          <div className="bg-muted/50 flex items-center justify-between rounded-lg p-3">
             <div className="flex items-center gap-3">
-              <Activity className="w-5 h-5 text-muted-foreground" />
+              <Activity className="h-5 w-5 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">Avg Messages/User</p>
                 <p className="text-xs text-muted-foreground">Average per user</p>
               </div>
             </div>
             <p className="text-lg font-semibold">
-              {metrics.avgMessagesPerUser
-                ? Math.round(metrics.avgMessagesPerUser)
-                : 0}
+              {metrics.avgMessagesPerUser ? Math.round(metrics.avgMessagesPerUser) : 0}
             </p>
           </div>
 
           {metrics.avgProcessingTime !== undefined && (
-            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+            <div className="bg-muted/50 flex items-center justify-between rounded-lg p-3">
               <div className="flex items-center gap-3">
-                <AlertCircle className="w-5 h-5 text-muted-foreground" />
+                <AlertCircle className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <p className="text-sm font-medium">Avg Processing Time</p>
                   <p className="text-xs text-muted-foreground">PDF processing</p>
                 </div>
               </div>
-              <p className="text-lg font-semibold">
-                {metrics.avgProcessingTime.toFixed(1)}s
-              </p>
+              <p className="text-lg font-semibold">{metrics.avgProcessingTime.toFixed(1)}s</p>
             </div>
           )}
 
           {metrics.activeUsers24h !== undefined && (
-            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+            <div className="bg-muted/50 flex items-center justify-between rounded-lg p-3">
               <div className="flex items-center gap-3">
-                <Activity className="w-5 h-5 text-muted-foreground" />
+                <Activity className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <p className="text-sm font-medium">Active Users (24h)</p>
                   <p className="text-xs text-muted-foreground">Recent activity</p>
@@ -125,4 +119,3 @@ export function SystemMetrics({ initialMetrics }: SystemMetricsProps) {
     </Card>
   );
 }
-

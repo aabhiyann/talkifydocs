@@ -17,7 +17,7 @@ import { Toaster } from "@/components/ui/toaster";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
@@ -32,7 +32,8 @@ const fraunces = Fraunces({
 
 export const metadata: Metadata = {
   title: "TalkifyDocs - AI-Powered Document Analysis",
-  description: "Upload, analyze, and chat with your PDF documents using advanced AI technology. Extract insights and get instant answers from your documents.",
+  description:
+    "Upload, analyze, and chat with your PDF documents using advanced AI technology. Extract insights and get instant answers from your documents.",
   keywords: "PDF analysis, AI chat, document processing, PDF reader, document AI",
   authors: [{ name: "TalkifyDocs Team" }],
   metadataBase: new URL("https://talkifydocs.com"),
@@ -69,11 +70,7 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider
       appearance={{
@@ -90,10 +87,10 @@ export default function RootLayout({
         <Providers>
           <body
             className={cn(
-              "min-h-screen font-sans antialiased grainy",
+              "grainy min-h-screen font-sans antialiased",
               inter.variable,
               fraunces.variable,
-              inter.className
+              inter.className,
             )}
             suppressHydrationWarning={true}
           >

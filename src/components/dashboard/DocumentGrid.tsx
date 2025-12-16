@@ -27,9 +27,7 @@ export const DocumentGrid = ({ files, viewMode, onDelete, onRetry, isDemo = fals
   return (
     <div
       className={
-        viewMode === "grid"
-          ? "grid grid-cols-1 gap-6 md:grid-cols=2 lg:grid-cols-3"
-          : "space-y-4"
+        viewMode === "grid" ? "md:grid-cols=2 grid grid-cols-1 gap-6 lg:grid-cols-3" : "space-y-4"
       }
     >
       {files.map((file, index) => (
@@ -50,5 +48,3 @@ export const DocumentGrid = ({ files, viewMode, onDelete, onRetry, isDemo = fals
     </div>
   );
 };
-
-

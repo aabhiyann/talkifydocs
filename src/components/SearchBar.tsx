@@ -42,7 +42,7 @@ export function SearchBar({
       setQuery(searchQuery);
       onSearch(searchQuery);
     },
-    [onSearch]
+    [onSearch],
   );
 
   const handleClear = useCallback(() => {
@@ -55,7 +55,7 @@ export function SearchBar({
       const newFilters = { ...filters, sortBy };
       onFiltersChange(newFilters);
     },
-    [filters, onFiltersChange]
+    [filters, onFiltersChange],
   );
 
   const handleSortOrderToggle = useCallback(() => {
@@ -72,12 +72,12 @@ export function SearchBar({
       { value: "name", label: "Name" },
       { value: "size", label: "File Size" },
     ],
-    []
+    [],
   );
 
   const activeSortOption = useMemo(
     () => sortOptions.find((option) => option.value === filters.sortBy),
-    [sortOptions, filters.sortBy]
+    [sortOptions, filters.sortBy],
   );
 
   return (
@@ -105,7 +105,7 @@ export function SearchBar({
 
       {/* Advanced Filters */}
       {isExpanded && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-2 rounded-lg border bg-background p-4 shadow-lg">
+        <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-lg border bg-background p-4 shadow-lg">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Filter className="h-4 w-4 text-muted-foreground" />
@@ -122,9 +122,7 @@ export function SearchBar({
                 {sortOptions.map((option) => (
                   <DropdownMenuItem
                     key={option.value}
-                    onClick={() =>
-                      handleSortChange(option.value as SearchFilters["sortBy"])
-                    }
+                    onClick={() => handleSortChange(option.value as SearchFilters["sortBy"])}
                   >
                     {option.label}
                   </DropdownMenuItem>
@@ -155,12 +153,7 @@ export function SearchBar({
       )}
 
       {/* Click outside to close */}
-      {isExpanded && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => setIsExpanded(false)}
-        />
-      )}
+      {isExpanded && <div className="fixed inset-0 z-40" onClick={() => setIsExpanded(false)} />}
     </div>
   );
 }

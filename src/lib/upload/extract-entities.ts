@@ -1,5 +1,5 @@
-import { ChatOpenAI } from "langchain/chat_models/openai";
-import { PromptTemplate } from "langchain/prompts";
+import { ChatOpenAI } from "@langchain/openai";
+import { PromptTemplate } from "@langchain/core/prompts";
 
 export async function extractEntities(text: string) {
   const model = new ChatOpenAI({
@@ -29,7 +29,6 @@ Respond with only valid JSON, no additional text.
   const response = await model.invoke(input);
 
   try {
-    // @ts-expect-error: response.content is a string in ChatOpenAI
     return JSON.parse(response.content as string);
   } catch (error) {
     console.warn("[upload] Failed to parse entities JSON:", error);
@@ -42,5 +41,3 @@ Respond with only valid JSON, no additional text.
     };
   }
 }
-
-

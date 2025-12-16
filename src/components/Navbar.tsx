@@ -14,6 +14,7 @@ import {
   User,
   Home,
   Zap,
+  Shield,
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { usePathname } from "next/navigation";
@@ -59,18 +60,18 @@ const Navbar = () => {
     <nav
       className={`sticky top-0 z-50 w-full transition-all duration-200 ${
         isScrolled
-          ? "bg-background/95 backdrop-blur-md border-b border-border shadow-sm"
+          ? "bg-background/95 border-b border-border shadow-sm backdrop-blur-md"
           : "bg-background/80 backdrop-blur-sm"
       }`}
     >
       <MaxWidthWrapper>
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2 z-50 group">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
-              <FileText className="w-5 h-5 text-white" />
+          <Link href="/" className="group z-50 flex items-center space-x-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 transition-transform duration-200 group-hover:scale-105">
+              <FileText className="h-5 w-5 text-white" />
             </div>
-            <span className="text-heading-lg font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
+            <span className="text-heading-lg bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text font-bold text-transparent">
               TalkifyDocs
             </span>
           </Link>
@@ -83,19 +84,19 @@ const Navbar = () => {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center space-x-1 px-3 py-2 rounded-lg text-body-sm font-medium transition-all duration-200 ${
+                  className={`text-body-sm flex items-center space-x-1 rounded-lg px-3 py-2 font-medium transition-all duration-200 ${
                     isActive(item.href)
-                      ? "bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-300"
-                      : "text-secondary-600 hover:text-secondary-900 hover:bg-secondary-50 dark:text-secondary-300 dark:hover:text-secondary-100 dark:hover:bg-secondary-800/50"
+                      ? "dark:bg-primary-900/20 bg-primary-50 text-primary-700 dark:text-primary-300"
+                      : "dark:hover:bg-secondary-800/50 text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 dark:text-secondary-300 dark:hover:text-secondary-100"
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="h-4 w-4" />
                   <span>{item.label}</span>
                 </Link>
               );
             })}
 
-            <div className="flex items-center space-x-2 ml-4 pl-4 border-l border-secondary-200">
+            <div className="ml-4 flex items-center space-x-2 border-l border-secondary-200 pl-4">
               <ThemeToggle />
 
               <SignedIn>
@@ -107,7 +108,7 @@ const Navbar = () => {
                       size: "sm",
                     })}
                   >
-                    <Home className="w-4 h-4 mr-2" />
+                    <Home className="mr-2 h-4 w-4" />
                     Dashboard
                   </Link>
                   {isAdmin && (
@@ -118,7 +119,7 @@ const Navbar = () => {
                         size: "sm",
                       })}
                     >
-                      <Shield className="w-4 h-4 mr-2" />
+                      <Shield className="mr-2 h-4 w-4" />
                       Admin
                     </Link>
                   )}
@@ -126,8 +127,7 @@ const Navbar = () => {
                     afterSignOutUrl="/"
                     appearance={{
                       elements: {
-                        avatarBox:
-                          "w-8 h-8 border border-border/60 shadow-sm rounded-full",
+                        avatarBox: "w-8 h-8 border border-border/60 shadow-sm rounded-full",
                       },
                     }}
                   />
@@ -142,10 +142,7 @@ const Navbar = () => {
                   >
                     Sign in
                   </Link>
-                  <Link
-                    href="/sign-up"
-                    className={buttonVariants({ size: "sm" })}
-                  >
+                  <Link href="/sign-up" className={buttonVariants({ size: "sm" })}>
                     Get Started <ArrowRight className="ml-1.5 h-4 w-4" />
                   </Link>
                 </>
@@ -161,17 +158,13 @@ const Navbar = () => {
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle mobile menu"
           >
-            {isMobileMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
+            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </Button>
         </div>
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-lg">
+          <div className="bg-background/95 border-t border-border backdrop-blur-lg md:hidden">
             <div className="flex flex-col space-y-1 p-4">
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -179,21 +172,21 @@ const Navbar = () => {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    className={`flex items-center space-x-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
                       isActive(item.href)
-                        ? "bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-300"
-                        : "text-secondary-600 hover:text-secondary-900 hover:bg-secondary-50 dark:text-secondary-300 dark:hover:text-secondary-100 dark:hover:bg-secondary-800/50"
+                        ? "dark:bg-primary-900/20 bg-primary-50 text-primary-700 dark:text-primary-300"
+                        : "dark:hover:bg-secondary-800/50 text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 dark:text-secondary-300 dark:hover:text-secondary-100"
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className="h-4 w-4" />
                     <span>{item.label}</span>
                   </Link>
                 );
               })}
 
-              <div className="pt-4 border-t border-secondary-200">
-                <div className="flex items-center justify-between mb-4">
+              <div className="border-t border-secondary-200 pt-4">
+                <div className="mb-4 flex items-center justify-between">
                   <span className="text-sm font-medium text-secondary-700 dark:text-secondary-300">
                     Theme
                   </span>
@@ -204,21 +197,21 @@ const Navbar = () => {
                   <div className="space-y-2">
                     <Link
                       href="/dashboard"
-                      className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-secondary-600 hover:text-secondary-900 hover:bg-secondary-50 dark:text-secondary-300 dark:hover:text-secondary-100 dark:hover:bg-secondary-800/50"
+                      className="dark:hover:bg-secondary-800/50 flex items-center space-x-2 rounded-lg px-3 py-2 text-sm font-medium text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 dark:text-secondary-300 dark:hover:text-secondary-100"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <Home className="w-4 h-4" />
+                      <Home className="h-4 w-4" />
                       <span>Dashboard</span>
                     </Link>
                     <Link
                       href="/dashboard/billing"
-                      className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-secondary-600 hover:text-secondary-900 hover:bg-secondary-50 dark:text-secondary-300 dark:hover:text-secondary-100 dark:hover:bg-secondary-800/50"
+                      className="dark:hover:bg-secondary-800/50 flex items-center space-x-2 rounded-lg px-3 py-2 text-sm font-medium text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 dark:text-secondary-300 dark:hover:text-secondary-100"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <Settings className="w-4 h-4" />
+                      <Settings className="h-4 w-4" />
                       <span>Billing</span>
                     </Link>
-                    <div className="px-3 py-2 flex items-center justify-between rounded-lg border border-secondary-200 dark:border-secondary-700">
+                    <div className="flex items-center justify-between rounded-lg border border-secondary-200 px-3 py-2 dark:border-secondary-700">
                       <span className="text-sm font-medium">Account</span>
                       <UserButton
                         afterSignOutUrl="/"

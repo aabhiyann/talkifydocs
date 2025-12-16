@@ -50,7 +50,7 @@ const ChatPage = async ({ params }: PageProps) => {
   });
 
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-3.5rem)]">
+    <div className="flex h-[calc(100vh-3.5rem)] flex-1 flex-col">
       <ConversationChatShell
         conversationId={params.conversationId}
         files={conversationFiles}
@@ -61,5 +61,3 @@ const ChatPage = async ({ params }: PageProps) => {
 };
 
 export default ChatPage;
-
-

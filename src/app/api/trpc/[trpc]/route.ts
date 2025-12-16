@@ -11,7 +11,7 @@ const handler = (req: Request) =>
       // Get the current user - this will be null if not authenticated
       // The middleware protects the route, so this should usually have a user
       const user = await getCurrentUser();
-      
+
       return {
         user: user || null,
       };

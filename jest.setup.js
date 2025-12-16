@@ -1,13 +1,13 @@
-import '@testing-library/jest-dom'
+import "@testing-library/jest-dom";
 
 // Mock Next.js router
-jest.mock('next/router', () => ({
+jest.mock("next/router", () => ({
   useRouter() {
     return {
-      route: '/',
-      pathname: '/',
+      route: "/",
+      pathname: "/",
       query: {},
-      asPath: '/',
+      asPath: "/",
       push: jest.fn(),
       pop: jest.fn(),
       reload: jest.fn(),
@@ -19,12 +19,12 @@ jest.mock('next/router', () => ({
         off: jest.fn(),
         emit: jest.fn(),
       },
-    }
+    };
   },
-}))
+}));
 
 // Mock Next.js navigation
-jest.mock('next/navigation', () => ({
+jest.mock("next/navigation", () => ({
   useRouter() {
     return {
       push: jest.fn(),
@@ -33,19 +33,19 @@ jest.mock('next/navigation', () => ({
       back: jest.fn(),
       forward: jest.fn(),
       refresh: jest.fn(),
-    }
+    };
   },
   useSearchParams() {
-    return new URLSearchParams()
+    return new URLSearchParams();
   },
   usePathname() {
-    return '/'
+    return "/";
   },
-}))
+}));
 
 // Mock environment variables
-process.env.NODE_ENV = 'test'
-process.env.OPENAI_API_KEY = 'test-key'
-process.env.PINECONE_API_KEY = 'test-key'
-process.env.STRIPE_SECRET_KEY = 'test-key'
-process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test'
+process.env.NODE_ENV = "test";
+process.env.OPENAI_API_KEY = "test-key";
+process.env.PINECONE_API_KEY = "test-key";
+process.env.STRIPE_SECRET_KEY = "test-key";
+process.env.DATABASE_URL = "postgresql://test:test@localhost:5432/test";

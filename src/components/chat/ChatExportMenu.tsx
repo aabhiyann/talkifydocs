@@ -65,8 +65,7 @@ export function ChatExportMenu({ conversationId }: ChatExportMenuProps) {
     } catch (error) {
       toast({
         title: "Export failed",
-        description:
-          error instanceof Error ? error.message : "Failed to export chat",
+        description: error instanceof Error ? error.message : "Failed to export chat",
         variant: "destructive",
       });
     } finally {
@@ -87,8 +86,7 @@ export function ChatExportMenu({ conversationId }: ChatExportMenuProps) {
     } catch (error) {
       toast({
         title: "Failed to create share link",
-        description:
-          error instanceof Error ? error.message : "Failed to create share link",
+        description: error instanceof Error ? error.message : "Failed to create share link",
         variant: "destructive",
       });
     } finally {
@@ -124,8 +122,7 @@ export function ChatExportMenu({ conversationId }: ChatExportMenuProps) {
     } catch (error) {
       toast({
         title: "Failed to revoke link",
-        description:
-          error instanceof Error ? error.message : "Failed to revoke share link",
+        description: error instanceof Error ? error.message : "Failed to revoke share link",
         variant: "destructive",
       });
     }
@@ -135,33 +132,30 @@ export function ChatExportMenu({ conversationId }: ChatExportMenuProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" disabled={isLoadingShare}>
-          <Download className="w-4 h-4 mr-2" />
+          <Download className="mr-2 h-4 w-4" />
           Export
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuItem
-          onClick={handleExportMarkdown}
-          disabled={isExporting}
-        >
-          <FileText className="w-4 h-4 mr-2" />
+        <DropdownMenuItem onClick={handleExportMarkdown} disabled={isExporting}>
+          <FileText className="mr-2 h-4 w-4" />
           {isExporting ? "Exporting..." : "Export as Markdown"}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         {shareUrl ? (
           <>
             <DropdownMenuItem onClick={handleCopyShareLink}>
-              <Link2 className="w-4 h-4 mr-2" />
+              <Link2 className="mr-2 h-4 w-4" />
               Copy Share Link
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleRevokeShare}>
-              <X className="w-4 h-4 mr-2" />
+              <X className="mr-2 h-4 w-4" />
               Revoke Share Link
             </DropdownMenuItem>
           </>
         ) : (
           <DropdownMenuItem onClick={handleCreateShare} disabled={isSharing}>
-            <Share2 className="w-4 h-4 mr-2" />
+            <Share2 className="mr-2 h-4 w-4" />
             {isSharing ? "Creating..." : "Create Share Link"}
           </DropdownMenuItem>
         )}
@@ -169,4 +163,3 @@ export function ChatExportMenu({ conversationId }: ChatExportMenuProps) {
     </DropdownMenu>
   );
 }
-

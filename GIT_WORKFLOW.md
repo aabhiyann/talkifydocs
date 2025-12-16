@@ -3,27 +3,32 @@
 ## Branch Structure
 
 ### Main Branches
+
 - **`main`** - Production-ready code, always deployable
 - **`develop`** - Integration branch for features, staging environment
 
 ### Feature Branches
+
 - **`feature/*`** - New features and enhancements
   - `feature/user-authentication`
   - `feature/pdf-processing`
   - `feature/chat-interface`
 
 ### Fix Branches
+
 - **`fix/*`** - Bug fixes and hotfixes
   - `fix/pdf-loading-issues`
   - `fix/authentication-bug`
   - `fix/performance-optimization`
 
 ### Release Branches
+
 - **`release/*`** - Release preparation
   - `release/v1.0.0`
   - `release/v1.1.0`
 
 ### Hotfix Branches
+
 - **`hotfix/*`** - Critical production fixes
   - `hotfix/security-patch`
   - `hotfix/critical-bug`
@@ -31,6 +36,7 @@
 ## Commit Message Convention
 
 ### Format
+
 ```
 <type>(<scope>): <description>
 
@@ -40,6 +46,7 @@
 ```
 
 ### Types
+
 - **feat**: New feature
 - **fix**: Bug fix
 - **docs**: Documentation changes
@@ -51,6 +58,7 @@
 - **ci**: CI/CD changes
 
 ### Scopes
+
 - `pdf`: PDF-related functionality
 - `auth`: Authentication
 - `ui`: User interface
@@ -61,6 +69,7 @@
 ### Examples
 
 #### Feature Commit
+
 ```
 feat(pdf): add PDF fullscreen viewer
 
@@ -72,6 +81,7 @@ Closes #123
 ```
 
 #### Bug Fix Commit
+
 ```
 fix(pdf): resolve infinite loading issue
 
@@ -83,6 +93,7 @@ Fixes #456
 ```
 
 #### Performance Commit
+
 ```
 perf(api): optimize PDF processing pipeline
 
@@ -96,6 +107,7 @@ Resolves #789
 ## Workflow Process
 
 ### 1. Feature Development
+
 ```bash
 # Start from develop
 git checkout develop
@@ -113,6 +125,7 @@ git push origin feature/new-feature-name
 ```
 
 ### 2. Bug Fixes
+
 ```bash
 # Start from develop
 git checkout develop
@@ -130,6 +143,7 @@ git push origin fix/bug-description
 ```
 
 ### 3. Release Process
+
 ```bash
 # Create release branch from develop
 git checkout develop
@@ -152,6 +166,7 @@ git branch -d release/v1.0.0
 ```
 
 ### 4. Hotfix Process
+
 ```bash
 # Create hotfix from main
 git checkout main
@@ -176,41 +191,50 @@ git branch -d hotfix/critical-issue
 ## Pull Request Guidelines
 
 ### PR Title Format
+
 ```
 <type>(<scope>): <description>
 ```
 
 ### PR Description Template
+
 ```markdown
 ## Description
+
 Brief description of changes
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update
 
 ## Changes Made
+
 - Change 1
 - Change 2
 - Change 3
 
 ## Testing
+
 - [ ] Unit tests pass
 - [ ] Integration tests pass
 - [ ] Manual testing completed
 
 ## Screenshots (if applicable)
+
 [Add screenshots here]
 
 ## Checklist
+
 - [ ] Code follows project style guidelines
 - [ ] Self-review completed
 - [ ] Documentation updated
 - [ ] Tests added/updated
 
 ## Related Issues
+
 Closes #123
 Fixes #456
 ```
@@ -218,12 +242,14 @@ Fixes #456
 ## Branch Protection Rules
 
 ### Main Branch
+
 - Require pull request reviews (2 reviewers)
 - Require status checks to pass
 - Require branches to be up to date
 - Restrict pushes to main
 
 ### Develop Branch
+
 - Require pull request reviews (1 reviewer)
 - Require status checks to pass
 - Allow force pushes for maintainers
@@ -231,6 +257,7 @@ Fixes #456
 ## Code Review Guidelines
 
 ### Reviewers Should Check
+
 - [ ] Code quality and readability
 - [ ] Security implications
 - [ ] Performance impact
@@ -239,6 +266,7 @@ Fixes #456
 - [ ] Breaking changes
 
 ### Review Comments
+
 - Be constructive and specific
 - Suggest improvements
 - Ask questions for clarification
@@ -247,18 +275,21 @@ Fixes #456
 ## Best Practices
 
 ### Commit Frequency
+
 - Commit early and often
 - One logical change per commit
 - Keep commits atomic
 - Write meaningful commit messages
 
 ### Branch Naming
+
 - Use lowercase with hyphens
 - Be descriptive but concise
 - Include type prefix
 - Avoid special characters
 
 ### Merge Strategy
+
 - Use "Squash and merge" for feature branches
 - Use "Merge commit" for release branches
 - Use "Rebase and merge" for hotfixes
@@ -266,6 +297,7 @@ Fixes #456
 ## Emergency Procedures
 
 ### Critical Production Issue
+
 1. Create hotfix branch from main
 2. Implement minimal fix
 3. Test thoroughly
@@ -275,6 +307,7 @@ Fixes #456
 7. Create follow-up PR for proper fix
 
 ### Rollback Procedure
+
 1. Identify last stable commit
 2. Create rollback branch
 3. Revert problematic changes

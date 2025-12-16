@@ -1,7 +1,7 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 
-export type AuthUser = {
+export type AuthenticatedUser = {
   id: string; // internal User.id (Prisma)
   clerkId: string;
   email: string | null;
@@ -14,8 +14,8 @@ export type AuthUser = {
  * Returns the current authenticated user, ensuring there is a corresponding
  * Prisma User record. If no user is authenticated, returns null.
  */
-export async function getCurrentUser(): Promise<AuthUser | null> {
-  const { userId } = auth();
+export async function getCurrentUser(): Promise<AuthenticatedUser | null> {
+  const { userId } = await auth();
   if (!userId) return null;
 
   const clerk = await currentUser();
@@ -47,7 +47,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     email: dbUser.email,
     name: dbUser.name,
     imageUrl: dbUser.imageUrl,
-    tier: dbUser.tier as AuthUser["tier"],
+    tier: dbUser.tier as AuthenticatedUser["tier"],
   };
 }
 
@@ -57,9 +57,9 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
  * Note: Middleware should protect routes, so this should rarely throw.
  * If it does throw, the middleware will handle the redirect.
  */
-export async function requireUser(): Promise<AuthUser> {
+export async function requireUser(): Promise<AuthenticatedUser> {
   // Check auth state first using Clerk's auth()
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) {
     // Middleware should have caught this, but throw error as fallback
     throw new Error("User not authenticated");
@@ -81,7 +81,7 @@ export async function requireUser(): Promise<AuthUser> {
  */
 export const requireAuth = requireUser;
 
-export async function requireAdmin(): Promise<AuthUser> {
+export async function requireAdmin(): Promise<AuthenticatedUser> {
   const user = await requireUser();
 
   if (user.tier !== "ADMIN") {
@@ -90,4 +90,3 @@ export async function requireAdmin(): Promise<AuthUser> {
 
   return user;
 }
-

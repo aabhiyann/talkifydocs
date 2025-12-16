@@ -79,12 +79,14 @@ NODE_ENV=production
 ## Database Setup
 
 1. **Create Database**
+
    ```bash
    # Using Neon, Supabase, or other PostgreSQL provider
    # Create a new database and copy the connection string
    ```
 
 2. **Run Migrations**
+
    ```bash
    npm run db:migrate
    ```
@@ -98,6 +100,7 @@ NODE_ENV=production
 ## Pinecone Setup
 
 1. **Create Index**
+
    ```bash
    # Use Pinecone console or API
    # Index name should match PINECONE_INDEX env var
@@ -140,6 +143,7 @@ NODE_ENV=production
 ## Vercel Deployment
 
 1. **Connect Repository**
+
    ```bash
    # Via Vercel Dashboard or CLI
    vercel link
@@ -162,12 +166,15 @@ NODE_ENV=production
 ## Post-Deployment Verification
 
 ### Automated Smoke Tests
+
 Run the smoke test script:
+
 ```bash
 ./scripts/smoke-tests.sh https://your-domain.com
 ```
 
 Or manually verify:
+
 - [ ] Health check endpoint returns 200: `curl https://your-domain.com/api/health`
 - [ ] Homepage loads correctly
 - [ ] Sign up flow works
@@ -180,12 +187,15 @@ Or manually verify:
 - [ ] Analytics tracking (if configured)
 
 ### Performance Verification
+
 Run the performance check script:
+
 ```bash
 ./scripts/performance-check.sh
 ```
 
 Check Lighthouse scores:
+
 - [ ] Performance score > 70
 - [ ] Accessibility score > 90
 - [ ] Best Practices score > 90
@@ -194,21 +204,25 @@ Check Lighthouse scores:
 ## Performance Optimization
 
 ### Database
+
 - [ ] Connection pooling enabled (`?pgbouncer=true&connection_limit=1`)
 - [ ] Indexes verified on frequently queried fields
 - [ ] Query performance monitored
 
 ### Caching
+
 - [ ] Redis/Upstash configured and working
 - [ ] Cache hit rates monitored
 - [ ] Cache invalidation working correctly
 
 ### CDN & Assets
+
 - [ ] Static assets served via CDN
 - [ ] Images optimized (WebP/AVIF)
 - [ ] Fonts preloaded
 
 ### Monitoring
+
 - [ ] Error tracking configured (Sentry)
 - [ ] Performance monitoring enabled
 - [ ] Uptime monitoring configured
@@ -219,11 +233,13 @@ Check Lighthouse scores:
 If deployment fails:
 
 1. **Revert to Previous Version**
+
    ```bash
    vercel rollback
    ```
 
 2. **Check Logs**
+
    ```bash
    vercel logs
    ```
@@ -240,6 +256,7 @@ If deployment fails:
 ## Maintenance
 
 ### Regular Tasks
+
 - [ ] Monitor error rates in Sentry
 - [ ] Review performance metrics weekly
 - [ ] Update dependencies monthly
@@ -247,6 +264,7 @@ If deployment fails:
 - [ ] Review and rotate API keys quarterly
 
 ### Scaling Considerations
+
 - [ ] Database connection pool size
 - [ ] Redis cache size
 - [ ] Pinecone index capacity
@@ -297,8 +315,8 @@ If deployment fails:
 ## Support
 
 For issues or questions:
+
 - Check application logs: `vercel logs`
 - Check Sentry for errors
 - Review health check endpoint
 - Contact support team
-

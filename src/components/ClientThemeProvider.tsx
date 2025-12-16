@@ -7,16 +7,18 @@ export default function ClientThemeProvider() {
 
   useEffect(() => {
     setMounted(true);
-    
+
     // Apply theme after component mounts to prevent hydration issues
     try {
-      const theme = localStorage.getItem('talkifydocs-ui-theme') || 'system';
-      const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      document.documentElement.classList.remove('light', 'dark');
-      document.documentElement.classList.add(isDark ? 'dark' : 'light');
+      const theme = localStorage.getItem("talkifydocs-ui-theme") || "system";
+      const isDark =
+        theme === "dark" ||
+        (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      document.documentElement.classList.remove("light", "dark");
+      document.documentElement.classList.add(isDark ? "dark" : "light");
     } catch (e) {
-      document.documentElement.classList.remove('light', 'dark');
-      document.documentElement.classList.add('light');
+      document.documentElement.classList.remove("light", "dark");
+      document.documentElement.classList.add("light");
     }
   }, []);
 

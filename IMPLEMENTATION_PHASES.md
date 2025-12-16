@@ -3,12 +3,14 @@
 ### Phase 1: Foundation & Core Upgrades (Week 1–2) ✅ COMPLETED
 
 **Goals**
+
 - Modernize tech stack
 - Update database schema
 - Implement new auth flow
 - Set up development environment
 
 **Tasks**
+
 - ✅ Initialize Next.js 16 project with App Router
 - ✅ Set up Clerk authentication (migrated from Kinde)
 - ✅ Migrate database schema with new models (Conversation, Highlight, RateLimit)
@@ -20,6 +22,7 @@
 - ✅ Configure ESLint + Prettier
 
 **Deliverables**
+
 - ✅ Working auth flow (sign up, sign in, sign out)
 - ✅ Database migrations completed
 - ✅ Dark mode toggle functional
@@ -30,12 +33,14 @@
 ### Phase 2: Enhanced Document Management (Week 2–3) ✅ COMPLETED
 
 **Goals**
+
 - Improve upload experience
 - Add real-time processing status
 - Generate document summaries
 - Extract entities
 
 **Tasks**
+
 - ✅ Build upload interface with drag-and-drop (`react-dropzone`)
 - ✅ Replace polling with **SSE** for processing status
 - ✅ Generate PDF thumbnails (using `pdf-lib` and `sharp`)
@@ -46,6 +51,7 @@
 - ✅ Display thumbnails, summaries, and page counts
 
 **Deliverables**
+
 - ✅ Drag-and-drop upload zone
 - ✅ Real-time processing updates via SSE
 - ✅ Document cards with thumbnails + metadata
@@ -56,12 +62,14 @@
 ### Phase 3: Advanced Chat Features (Week 3–4) ✅ COMPLETED
 
 **Goals**
+
 - Build split-screen chat interface
 - Implement citation highlighting
 - Add multi-document conversations
 - Stream responses with thinking indicators
 
 **Tasks**
+
 - ✅ Build split-screen layout (PDF left, chat right)
 - ✅ Integrate `react-pdf` for PDF viewing
 - ✅ Implement citation highlighting in PDF (clickable citations)
@@ -73,6 +81,7 @@
 - ✅ Build message actions (copy, save as highlight)
 
 **Deliverables**
+
 - ✅ Split-screen chat interface (`ConversationChatShell`)
 - ✅ Citations highlighted and clickable in PDF
 - ✅ Multi-document conversations working
@@ -83,11 +92,13 @@
 ### Phase 4: Productivity & Sharing (Week 4–5) ✅ COMPLETED
 
 **Goals**
+
 - Add export functionality
 - Build highlights system
 - Implement sharing
 
 **Tasks**
+
 - ✅ Create highlights page with search/filter
 - ✅ Build "Save as highlight" flow (from message actions)
 - ✅ Implement chat export (Markdown format)
@@ -97,6 +108,7 @@
 - ⏳ Voice input (deferred to future phase)
 
 **Deliverables**
+
 - ✅ Highlights page with saved Q&As
 - ✅ Export chats as Markdown
 - ✅ Shareable conversation links with public view
@@ -106,6 +118,7 @@
 ### Phase 5: Polish & Portfolio Readiness (Week 5–6) ✅ COMPLETED
 
 **Goals**
+
 - Optimize performance
 - Add admin dashboard
 - Create demo mode
@@ -113,6 +126,7 @@
 - Deploy to production
 
 **Tasks**
+
 - ✅ Implement demo mode with example PDFs
 - ✅ Build admin dashboard (users, metrics, logs, error viewer)
 - ✅ Add Google Analytics integration
@@ -127,11 +141,10 @@
 - ⏳ Production deployment (ready)
 
 **Deliverables**
+
 - ✅ Public demo mode (no auth required)
 - ✅ Admin dashboard functional with full user management
 - ✅ Performance optimizations complete
 - ✅ Comprehensive documentation
 - ✅ CI/CD workflows (Lighthouse CI)
 - ✅ Production-ready monitoring and caching
-
-

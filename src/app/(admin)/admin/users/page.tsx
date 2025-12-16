@@ -37,18 +37,16 @@ export default async function UsersPage({ searchParams }: PageProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="container mx-auto px-4 py-8 md:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-display-lg font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-2">
+            <h1 className="text-display-lg mb-2 bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text font-bold text-transparent">
               User Management
             </h1>
             <p className="text-body-lg text-gray-600 dark:text-gray-300">
               Manage user accounts, tiers, and permissions
             </p>
           </div>
-          <div className="text-sm text-muted-foreground">
-            Total: {total} users
-          </div>
+          <div className="text-sm text-muted-foreground">Total: {total} users</div>
         </div>
 
         <UserManagementTable
@@ -60,4 +58,3 @@ export default async function UsersPage({ searchParams }: PageProps) {
     </div>
   );
 }
-

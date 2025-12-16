@@ -7,6 +7,7 @@ All notable changes to TalkifyDocs will be documented in this file.
 ### Major Changes
 
 #### Authentication
+
 - **BREAKING**: Migrated from Kinde to Clerk authentication
   - More robust authentication with better developer experience
   - Improved user management and webhook support
@@ -15,6 +16,7 @@ All notable changes to TalkifyDocs will be documented in this file.
 #### New Features
 
 **Admin Dashboard**
+
 - Complete admin dashboard with user management
 - System metrics and monitoring
 - Error log viewer
@@ -23,6 +25,7 @@ All notable changes to TalkifyDocs will be documented in this file.
 - Role-based access control
 
 **Demo Mode**
+
 - Public demo page with example documents
 - No authentication required for demo
 - Rate-limited demo chat API
@@ -30,24 +33,28 @@ All notable changes to TalkifyDocs will be documented in this file.
 - "Try Demo" CTA on landing page
 
 **Multi-Document Conversations**
+
 - Support for up to 5 documents per conversation
 - File comparison features
 - File management UI (add/remove files)
 - Enhanced hybrid search across multiple documents
 
 **Highlights & Bookmarks**
+
 - Save important Q&A pairs as highlights
 - Highlights page with search and filtering
 - Export highlights functionality
 - Quick access to saved insights
 
 **Chat Export & Sharing**
+
 - Export conversations as Markdown
 - Generate shareable public links
 - Revoke share links
 - Public conversation viewer
 
 **Performance & Monitoring**
+
 - Sentry integration for error tracking
 - Google Analytics integration
 - Redis caching layer (Upstash support)
@@ -56,6 +63,7 @@ All notable changes to TalkifyDocs will be documented in this file.
 - Lighthouse CI for automated performance testing
 
 **Developer Experience**
+
 - Comprehensive local development guide
 - Smoke test scripts
 - Performance check scripts
@@ -105,9 +113,9 @@ If upgrading from v1.0:
 ## [1.0.0] - Initial Release
 
 ### Features
+
 - PDF upload and processing
 - Single-document chat
 - User authentication (Kinde)
 - Stripe subscriptions
 - Basic dashboard
-

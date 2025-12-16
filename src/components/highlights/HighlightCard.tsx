@@ -33,9 +33,7 @@ export function HighlightCard({ highlight }: HighlightCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
-    if (
-      !confirm("Are you sure you want to delete this highlight? This action cannot be undone.")
-    ) {
+    if (!confirm("Are you sure you want to delete this highlight? This action cannot be undone.")) {
       return;
     }
 
@@ -82,25 +80,21 @@ export function HighlightCard({ highlight }: HighlightCardProps) {
   const citations = Array.isArray(highlight.citations)
     ? highlight.citations
     : highlight.citations
-    ? [highlight.citations]
-    : [];
+      ? [highlight.citations]
+      : [];
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-200 flex flex-col h-full">
-      <CardContent className="p-6 flex flex-col flex-1">
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-lg mb-2 line-clamp-2">
-              {highlight.question}
-            </h3>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground flex-wrap">
-              <span className="truncate max-w-[200px]" title={highlight.file.name}>
+    <Card className="flex h-full flex-col transition-shadow duration-200 hover:shadow-lg">
+      <CardContent className="flex flex-1 flex-col p-6">
+        <div className="mb-3 flex items-start justify-between">
+          <div className="min-w-0 flex-1">
+            <h3 className="mb-2 line-clamp-2 text-lg font-semibold">{highlight.question}</h3>
+            <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+              <span className="max-w-[200px] truncate" title={highlight.file.name}>
                 {highlight.file.name}
               </span>
               <span>•</span>
-              <span>
-                {format(new Date(highlight.createdAt), "MMM d, yyyy")}
-              </span>
+              <span>{format(new Date(highlight.createdAt), "MMM d, yyyy")}</span>
             </div>
           </div>
           <Button
@@ -108,24 +102,24 @@ export function HighlightCard({ highlight }: HighlightCardProps) {
             size="sm"
             onClick={handleDelete}
             disabled={isDeleting}
-            className="text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
+            className="hover:bg-destructive/10 flex-shrink-0 text-destructive hover:text-destructive"
           >
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
 
-        <div className="prose prose-sm dark:prose-invert max-w-none mb-4 flex-1">
-          <ReactMarkdown className="text-foreground">
-            {highlight.answer}
-          </ReactMarkdown>
+        <div className="prose prose-sm dark:prose-invert mb-4 max-w-none flex-1">
+          <ReactMarkdown className="text-foreground">{highlight.answer}</ReactMarkdown>
         </div>
 
         {citations.length > 0 && (
-          <div className="text-xs text-muted-foreground mb-4 flex flex-wrap gap-1">
+          <div className="mb-4 flex flex-wrap gap-1 text-xs text-muted-foreground">
             <strong className="mr-1">Sources:</strong>
             {citations.map((c: any, idx: number) => {
               const page =
-                c.pageNumber ?? c.page ?? (typeof c.pageIndex === "number" ? c.pageIndex + 1 : undefined);
+                c.pageNumber ??
+                c.page ??
+                (typeof c.pageIndex === "number" ? c.pageIndex + 1 : undefined);
               return (
                 <Badge key={idx} variant="outline" className="text-xs">
                   {page ? `p.${page}` : `Source ${idx + 1}`}
@@ -135,23 +129,13 @@ export function HighlightCard({ highlight }: HighlightCardProps) {
           </div>
         )}
 
-        <div className="flex gap-2 pt-2 border-t">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCopy}
-            className="flex-1"
-          >
-            <Copy className="w-4 h-4 mr-2" />
+        <div className="flex gap-2 border-t pt-2">
+          <Button variant="outline" size="sm" onClick={handleCopy} className="flex-1">
+            <Copy className="mr-2 h-4 w-4" />
             Copy
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleViewDocument}
-            className="flex-1"
-          >
-            <ExternalLink className="w-4 h-4 mr-2" />
+          <Button variant="outline" size="sm" onClick={handleViewDocument} className="flex-1">
+            <ExternalLink className="mr-2 h-4 w-4" />
             View Doc
           </Button>
         </div>
@@ -159,4 +143,3 @@ export function HighlightCard({ highlight }: HighlightCardProps) {
     </Card>
   );
 }
-

@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/nextjs";
+import { httpIntegration, prismaIntegration } from "@sentry/node";
 
 if (process.env.NODE_ENV === "production" && process.env.SENTRY_DSN) {
   Sentry.init({
@@ -17,10 +18,7 @@ if (process.env.NODE_ENV === "production" && process.env.SENTRY_DSN) {
       }
       return event;
     },
-    integrations: [
-      new Sentry.Integrations.Http({ tracing: true }),
-      new Sentry.Integrations.Prisma({ client: require("@prisma/client").PrismaClient }),
-    ],
+    integrations: [httpIntegration(), prismaIntegration()],
   });
 }
 
@@ -36,7 +34,11 @@ export function captureException(error: Error, context?: Record<string, any>) {
   }
 }
 
-export function captureMessage(message: string, level: Sentry.SeverityLevel = "info", context?: Record<string, any>) {
+export function captureMessage(
+  message: string,
+  level: Sentry.SeverityLevel = "info",
+  context?: Record<string, any>,
+) {
   if (process.env.NODE_ENV === "production" && process.env.SENTRY_DSN) {
     Sentry.captureMessage(message, {
       level,
@@ -60,4 +62,3 @@ export function clearUserContext() {
     Sentry.setUser(null);
   }
 }
-

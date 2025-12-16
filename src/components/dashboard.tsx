@@ -40,11 +40,10 @@ import {
 import { Badge } from "./ui/badge";
 import { Input } from "./ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { File } from "@prisma/client";
 
 const Dashboard = memo(() => {
-  const [currentlyDeletingFile, setCurrentlyDeletingFile] = useState<
-    string | null
-  >(null);
+  const [currentlyDeletingFile, setCurrentlyDeletingFile] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [filters, setFilters] = useState<SearchFilters>({
@@ -70,15 +69,11 @@ const Dashboard = memo(() => {
 
   const handleDeleteFile = useCallback(
     (id: string) => {
-      if (
-        confirm(
-          "Are you sure you want to delete this file? This action cannot be undone."
-        )
-      ) {
+      if (confirm("Are you sure you want to delete this file? This action cannot be undone.")) {
         deleteFile({ id });
       }
     },
-    [deleteFile]
+    [deleteFile],
   );
 
   // Filter and sort files
@@ -90,7 +85,7 @@ const Dashboard = memo(() => {
     // Apply search filter
     if (searchQuery) {
       filtered = filtered.filter((file) =>
-        file.name.toLowerCase().includes(searchQuery.toLowerCase())
+        file.name.toLowerCase().includes(searchQuery.toLowerCase()),
       );
     }
 
@@ -103,12 +98,10 @@ const Dashboard = memo(() => {
           comparison = a.name.localeCompare(b.name);
           break;
         case "date":
-          comparison =
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
           break;
         case "size":
-          comparison =
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          comparison = Number(a.size) - Number(b.size); // Convert BigInt to Number for comparison
           break;
       }
 
@@ -123,13 +116,13 @@ const Dashboard = memo(() => {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
           <div className="text-center">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
               <FileText className="h-10 w-10 text-red-600 dark:text-red-400" />
             </div>
-            <h3 className="text-heading-md font-semibold text-foreground mb-2">
+            <h3 className="text-heading-md mb-2 font-semibold text-foreground">
               Something went wrong
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <p className="mb-6 text-gray-600 dark:text-gray-400">
               We couldn&apos;t load your documents. Please try again.
             </p>
             <Button onClick={() => window.location.reload()}>Try Again</Button>
@@ -146,7 +139,7 @@ const Dashboard = memo(() => {
         <div className="mb-8">
           <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center sm:gap-0">
             <div className="space-y-2">
-              <h1 className="text-display-lg font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
+              <h1 className="text-display-lg bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text font-bold text-transparent">
                 My Documents
               </h1>
               <p className="text-body-lg text-gray-600 dark:text-gray-300">
@@ -155,7 +148,7 @@ const Dashboard = memo(() => {
             </div>
             <div className="flex items-center space-x-3">
               {files && files.length >= 2 && (
-                <MultiDocSelector files={files.filter((f) => f.uploadStatus === "SUCCESS")} />
+                <MultiDocSelector files={filteredAndSortedFiles.filter((f) => f.uploadStatus === "SUCCESS")} />
               )}
               <UploadZone />
             </div>
@@ -163,15 +156,15 @@ const Dashboard = memo(() => {
 
           {/* Search and Controls */}
           <div className="mt-8 space-y-4">
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col gap-4 sm:flex-row">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
                 <Input
                   type="text"
                   placeholder="Search your documents..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 w-full"
+                  className="w-full py-2 pl-10 pr-4"
                 />
               </div>
 
@@ -179,45 +172,31 @@ const Dashboard = memo(() => {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm">
-                      <Filter className="h-4 w-4 mr-2" />
+                      <Filter className="mr-2 h-4 w-4" />
                       Sort by {filters.sortBy}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                      onClick={() => setFilters({ ...filters, sortBy: "name" })}
-                    >
+                    <DropdownMenuItem onClick={() => setFilters({ ...filters, sortBy: "name" })}>
                       Name
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setFilters({ ...filters, sortBy: "date" })}
-                    >
+                    <DropdownMenuItem onClick={() => setFilters({ ...filters, sortBy: "date" })}>
                       Date Modified
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setFilters({ ...filters, sortBy: "size" })}
-                    >
+                    <DropdownMenuItem onClick={() => setFilters({ ...filters, sortBy: "size" })}>
                       File Size
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() =>
-                        setFilters({ ...filters, sortOrder: "asc" })
-                      }
-                    >
+                    <DropdownMenuItem onClick={() => setFilters({ ...filters, sortOrder: "asc" })}>
                       Ascending
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() =>
-                        setFilters({ ...filters, sortOrder: "desc" })
-                      }
-                    >
+                    <DropdownMenuItem onClick={() => setFilters({ ...filters, sortOrder: "desc" })}>
                       Descending
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                <div className="flex items-center border border-gray-200 rounded-lg">
+                <div className="flex items-center rounded-lg border border-gray-200">
                   <Button
                     variant={viewMode === "grid" ? "default" : "ghost"}
                     size="sm"
@@ -240,14 +219,12 @@ const Dashboard = memo(() => {
 
             {/* Stats */}
             {files && (
-              <div className="flex items-center space-x-6 text-body-sm text-gray-600 dark:text-gray-400">
+              <div className="text-body-sm flex items-center space-x-6 text-gray-600 dark:text-gray-400">
                 <span>
                   {filteredAndSortedFiles.length} document
                   {filteredAndSortedFiles.length !== 1 ? "s" : ""}
                 </span>
-                {searchQuery && (
-                  <span>Filtered by &quot;{searchQuery}&quot;</span>
-                )}
+                {searchQuery && <span>Filtered by &quot;{searchQuery}&quot;</span>}
               </div>
             )}
           </div>
@@ -263,18 +240,14 @@ const Dashboard = memo(() => {
             }
           >
             {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="animate-fade-in"
-                style={{ animationDelay: `${i * 100}ms` }}
-              >
+              <div key={i} className="animate-fade-in" style={{ animationDelay: `${i * 100}ms` }}>
                 <DocumentCardSkeleton />
               </div>
             ))}
           </div>
         ) : filteredAndSortedFiles.length > 0 ? (
           <DocumentGrid
-            files={filteredAndSortedFiles as any}
+            files={filteredAndSortedFiles}
             viewMode={viewMode}
             onDelete={handleDeleteFile}
             onRetry={async (fileId) => {
@@ -290,14 +263,14 @@ const Dashboard = memo(() => {
             }}
           />
         ) : (
-          <div className="text-center py-16 animate-fade-in">
-            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center animate-bounce-in">
+          <div className="animate-fade-in py-16 text-center">
+            <div className="animate-bounce-in mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
               <Ghost className="h-12 w-12 text-gray-400" />
             </div>
-            <h3 className="text-heading-lg font-semibold text-foreground mb-2">
+            <h3 className="text-heading-lg mb-2 font-semibold text-foreground">
               {searchQuery ? "No documents found" : "No documents yet"}
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mb-8">
+            <p className="mx-auto mb-8 max-w-md text-gray-600 dark:text-gray-400">
               {searchQuery
                 ? `No documents match &quot;${searchQuery}&quot;. Try adjusting your search.`
                 : "Upload your first PDF document to get started with AI-powered analysis and intelligent conversations."}

@@ -20,7 +20,9 @@ export function useKeyboardShortcuts() {
       key: "k",
       description: "Search documents",
       action: () => {
-        const searchInput = document.querySelector('input[placeholder*="Search"]') as HTMLInputElement;
+        const searchInput = document.querySelector(
+          'input[placeholder*="Search"]',
+        ) as HTMLInputElement;
         if (searchInput) {
           searchInput.focus();
         }
@@ -31,7 +33,7 @@ export function useKeyboardShortcuts() {
       key: "n",
       description: "Upload new document",
       action: () => {
-        const uploadButton = document.querySelector('[data-upload-trigger]') as HTMLButtonElement;
+        const uploadButton = document.querySelector("[data-upload-trigger]") as HTMLButtonElement;
         if (uploadButton) {
           uploadButton.click();
         }
@@ -62,7 +64,8 @@ export function useKeyboardShortcuts() {
       action: () => {
         toast({
           title: "Keyboard Shortcuts",
-          description: "Press Cmd+K to search, Cmd+N to upload, Cmd+H for home, Cmd+D for dashboard, Cmd+P for pricing",
+          description:
+            "Press Cmd+K to search, Cmd+N to upload, Cmd+H for home, Cmd+D for dashboard, Cmd+P for pricing",
         });
       },
     },
@@ -73,7 +76,7 @@ export function useKeyboardShortcuts() {
         // Close any open modals or dropdowns
         const modals = document.querySelectorAll('[role="dialog"]');
         const dropdowns = document.querySelectorAll('[data-state="open"]');
-        
+
         [...modals, ...dropdowns].forEach((element) => {
           const closeButton = element.querySelector('[aria-label="Close"], [data-close]');
           if (closeButton) {
@@ -93,7 +96,7 @@ export function useKeyboardShortcuts() {
 
       for (const shortcut of shortcuts) {
         const keyMatches = shortcut.key.toLowerCase() === event.key.toLowerCase();
-        const modifierMatches = 
+        const modifierMatches =
           (!shortcut.modifier && !isCmd && !isAlt && !isShift) ||
           (shortcut.modifier === "cmd" && isCmd && !isAlt && !isShift) ||
           (shortcut.modifier === "alt" && isAlt && !isCmd && !isShift) ||
@@ -106,7 +109,7 @@ export function useKeyboardShortcuts() {
         }
       }
     },
-    [shortcuts]
+    [shortcuts],
   );
 
   useEffect(() => {
@@ -134,13 +137,11 @@ export function KeyboardShortcutsModal() {
             <span className="text-sm text-gray-600">{shortcut.description}</span>
             <div className="flex items-center space-x-1">
               {shortcut.modifier && (
-                <kbd className="px-2 py-1 text-xs font-mono bg-gray-100 rounded">
+                <kbd className="rounded bg-gray-100 px-2 py-1 font-mono text-xs">
                   {shortcut.modifier === "cmd" ? "⌘" : shortcut.modifier.toUpperCase()}
                 </kbd>
               )}
-              <kbd className="px-2 py-1 text-xs font-mono bg-gray-100 rounded">
-                {shortcut.key}
-              </kbd>
+              <kbd className="rounded bg-gray-100 px-2 py-1 font-mono text-xs">{shortcut.key}</kbd>
             </div>
           </div>
         ))}

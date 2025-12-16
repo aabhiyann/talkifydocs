@@ -24,8 +24,7 @@ const PdfFullscreen = ({ fileUrl }: PdfFullscreenProps) => {
   useEffect(() => {
     const loadPdfComponents = async () => {
       try {
-        const { Document: DocumentComponent, Page: PageComponent } =
-          await import("react-pdf");
+        const { Document: DocumentComponent, Page: PageComponent } = await import("react-pdf");
         setDocument(() => DocumentComponent);
         setPage(() => PageComponent);
         setIsLoading(false);
@@ -58,15 +57,13 @@ const PdfFullscreen = ({ fileUrl }: PdfFullscreenProps) => {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-7xl w-full">
-        <SimpleBar autoHide={false} className="max-h-[calc(100vh-10rem)] mt-6">
+      <DialogContent className="w-full max-w-7xl">
+        <SimpleBar autoHide={false} className="mt-6 max-h-[calc(100vh-10rem)]">
           <div ref={ref}>
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-primary-600 mb-4" />
-                <p className="text-sm text-muted-foreground">
-                  Loading PDF viewer...
-                </p>
+                <Loader2 className="mb-4 h-8 w-8 animate-spin text-primary-600" />
+                <p className="text-sm text-muted-foreground">Loading PDF viewer...</p>
               </div>
             ) : Document && Page ? (
               <Document
@@ -91,19 +88,13 @@ const PdfFullscreen = ({ fileUrl }: PdfFullscreenProps) => {
                 {numPages &&
                   new Array(numPages)
                     .fill(0)
-                    .map((_, i) => (
-                      <Page
-                        key={i}
-                        width={width ? width : 1}
-                        pageNumber={i + 1}
-                      />
-                    ))}
+                    .map((_, i) => <Page key={i} width={width ? width : 1} pageNumber={i + 1} />)}
               </Document>
             ) : (
               <div className="flex flex-col items-center justify-center py-12">
-                <div className="text-destructive mb-4">
+                <div className="mb-4 text-destructive">
                   <svg
-                    className="h-12 w-12 mx-auto"
+                    className="mx-auto h-12 w-12"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -116,10 +107,10 @@ const PdfFullscreen = ({ fileUrl }: PdfFullscreenProps) => {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">
+                <h3 className="mb-2 text-lg font-semibold text-foreground">
                   Failed to load PDF viewer
                 </h3>
-                <p className="text-sm text-muted-foreground text-center">
+                <p className="text-center text-sm text-muted-foreground">
                   There was an error loading the PDF viewer for fullscreen mode.
                 </p>
               </div>

@@ -28,10 +28,7 @@ export async function createConversation(fileIds: string[]) {
   }
 
   // Generate title from file names
-  const title =
-    files.length === 1
-      ? files[0].name
-      : `${files.length} Documents`;
+  const title = files.length === 1 ? files[0].name : `${files.length} Documents`;
 
   // Create conversation
   const conversation = await db.conversation.create({
@@ -55,10 +52,7 @@ export async function createConversation(fileIds: string[]) {
   return conversation;
 }
 
-export async function addFileToConversation(
-  conversationId: string,
-  fileId: string
-) {
+export async function addFileToConversation(conversationId: string, fileId: string) {
   const user = await requireUser();
 
   // Verify ownership
@@ -83,9 +77,7 @@ export async function addFileToConversation(
   }
 
   // Check if file already in conversation
-  const alreadyAdded = conversation.conversationFiles.some(
-    (cf) => cf.fileId === fileId
-  );
+  const alreadyAdded = conversation.conversationFiles.some((cf) => cf.fileId === fileId);
 
   if (alreadyAdded) {
     throw new Error("File already in conversation");
@@ -110,10 +102,7 @@ export async function addFileToConversation(
   return { success: true };
 }
 
-export async function removeFileFromConversation(
-  conversationId: string,
-  fileId: string
-) {
+export async function removeFileFromConversation(conversationId: string, fileId: string) {
   const user = await requireUser();
 
   const conversation = await db.conversation.findUnique({
@@ -148,4 +137,3 @@ export async function removeFileFromConversation(
   revalidatePath(`/chat/${conversationId}`);
   return { success: true };
 }
-

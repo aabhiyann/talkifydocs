@@ -47,7 +47,7 @@ export function HighlightsSearch({ highlights }: HighlightsSearchProps) {
         (h) =>
           h.question.toLowerCase().includes(query) ||
           h.answer.toLowerCase().includes(query) ||
-          h.file.name.toLowerCase().includes(query)
+          h.file.name.toLowerCase().includes(query),
       );
     }
 
@@ -69,9 +69,9 @@ export function HighlightsSearch({ highlights }: HighlightsSearchProps) {
   return (
     <div className="space-y-4">
       {/* Search and Filter Controls */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="text"
             placeholder="Search highlights by question, answer, or document name..."
@@ -84,7 +84,7 @@ export function HighlightsSearch({ highlights }: HighlightsSearchProps) {
               variant="ghost"
               size="sm"
               onClick={() => setSearchQuery("")}
-              className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0"
+              className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 p-0"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -92,7 +92,7 @@ export function HighlightsSearch({ highlights }: HighlightsSearchProps) {
         </div>
 
         {uniqueFiles.length > 1 && (
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex flex-wrap gap-2">
             <Button
               variant={selectedFile === null ? "default" : "outline"}
               size="sm"
@@ -105,13 +105,9 @@ export function HighlightsSearch({ highlights }: HighlightsSearchProps) {
                 key={file.id}
                 variant={selectedFile === file.id ? "default" : "outline"}
                 size="sm"
-                onClick={() =>
-                  setSelectedFile(selectedFile === file.id ? null : file.id)
-                }
+                onClick={() => setSelectedFile(selectedFile === file.id ? null : file.id)}
               >
-                {file.name.length > 20
-                  ? `${file.name.slice(0, 20)}...`
-                  : file.name}
+                {file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}
               </Button>
             ))}
           </div>
@@ -120,15 +116,12 @@ export function HighlightsSearch({ highlights }: HighlightsSearchProps) {
 
       {/* Active Filters */}
       {hasActiveFilters && (
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm text-muted-foreground">Filters:</span>
           {searchQuery && (
             <Badge variant="secondary" className="gap-1">
               Search: &quot;{searchQuery}&quot;
-              <button
-                onClick={() => setSearchQuery("")}
-                className="ml-1 hover:text-destructive"
-              >
+              <button onClick={() => setSearchQuery("")} className="ml-1 hover:text-destructive">
                 <X className="h-3 w-3" />
               </button>
             </Badge>
@@ -136,20 +129,12 @@ export function HighlightsSearch({ highlights }: HighlightsSearchProps) {
           {selectedFile && (
             <Badge variant="secondary" className="gap-1">
               File: {uniqueFiles.find((f) => f.id === selectedFile)?.name}
-              <button
-                onClick={() => setSelectedFile(null)}
-                className="ml-1 hover:text-destructive"
-              >
+              <button onClick={() => setSelectedFile(null)} className="ml-1 hover:text-destructive">
                 <X className="h-3 w-3" />
               </button>
             </Badge>
           )}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearFilters}
-            className="h-6 text-xs"
-          >
+          <Button variant="ghost" size="sm" onClick={clearFilters} className="h-6 text-xs">
             Clear all
           </Button>
         </div>
@@ -158,7 +143,9 @@ export function HighlightsSearch({ highlights }: HighlightsSearchProps) {
       {/* Results Count */}
       <div className="text-sm text-muted-foreground">
         {filteredHighlights.length === highlights.length ? (
-          <span>{highlights.length} highlight{highlights.length !== 1 ? "s" : ""}</span>
+          <span>
+            {highlights.length} highlight{highlights.length !== 1 ? "s" : ""}
+          </span>
         ) : (
           <span>
             Showing {filteredHighlights.length} of {highlights.length} highlight
@@ -169,8 +156,8 @@ export function HighlightsSearch({ highlights }: HighlightsSearchProps) {
 
       {/* Filtered Highlights */}
       {filteredHighlights.length === 0 ? (
-        <div className="text-center py-12 border rounded-lg bg-muted/30">
-          <p className="text-muted-foreground mb-2">No highlights match your filters</p>
+        <div className="bg-muted/30 rounded-lg border py-12 text-center">
+          <p className="mb-2 text-muted-foreground">No highlights match your filters</p>
           <Button variant="outline" size="sm" onClick={clearFilters}>
             Clear filters
           </Button>
@@ -185,4 +172,3 @@ export function HighlightsSearch({ highlights }: HighlightsSearchProps) {
     </div>
   );
 }
-

@@ -38,34 +38,40 @@ PORT="3000"
 ## How to Get These Keys
 
 ### 1. OpenAI API Key
+
 - Go to [OpenAI Platform](https://platform.openai.com/)
 - Create an account and get your API key
 - Add it to `OPENAI_API_KEY`
 
 ### 2. Pinecone
+
 - Go to [Pinecone Console](https://app.pinecone.io/)
 - Create a new project
 - Get your API key and environment
 - Add them to `PINECONE_API_KEY` and `PINECONE_ENVIRONMENT`
 
 ### 3. UploadThing
+
 - Go to [UploadThing](https://uploadthing.com/)
 - Create a new app
 - Get your secret and app ID
 - Add them to `UPLOADTHING_SECRET` and `UPLOADTHING_APP_ID`
 
 ### 4. Clerk Auth
+
 - Go to [Clerk](https://clerk.com/)
 - Create a new application
 - Get your secret key and webhook secret
 - Add them to the Clerk variables
 
 ### 5. Stripe
+
 - Go to [Stripe Dashboard](https://dashboard.stripe.com/)
 - Get your secret key and webhook secret
 - Add them to the Stripe variables
 
 ### 6. Database
+
 - Set up a PostgreSQL database
 - Get the connection string
 - Add it to `DATABASE_URL`

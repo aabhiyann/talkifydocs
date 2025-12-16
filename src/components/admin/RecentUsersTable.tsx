@@ -29,13 +29,13 @@ export function RecentUsersTable({ users }: RecentUsersTableProps) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5" />
+            <Users className="h-5 w-5" />
             Recent Users
           </CardTitle>
           <Link href="/admin/users">
             <Button variant="outline" size="sm">
               View All
-              <ExternalLink className="w-4 h-4 ml-2" />
+              <ExternalLink className="ml-2 h-4 w-4" />
             </Button>
           </Link>
         </div>
@@ -45,19 +45,19 @@ export function RecentUsersTable({ users }: RecentUsersTableProps) {
           <table className="w-full">
             <thead>
               <tr className="border-b">
-                <th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-muted-foreground">
                   User
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-muted-foreground">
                   Tier
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-muted-foreground">
                   Files
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-muted-foreground">
                   Messages
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-muted-foreground">
                   Joined
                 </th>
               </tr>
@@ -71,29 +71,29 @@ export function RecentUsersTable({ users }: RecentUsersTableProps) {
                 </tr>
               ) : (
                 users.map((user) => (
-                  <tr key={user.id} className="border-b hover:bg-muted/50 transition-colors">
-                    <td className="py-3 px-4">
+                  <tr key={user.id} className="hover:bg-muted/50 border-b transition-colors">
+                    <td className="px-4 py-3">
                       <div>
                         <div className="font-medium">{user.name || "Anonymous"}</div>
                         <div className="text-sm text-muted-foreground">{user.email}</div>
                       </div>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="px-4 py-3">
                       <Badge
                         variant={
                           user.tier === "ADMIN"
                             ? "default"
                             : user.tier === "PRO"
-                            ? "secondary"
-                            : "outline"
+                              ? "secondary"
+                              : "outline"
                         }
                       >
                         {user.tier}
                       </Badge>
                     </td>
-                    <td className="py-3 px-4 text-sm">{user._count.files}</td>
-                    <td className="py-3 px-4 text-sm">{user._count.messages}</td>
-                    <td className="py-3 px-4 text-sm text-muted-foreground">
+                    <td className="px-4 py-3 text-sm">{user._count.files}</td>
+                    <td className="px-4 py-3 text-sm">{user._count.messages}</td>
+                    <td className="px-4 py-3 text-sm text-muted-foreground">
                       {format(new Date(user.createdAt), "MMM d, yyyy")}
                     </td>
                   </tr>
@@ -106,4 +106,3 @@ export function RecentUsersTable({ users }: RecentUsersTableProps) {
     </Card>
   );
 }
-

@@ -75,8 +75,7 @@ export async function createMessage(params: {
   isUserMessage: boolean;
   citations?: unknown;
 }) {
-  const { userId, conversationId, fileId, text, isUserMessage, citations } =
-    params;
+  const { userId, conversationId, fileId, text, isUserMessage, citations } = params;
 
   // Ensure conversation belongs to user
   const conversation = await db.conversation.findFirst({
@@ -102,5 +101,3 @@ export async function createMessage(params: {
     },
   });
 }
-
-

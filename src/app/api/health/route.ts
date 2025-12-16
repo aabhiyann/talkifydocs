@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
         checks: Object.keys(checks).length,
         latency: totalLatency,
       },
-      "Health check requested"
+      "Health check requested",
     );
 
     return NextResponse.json(health, {
@@ -89,7 +89,7 @@ export async function GET(req: NextRequest) {
         services: checks,
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

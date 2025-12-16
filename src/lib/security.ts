@@ -2,7 +2,6 @@ import { NextRequest } from "next/server";
 import { loggers } from "./logger";
 import { db } from "@/lib/db";
 
-
 // Rate limiting configuration
 const RATE_LIMITS = {
   API: { requests: 100, windowMs: 15 * 60 * 1000 }, // 100 requests per 15 minutes
@@ -49,7 +48,7 @@ export function sanitizeFileName(fileName: string): string {
 // Rate limiting using Prisma-backed RateLimit model
 export async function checkRateLimit(
   identifier: string,
-  limitType: keyof typeof RATE_LIMITS
+  limitType: keyof typeof RATE_LIMITS,
 ): Promise<{ allowed: boolean; remaining: number; resetTime: number }> {
   const limit = RATE_LIMITS[limitType];
   const now = new Date();
@@ -158,8 +157,7 @@ export function getSecurityHeaders(): Record<string, string> {
     "X-Frame-Options": "DENY",
     "X-XSS-Protection": "1; mode=block",
     "Referrer-Policy": "strict-origin-when-cross-origin",
-    "Permissions-Policy":
-      "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=(), interest-cohort=()",
     "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
     "Content-Security-Policy":
       "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:;",

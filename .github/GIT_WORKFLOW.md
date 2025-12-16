@@ -3,24 +3,29 @@
 ## Branch Structure
 
 ### Main Branches
+
 - `main` - Production-ready code (protected)
 - `develop` - Integration branch for features
 
 ### Feature Branches
+
 - `feature/epic-name` - Large features/epics
 - `feature/epic-name/feature-name` - Specific features within epics
 - `feature/standalone-feature` - Independent features
 
 ### Fix Branches
+
 - `fix/category/issue-description` - Bug fixes
 - `hotfix/critical-issue` - Critical production fixes (from main)
 
 ### Release Branches
+
 - `release/version-number` - Release preparation (from develop)
 
 ## Commit Convention
 
 ### Format
+
 ```
 type(scope): description
 
@@ -30,6 +35,7 @@ type(scope): description
 ```
 
 ### Types
+
 - `feat`: New features
 - `fix`: Bug fixes
 - `docs`: Documentation changes
@@ -41,6 +47,7 @@ type(scope): description
 - `ci`: CI/CD changes
 
 ### Scopes
+
 - `auth`: Authentication related
 - `ui`: User interface
 - `api`: API changes
@@ -50,6 +57,7 @@ type(scope): description
 - `deps`: Dependencies
 
 ### Examples
+
 ```
 feat(auth): add OAuth2 integration
 fix(theme): resolve hydration mismatch
@@ -61,6 +69,7 @@ chore(deps): update React to v19
 ## Workflow Process
 
 ### 1. Feature Development
+
 ```bash
 # Create feature branch from develop
 git checkout develop
@@ -76,6 +85,7 @@ git push origin feature/epic-name/feature-name
 ```
 
 ### 2. Bug Fixes
+
 ```bash
 # Create fix branch from develop
 git checkout develop
@@ -91,6 +101,7 @@ git push origin fix/category/issue-description
 ```
 
 ### 3. Hotfixes
+
 ```bash
 # Create hotfix from main
 git checkout main
@@ -106,6 +117,7 @@ git push origin hotfix/critical-issue
 ```
 
 ### 4. Release Process
+
 ```bash
 # Create release branch from develop
 git checkout develop
@@ -127,12 +139,14 @@ git merge release/v1.2.0
 ## Branch Protection Rules
 
 ### Main Branch
+
 - Require PR reviews (2 reviewers)
 - Require status checks to pass
 - Require branches to be up to date
 - Restrict pushes to main
 
 ### Develop Branch
+
 - Require PR reviews (1 reviewer)
 - Require status checks to pass
 - Allow force pushes (for cleanup)

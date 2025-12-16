@@ -1,12 +1,19 @@
-import { PDFLoader } from "langchain/document_loaders/fs/pdf";
-import { OpenAIEmbeddings } from "langchain/embeddings/openai";
-import { PineconeStore } from "langchain/vectorstores/pinecone";
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+import { OpenAIEmbeddings } from "@langchain/openai";
+import { PineconeStore } from "@langchain/pinecone";
 import { db } from "@/lib/db";
 import { getPineconeClient } from "@/lib/pinecone";
 import { extractMetadata } from "./extract-metadata";
 import { generateThumbnail } from "./generate-thumbnail";
 import { extractEntities } from "./extract-entities";
 import { summarizeDocument } from "./summarize-document";
+import { PLANS } from "@/config/plans";
+import { PINECONE_INDEX_NAME } from "@/config/pinecone";
+import { Index as PineconeIndex } from "@pinecone-database/pinecone";
+import { withTimeout } from "@/lib/utils";
+import { Document } from "@langchain/core/documents";
+import { JsonValue } from "@prisma/client/runtime/library";
+
 
 type ProcessPdfParams = {
   fileId: string;
@@ -48,16 +55,33 @@ export async function processPdfFile({
   fileUrl,
   fileName,
 }: ProcessPdfParams): Promise<void> {
+  let uploadStatus: "SUCCESS" | "FAILED" = "FAILED";
+  let processedData: Partial<{
+    pageCount: number;
+    summary: string | null;
+    entities: JsonValue | null;
+    metadata: JsonValue | null;
+    thumbnailUrl: string | null;
+  }> = {};
+
+
   try {
     console.log(`[upload] Starting processing for file ${fileName} (${fileId})`);
 
-    // Mark as processing
+    const file = await db.file.findUnique({
+      where: { id: fileId },
+      include: { user: true },
+    });
+
+    if (!file || !file.user) {
+      throw new Error("File or user not found");
+    }
+
     await db.file.update({
       where: { id: fileId },
       data: { uploadStatus: "PROCESSING" },
     });
 
-    // Download file (with timeout)
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minutes
 
@@ -66,149 +90,87 @@ export async function processPdfFile({
 
     if (!response.ok) {
       throw new Error(
-        `Failed to fetch file from storage: ${response.status} ${response.statusText}`
+        `Failed to fetch file from storage: ${response.status} ${response.statusText}`,
       );
     }
 
     const blob = await response.blob();
-    console.log(
-      `[upload] File downloaded (${fileName}), size=${blob.size} bytes, type=${blob.type}`
-    );
-
     if (!blob || blob.size === 0) {
       throw new Error("Downloaded file is empty");
     }
 
     if (blob.type && blob.type !== "application/pdf") {
-      console.warn(
-        `[upload] Warning: file type is ${blob.type}, expected application/pdf`
-      );
+      console.warn(`[upload] Warning: file type is ${blob.type}, expected application/pdf`);
     }
 
-    // Create a temporary File-like object for PDFLoader
-    const tempFile = new File([blob], fileName, {
-      type: "application/pdf",
-    });
-
-    // Extract pages & basic metadata
+    const tempFile = new File([blob], fileName, { type: "application/pdf" });
     const loader = new PDFLoader(tempFile);
-    const pageLevelDocs = await loader.load();
-    console.log(
-      `[upload] PDF loaded for ${fileName}, pages=${pageLevelDocs.length}`
-    );
+    const pageLevelDocs: Document[] = await withTimeout(loader.load(), 30000);
 
     if (!pageLevelDocs.length) {
       throw new Error("PDF appears to be empty or could not be parsed");
     }
 
-    // Enforce free-plan page limits (5 pages per PDF as per marketing site)
-    const fileWithUser = await db.file.findUnique({
-      where: { id: fileId },
-      select: {
-        user: {
-          select: {
-            tier: true,
-          },
-        },
-      },
-    });
-
-    const tier = fileWithUser?.user?.tier;
+    const { tier } = file.user;
     const isProOrAdmin = tier === "PRO" || tier === "ADMIN";
+    const pageLimit = isProOrAdmin ? PLANS.PRO.pageLimit : PLANS.FREE.pageLimit;
 
-    if (!isProOrAdmin && pageLevelDocs.length > 5) {
+    if (pageLevelDocs.length > pageLimit) {
       throw new Error(
-        "Free plan supports up to 5 pages per PDF. Upgrade to Pro for larger documents."
+        `${tier} plan supports up to ${pageLimit} pages per PDF. Upgrade to Pro for larger documents.`,
       );
     }
 
     const [metadata, thumbnailUrl] = await Promise.all([
-      extractMetadata(fileUrl),
-      generateThumbnail(fileUrl),
+      withTimeout(extractMetadata(fileUrl), 30000),
+      withTimeout(generateThumbnail(fileUrl), 30000),
     ]);
 
-    const fullText = pageLevelDocs.map((d) => d.pageContent).join("\n");
+    const fullText = pageLevelDocs.map((d: Document) => d.pageContent).join("\n");
 
     const [entities, summary] = await Promise.all([
-      extractEntities(fullText),
-      summarizeDocument(fullText),
+      withTimeout(extractEntities(fullText), 30000),
+      withTimeout(summarizeDocument(fullText), 30000),
     ]);
 
-    // Initialize Pinecone + embeddings and index documents
-    console.log("[upload] Initializing Pinecone client...");
     const pinecone = await getPineconeClient();
-
-    const indexName = "talkifydocs";
-    try {
-      const existing = await pinecone.listIndexes();
-      const exists = existing?.some((idx: any) => idx.name === indexName);
-      if (!exists) {
-        console.log(`[upload] Creating Pinecone index: ${indexName}`);
-        await pinecone.createIndex({
-          name: indexName,
-          dimension: 1536,
-          metric: "cosine",
-          spec: {
-            serverless: {
-              cloud: "aws",
-              region: "us-east-1",
-            },
-          },
-        } as any);
-      }
-    } catch (e) {
-      console.warn(
-        `[upload] Failed to verify/create Pinecone index ${indexName}:`,
-        e
-      );
-      // continue – index may already exist
-    }
-
-    const pineconeIndex = pinecone.Index(indexName);
+    const pineconeIndex: PineconeIndex = pinecone.Index(PINECONE_INDEX_NAME);
     const embeddings = new OpenAIEmbeddings({
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
-    console.log("[upload] Storing documents in Pinecone...");
-    await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
-      pineconeIndex: pineconeIndex as any,
-    });
-    console.log("[upload] Documents stored in Pinecone");
+    await withTimeout(
+      PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
+        pineconeIndex,
+        namespace: fileId,
+      }),
+      60000,
+    );
 
-    // Mark file as successfully processed and attach metadata
-    await db.file.update({
-      where: { id: fileId },
-      data: {
-        uploadStatus: "SUCCESS",
-        pageCount: metadata.pageCount ?? pageLevelDocs.length,
-        summary,
-        entities,
-        metadata,
-        thumbnailUrl,
-      },
-    });
+    uploadStatus = "SUCCESS";
+    processedData = {
+      pageCount: metadata.pageCount ?? pageLevelDocs.length,
+      summary,
+      entities: entities as any,
+      metadata: metadata as any,
+      thumbnailUrl,
+    };
 
     console.log(`[upload] Processing finished successfully for ${fileName}`);
   } catch (error) {
-    console.error(
-      `[upload] Error processing file ${fileName} (${fileId}):`,
-      error
-    );
-
+    console.error(`[upload] Error processing file ${fileName} (${fileId}):`, error);
+    throw error;
+  } finally {
     await db.file.update({
       where: { id: fileId },
       data: {
-        uploadStatus: "FAILED",
+        uploadStatus,
+        pageCount: processedData.pageCount,
+        summary: processedData.summary,
+        entities: processedData.entities,
+        metadata: processedData.metadata,
+        thumbnailUrl: processedData.thumbnailUrl,
       },
     });
-
-    throw error;
   }
 }
-
-type PdfMetadata = {
-  pageCount: number;
-  summary?: string | null;
-  metadata?: Record<string, any> | null;
-};
-

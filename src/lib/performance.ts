@@ -45,7 +45,7 @@ class PerformanceMonitor {
 
   // Get all completed metrics
   getMetrics(): PerformanceMetric[] {
-    return Array.from(this.metrics.values()).filter(m => m.duration !== undefined);
+    return Array.from(this.metrics.values()).filter((m) => m.duration !== undefined);
   }
 
   // Clear all metrics
@@ -61,14 +61,14 @@ export const perfMonitor = new PerformanceMonitor();
 export function usePerformanceMonitor(name: string) {
   const start = () => perfMonitor.start(name);
   const end = () => perfMonitor.end(name);
-  
+
   return { start, end };
 }
 
 // Higher-order function for API performance monitoring
 export function withPerformanceMonitoring<T extends any[], R>(
   fn: (...args: T) => Promise<R>,
-  operationName: string
+  operationName: string,
 ) {
   return async (...args: T): Promise<R> => {
     perfMonitor.start(operationName);
@@ -84,18 +84,12 @@ export function withPerformanceMonitoring<T extends any[], R>(
 }
 
 // Database query performance monitoring
-export function monitorDbQuery<T>(
-  queryName: string,
-  queryFn: () => Promise<T>
-): Promise<T> {
+export function monitorDbQuery<T>(queryName: string, queryFn: () => Promise<T>): Promise<T> {
   return withPerformanceMonitoring(queryFn, `db-query:${queryName}`)();
 }
 
 // API route performance monitoring
-export function monitorApiRoute<T>(
-  routeName: string,
-  handler: () => Promise<T>
-): Promise<T> {
+export function monitorApiRoute<T>(routeName: string, handler: () => Promise<T>): Promise<T> {
   return withPerformanceMonitoring(handler, `api-route:${routeName}`)();
 }
 
@@ -112,7 +106,7 @@ export function reportWebVitals(metric: any) {
   if (process.env.NODE_ENV === "development") {
     console.log("Web Vitals:", metric);
   }
-  
+
   // In production, you might want to send this to an analytics service
   if (process.env.NODE_ENV === "production") {
     // Example: Send to analytics service

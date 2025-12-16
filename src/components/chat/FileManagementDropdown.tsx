@@ -41,7 +41,7 @@ export function FileManagementDropdown({
 
   const currentFileIds = new Set(currentFiles.map((cf) => cf.fileId));
   const canAddFiles = availableFiles.filter(
-    (f) => !currentFileIds.has(f.id) && currentFiles.length < 5
+    (f) => !currentFileIds.has(f.id) && currentFiles.length < 5,
   );
 
   const handleAddFile = async (fileId: string) => {
@@ -115,7 +115,7 @@ export function FileManagementDropdown({
                 onClick={() => handleAddFile(file.id)}
                 disabled={isLoading === file.id}
               >
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="mr-2 h-4 w-4" />
                 <span className="truncate">{file.name}</span>
               </DropdownMenuItem>
             ))}
@@ -132,19 +132,16 @@ export function FileManagementDropdown({
                 disabled={isLoading === cf.fileId}
                 className="text-destructive focus:text-destructive"
               >
-                <X className="h-4 w-4 mr-2" />
+                <X className="mr-2 h-4 w-4" />
                 <span className="truncate">{cf.file.name}</span>
               </DropdownMenuItem>
             ))}
           </>
         )}
         {canAddFiles.length === 0 && currentFiles.length <= 1 && (
-          <div className="px-2 py-1.5 text-sm text-muted-foreground">
-            No actions available
-          </div>
+          <div className="px-2 py-1.5 text-sm text-muted-foreground">No actions available</div>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
-

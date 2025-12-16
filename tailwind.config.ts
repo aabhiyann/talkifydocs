@@ -21,7 +21,7 @@ const config = {
         "2xl": "3rem",
       },
       screens: {
-        "2xl": "1280px", /* Max width per Wist design */
+        "2xl": "1280px" /* Max width per Wist design */,
       },
     },
     extend: {
@@ -173,6 +173,6 @@ const config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config
+} satisfies Config;
 
-export default config
+export default config;

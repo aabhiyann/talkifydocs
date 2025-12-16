@@ -14,37 +14,21 @@ const sizeClasses = {
   xl: "h-12 w-12",
 };
 
-export function LoadingSpinner({
-  size = "md",
-  className,
-  text,
-}: LoadingSpinnerProps) {
+export function LoadingSpinner({ size = "md", className, text }: LoadingSpinnerProps) {
   return (
     <div className="flex items-center justify-center space-x-2">
-      <Loader2
-        className={cn(
-          "animate-spin text-primary-600",
-          sizeClasses[size],
-          className
-        )}
-      />
-      {text && (
-        <span className="text-body-sm text-gray-600 dark:text-gray-400">
-          {text}
-        </span>
-      )}
+      <Loader2 className={cn("animate-spin text-primary-600", sizeClasses[size], className)} />
+      {text && <span className="text-body-sm text-gray-600 dark:text-gray-400">{text}</span>}
     </div>
   );
 }
 
 export function PageLoader() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="text-center">
         <LoadingSpinner size="xl" />
-        <p className="mt-4 text-body-lg text-gray-600 dark:text-gray-400">
-          Loading...
-        </p>
+        <p className="text-body-lg mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
       </div>
     </div>
   );

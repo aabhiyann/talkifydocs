@@ -45,9 +45,7 @@ export async function GET(req: NextRequest) {
       } catch (error) {
         console.error("[upload-status] SSE error:", error);
         const encoder = new TextEncoder();
-        controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify({ error: "ERROR" })}\n\n`)
-        );
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: "ERROR" })}\n\n`));
       } finally {
         controller.close();
       }
@@ -62,5 +60,3 @@ export async function GET(req: NextRequest) {
     },
   });
 }
-
-

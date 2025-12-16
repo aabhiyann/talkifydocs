@@ -15,9 +15,7 @@ export async function initializeCurrentUser() {
   }
 
   const email =
-    clerk.emailAddresses?.[0]?.emailAddress ??
-    clerk.primaryEmailAddress?.emailAddress ??
-    "";
+    clerk.emailAddresses?.[0]?.emailAddress ?? clerk.primaryEmailAddress?.emailAddress ?? "";
   const name = clerk.fullName ?? null;
   const imageUrl = clerk.imageUrl ?? null;
 
@@ -38,5 +36,3 @@ export async function initializeCurrentUser() {
 
   return { id: user.id, clerkId: user.clerkId };
 }
-
-

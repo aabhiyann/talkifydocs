@@ -25,15 +25,15 @@ export default function DemoPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="container mx-auto px-4 py-8 md:px-6 lg:px-8">
-        <div className="mb-10 text-center max-w-2xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
+        <div className="mx-auto mb-10 max-w-2xl text-center">
+          <h1 className="mb-4 bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-4xl font-extrabold tracking-tight text-transparent md:text-5xl">
             Try TalkifyDocs
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
-            Explore our example documents and experience AI-powered document chat
-            without creating an account. Sign up anytime to use your own PDFs.
+          <p className="mb-6 text-lg text-gray-600 dark:text-gray-300">
+            Explore our example documents and experience AI-powered document chat without creating
+            an account. Sign up anytime to use your own PDFs.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Link href="/sign-up">
               <Button size="lg" className="px-8">
                 Sign Up Free
@@ -48,7 +48,7 @@ export default function DemoPage() {
         </div>
 
         <div className="mb-6">
-          <h2 className="text-2xl font-semibold mb-2">Example Documents</h2>
+          <h2 className="mb-2 text-2xl font-semibold">Example Documents</h2>
           <p className="text-gray-600 dark:text-gray-400">
             Click any document to open it in demo chat mode.
           </p>

@@ -8,5 +8,3 @@ import UploadButton from "../UploadButton";
 export const UploadZone = () => {
   return <UploadButton />;
 };
-
-

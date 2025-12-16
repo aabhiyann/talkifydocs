@@ -223,7 +223,7 @@ export { cacheService, cacheKeys, CACHE_TTL };
 export function withCache<T extends any[], R>(
   fn: (...args: T) => Promise<R>,
   keyGenerator: (...args: T) => string,
-  ttl?: number
+  ttl?: number,
 ) {
   return async (...args: T): Promise<R> => {
     const key = keyGenerator(...args);

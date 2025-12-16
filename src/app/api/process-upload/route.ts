@@ -59,9 +59,7 @@ export async function GET(req: NextRequest) {
       } catch (error) {
         console.error("[process-upload] SSE error:", error);
         const encoder = new TextEncoder();
-        controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify({ status: "ERROR" })}\n\n`)
-        );
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ status: "ERROR" })}\n\n`));
       } finally {
         controller.close();
       }
@@ -121,12 +119,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("[process-upload] Retry endpoint error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
-
-
-

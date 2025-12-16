@@ -24,4 +24,3 @@ export type ConversationWithRelations = Conversation & {
   messages: Message[];
   conversationFiles: (ConversationFile & { file: File })[];
 };
-

@@ -33,9 +33,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const fileNames = conversation.conversationFiles
-    .map((cf) => cf.file.name)
-    .join(", ");
+  const fileNames = conversation.conversationFiles.map((cf) => cf.file.name).join(", ");
 
   return {
     title: `Shared Conversation: ${conversation.title} | TalkifyDocs`,
@@ -62,28 +60,24 @@ export default async function SharedChatPage({ params }: PageProps) {
     notFound();
   }
 
-  const fileNames = conversation.conversationFiles
-    .map((cf) => cf.file.name)
-    .join(", ");
+  const fileNames = conversation.conversationFiles.map((cf) => cf.file.name).join(", ");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="mx-auto max-w-4xl px-4 py-8 md:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <div>
-              <h1 className="text-display-lg font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-2">
+              <h1 className="text-display-lg mb-2 bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text font-bold text-transparent">
                 Shared Conversation
               </h1>
-              <p className="text-body-lg text-gray-600 dark:text-gray-300">
-                {conversation.title}
-              </p>
+              <p className="text-body-lg text-gray-600 dark:text-gray-300">{conversation.title}</p>
             </div>
             <Link href="/sign-up">
               <Button variant="outline" size="sm">
                 Try TalkifyDocs
-                <ExternalLink className="w-4 h-4 ml-2" />
+                <ExternalLink className="ml-2 h-4 w-4" />
               </Button>
             </Link>
           </div>
@@ -96,8 +90,7 @@ export default async function SharedChatPage({ params }: PageProps) {
               <strong>Messages:</strong> {conversation.messages.length}
             </div>
             <div>
-              <strong>Created:</strong>{" "}
-              {format(new Date(conversation.createdAt), "MMMM d, yyyy")}
+              <strong>Created:</strong> {format(new Date(conversation.createdAt), "MMMM d, yyyy")}
             </div>
           </div>
         </div>
@@ -107,9 +100,7 @@ export default async function SharedChatPage({ params }: PageProps) {
           {conversation.messages.length === 0 ? (
             <Card>
               <CardContent className="p-8 text-center">
-                <p className="text-muted-foreground">
-                  This conversation has no messages yet.
-                </p>
+                <p className="text-muted-foreground">This conversation has no messages yet.</p>
               </CardContent>
             </Card>
           ) : (
@@ -117,15 +108,15 @@ export default async function SharedChatPage({ params }: PageProps) {
               const citations = Array.isArray(message.citations)
                 ? message.citations
                 : message.citations
-                ? [message.citations]
-                : [];
+                  ? [message.citations]
+                  : [];
 
               return (
                 <Card
                   key={message.id}
                   className={
                     message.isUserMessage
-                      ? "bg-primary-50 dark:bg-primary-950/20 border-primary-200 dark:border-primary-800"
+                      ? "dark:bg-primary-950/20 border-primary-200 bg-primary-50 dark:border-primary-800"
                       : ""
                   }
                 >
@@ -133,18 +124,18 @@ export default async function SharedChatPage({ params }: PageProps) {
                     <div className="flex items-start gap-4">
                       {/* Avatar */}
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${
                           message.isUserMessage
                             ? "bg-primary-600 text-white"
-                            : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+                            : "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
                         }`}
                       >
                         {message.isUserMessage ? "👤" : "🤖"}
                       </div>
 
                       {/* Content */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-2">
+                      <div className="min-w-0 flex-1">
+                        <div className="mb-2 flex items-center gap-2">
                           <span className="font-semibold">
                             {message.isUserMessage ? "You" : "AI Assistant"}
                           </span>
@@ -167,11 +158,8 @@ export default async function SharedChatPage({ params }: PageProps) {
                               const page =
                                 c.pageNumber ??
                                 c.page ??
-                                (typeof c.pageIndex === "number"
-                                  ? c.pageIndex + 1
-                                  : undefined);
-                              const filename =
-                                c.filename || c.fileName || c.title || "Document";
+                                (typeof c.pageIndex === "number" ? c.pageIndex + 1 : undefined);
+                              const filename = c.filename || c.fileName || c.title || "Document";
                               return (
                                 <Badge key={idx} variant="outline" className="text-xs">
                                   {filename}
@@ -192,19 +180,18 @@ export default async function SharedChatPage({ params }: PageProps) {
 
         {/* CTA Footer */}
         <div className="mt-12 text-center">
-          <Card className="bg-primary-50 dark:bg-primary-950/20 border-primary-200 dark:border-primary-800">
+          <Card className="dark:bg-primary-950/20 border-primary-200 bg-primary-50 dark:border-primary-800">
             <CardContent className="p-8">
-              <h3 className="text-xl font-semibold mb-2">
+              <h3 className="mb-2 text-xl font-semibold">
                 Want to try TalkifyDocs with your own documents?
               </h3>
-              <p className="text-muted-foreground mb-6">
-                Upload your PDFs and chat with AI-powered insights. Free to get
-                started.
+              <p className="mb-6 text-muted-foreground">
+                Upload your PDFs and chat with AI-powered insights. Free to get started.
               </p>
               <Link href="/sign-up">
                 <Button size="lg" className="bg-primary-600 hover:bg-primary-700">
                   Sign up for free
-                  <ExternalLink className="w-4 h-4 ml-2" />
+                  <ExternalLink className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
             </CardContent>
@@ -214,4 +201,3 @@ export default async function SharedChatPage({ params }: PageProps) {
     </div>
   );
 }
-

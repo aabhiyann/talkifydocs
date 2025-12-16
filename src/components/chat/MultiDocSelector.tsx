@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { createConversation } from "@/actions/conversations";
@@ -71,7 +77,7 @@ export function MultiDocSelector({ files }: MultiDocSelectorProps) {
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
+        <DialogContent className="flex max-h-[80vh] max-w-2xl flex-col">
           <DialogHeader>
             <DialogTitle>Select Documents to Compare</DialogTitle>
             <DialogDescription>
@@ -79,28 +85,22 @@ export function MultiDocSelector({ files }: MultiDocSelectorProps) {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-2 flex-1 overflow-y-auto min-h-0">
+          <div className="min-h-0 flex-1 space-y-2 overflow-y-auto">
             {files.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                No documents available
-              </div>
+              <div className="py-8 text-center text-muted-foreground">No documents available</div>
             ) : (
               files.map((file) => (
                 <label
                   key={file.id}
-                  className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 cursor-pointer transition-colors"
+                  className="hover:bg-muted/50 flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors"
                 >
                   <Checkbox
                     checked={selected.includes(file.id)}
-                    onCheckedChange={(checked) =>
-                      handleToggle(file.id, checked === true)
-                    }
-                    disabled={
-                      selected.length >= 5 && !selected.includes(file.id)
-                    }
+                    onCheckedChange={(checked) => handleToggle(file.id, checked === true)}
+                    disabled={selected.length >= 5 && !selected.includes(file.id)}
                   />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{file.name}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium">{file.name}</p>
                     <p className="text-sm text-muted-foreground">
                       {file.pageCount ?? 0} pages •{" "}
                       {file.size
@@ -113,10 +113,9 @@ export function MultiDocSelector({ files }: MultiDocSelectorProps) {
             )}
           </div>
 
-          <div className="flex justify-between items-center pt-4 border-t">
+          <div className="flex items-center justify-between border-t pt-4">
             <p className="text-sm text-muted-foreground">
-              {selected.length} document{selected.length !== 1 ? "s" : ""}{" "}
-              selected
+              {selected.length} document{selected.length !== 1 ? "s" : ""} selected
             </p>
             <div className="flex gap-2">
               <Button
@@ -131,13 +130,11 @@ export function MultiDocSelector({ files }: MultiDocSelectorProps) {
               </Button>
               <Button
                 onClick={handleCreate}
-                disabled={
-                  selected.length < 2 || selected.length > 5 || isCreating
-                }
+                disabled={selected.length < 2 || selected.length > 5 || isCreating}
               >
                 {isCreating ? (
                   <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Creating...
                   </>
                 ) : (
@@ -151,4 +148,3 @@ export function MultiDocSelector({ files }: MultiDocSelectorProps) {
     </>
   );
 }
-

@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { OpenAIStream, StreamingTextResponse } from "ai";
+import { LangChainStream, StreamingTextResponse } from "ai";
 import { ChatOpenAI } from "@langchain/openai";
 import { checkRateLimit, getClientIP, validateRequest } from "@/lib/security";
 import { logError, logPerformance } from "@/lib/logger";
@@ -48,12 +48,20 @@ export async function POST(req: NextRequest) {
       "You are the demo assistant for TalkifyDocs. Answer briefly and helpfully based only on the user's message. " +
       "Mention occasionally that this is a demo and that real accounts can upload and chat with their own PDFs.";
 
-    const response = await model.stream([
-      { role: "system", content: systemPrompt },
-      ...messages,
-    ]);
+    const { stream, writer } = LangChainStream();
 
-    const stream = OpenAIStream(response as any);
+    (async () => {
+      const streamResponse = await model.stream([
+        { role: "system", content: systemPrompt },
+        ...messages,
+      ]);
+
+      // Iterate over the AsyncIterable and write each chunk to the WritableStream
+      for await (const chunk of streamResponse) {
+        writer.write(chunk);
+      }
+      writer.close();
+    })();
 
     logPerformance("demo_chat_processing", startTime, {
       clientIP,

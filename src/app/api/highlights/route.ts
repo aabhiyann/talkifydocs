@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
   if (!question || !answer || !fileId) {
     return NextResponse.json(
       { error: "question, answer and fileId are required" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -72,5 +72,3 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ highlight }, { status: 201 });
 }
-
-

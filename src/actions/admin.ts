@@ -5,10 +5,7 @@ import { requireAdmin } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { loggers } from "@/lib/logger";
 
-export async function updateUserTier(
-  userId: string,
-  tier: "FREE" | "PRO" | "ADMIN"
-) {
+export async function updateUserTier(userId: string, tier: "FREE" | "PRO" | "ADMIN") {
   const admin = await requireAdmin();
 
   const user = await db.user.findUnique({
@@ -32,7 +29,7 @@ export async function updateUserTier(
       oldTier: user.tier,
       newTier: tier,
     },
-    "Admin updated user tier"
+    "Admin updated user tier",
   );
 
   revalidatePath("/admin/users");
@@ -85,7 +82,7 @@ export async function deleteUser(userId: string) {
       deletedMessages: user._count.messages,
       deletedConversations: user._count.conversations,
     },
-    "Admin deleted user account"
+    "Admin deleted user account",
   );
 
   revalidatePath("/admin/users");
@@ -143,4 +140,3 @@ export async function getSystemMetrics() {
     activeUsers24h,
   };
 }
-

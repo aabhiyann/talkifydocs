@@ -1,11 +1,7 @@
 // Google Analytics tracking functions
 declare global {
   interface Window {
-    gtag?: (
-      command: string,
-      targetId: string | Date,
-      config?: Record<string, any>
-    ) => void;
+    gtag?: (command: string, targetId: string | Date, config?: Record<string, any>) => void;
     dataLayer?: any[];
   }
 }
@@ -18,12 +14,7 @@ export function trackPageView(url: string) {
   }
 }
 
-export function trackEvent(
-  action: string,
-  category: string,
-  label?: string,
-  value?: number
-) {
+export function trackEvent(action: string, category: string, label?: string, value?: number) {
   if (typeof window !== "undefined" && window.gtag && process.env.NEXT_PUBLIC_GA_ID) {
     window.gtag("event", action, {
       event_category: category,
@@ -58,4 +49,3 @@ export function trackPerformance(metricName: string, value: number, unit: string
 export function trackEngagement(action: string, details?: Record<string, any>) {
   trackEvent(action, "User Engagement", JSON.stringify(details));
 }
-

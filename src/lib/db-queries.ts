@@ -86,12 +86,7 @@ export async function getFileById(fileId: string, userId: string) {
   }
 }
 
-export async function getMessagesByFileId(
-  fileId: string,
-  userId: string,
-  limit = 10,
-  offset = 0
-) {
+export async function getMessagesByFileId(fileId: string, userId: string, limit = 10, offset = 0) {
   const startTime = Date.now();
 
   try {
@@ -178,7 +173,7 @@ export async function createMessage(data: {
 
 export async function updateFileStatus(
   fileId: string,
-  status: "PENDING" | "PROCESSING" | "FAILED" | "SUCCESS"
+  status: "PENDING" | "PROCESSING" | "FAILED" | "SUCCESS",
 ) {
   const startTime = Date.now();
 
@@ -219,7 +214,7 @@ export async function createMessagesBatch(
     isUserMessage: boolean;
     fileId: string;
     userId: string;
-  }>
+  }>,
 ) {
   const startTime = Date.now();
 

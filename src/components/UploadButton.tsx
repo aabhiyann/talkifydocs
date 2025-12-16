@@ -11,16 +11,7 @@ import {
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import Dropzone from "react-dropzone";
-import {
-  Cloud,
-  File,
-  Files,
-  Loader2,
-  Upload,
-  X,
-  CheckCircle2,
-  AlertCircle,
-} from "lucide-react";
+import { Cloud, File, Files, Loader2, Upload, X, CheckCircle2, AlertCircle } from "lucide-react";
 import { Progress } from "./ui/progress";
 import { useToast } from "./ui/use-toast";
 import { useRouter } from "next/navigation";
@@ -33,7 +24,7 @@ const UploadDropzone = () => {
   const router = useRouter();
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
-  
+
   // Zustand store for upload management
   const {
     uploads,
@@ -49,7 +40,7 @@ const UploadDropzone = () => {
   const listenForProcessing = useCallback(
     (uploadId: string, fileId: string, fileName: string) => {
       const eventSource = new EventSource(
-        `/api/upload-status?fileId=${encodeURIComponent(fileId)}`
+        `/api/upload-status?fileId=${encodeURIComponent(fileId)}`,
       );
 
       eventSource.onmessage = (event) => {
@@ -100,8 +91,7 @@ const UploadDropzone = () => {
           if (isFailed) {
             updateUpload(uploadId, {
               status: "error",
-              error:
-                "We couldn't process this file. Please check the file and try again.",
+              error: "We couldn't process this file. Please check the file and try again.",
             });
             eventSource.close();
             return;
@@ -121,7 +111,7 @@ const UploadDropzone = () => {
         eventSource.close();
       };
     },
-    [getAllUploads, router, toast, updateUpload]
+    [getAllUploads, router, toast, updateUpload],
   );
 
   const processFile = useCallback(
@@ -136,7 +126,7 @@ const UploadDropzone = () => {
             clearInterval(progressInterval);
             return;
           }
-          
+
           if (upload.progress < 90) {
             updateUpload(uploadId, {
               progress: Math.min(upload.progress + Math.random() * 20, 90),
@@ -158,11 +148,7 @@ const UploadDropzone = () => {
         });
 
         // Start listening for processing status via SSE
-        listenForProcessing(
-          uploadId,
-          result.fileId,
-          file.name
-        );
+        listenForProcessing(uploadId, result.fileId, file.name);
       } catch (error) {
         updateUpload(uploadId, {
           status: "error",
@@ -170,7 +156,7 @@ const UploadDropzone = () => {
         });
       }
     },
-    [startUpload, updateUpload, listenForProcessing]
+    [updateUpload, listenForProcessing],
   );
 
   const handleDrop = useCallback(
@@ -195,9 +181,9 @@ const UploadDropzone = () => {
 
       // Check batch limit
       const currentUploads = getAllUploads().filter(
-        (u) => u.status === "uploading" || u.status === "processing"
+        (u) => u.status === "uploading" || u.status === "processing",
       );
-      
+
       if (currentUploads.length + acceptedFiles.length > 10) {
         toast({
           title: "Batch limit exceeded",
@@ -209,21 +195,21 @@ const UploadDropzone = () => {
 
       // Add files to queue
       const uploadIds = acceptedFiles.map((file) => addUpload(file));
-      
+
       // Process files with concurrency limit
       for (let i = 0; i < uploadIds.length; i++) {
         const uploadId = uploadIds[i];
         const file = acceptedFiles[i];
-        
+
         // Wait if we're at concurrency limit
         while (activeUploads >= 3) {
           await new Promise((resolve) => setTimeout(resolve, 100));
         }
-        
+
         processFile(uploadId, file);
       }
     },
-    [addUpload, getAllUploads, activeUploads, processFile, toast]
+    [addUpload, getAllUploads, activeUploads, processFile, toast],
   );
 
   // Get current uploads for display
@@ -244,27 +230,25 @@ const UploadDropzone = () => {
         {({ getRootProps, getInputProps, acceptedFiles, isDragActive }) => (
           <div
             {...getRootProps()}
-            className={`relative border-2 border-dashed rounded-xl transition-all duration-300 cursor-pointer ${
+            className={`relative cursor-pointer rounded-xl border-2 border-dashed transition-all duration-300 ${
               isDragActive
-                ? "border-primary-400 bg-primary-50 dark:bg-primary-900/10"
+                ? "dark:bg-primary-900/10 border-primary-400 bg-primary-50"
                 : hasUploads
-                ? "border-primary-300 bg-slate-50 dark:bg-slate-900/10"
-                : "border-gray-300 hover:border-primary-400 hover:bg-gray-50 dark:border-gray-600 dark:hover:border-primary-500 dark:hover:bg-gray-800/50"
+                  ? "border-primary-300 bg-slate-50 dark:bg-slate-900/10"
+                  : "dark:hover:bg-gray-800/50 border-gray-300 hover:border-primary-400 hover:bg-gray-50 dark:border-gray-600 dark:hover:border-primary-500"
             }`}
           >
             <div className="p-8">
               {!hasUploads ? (
                 // Empty state
                 <div className="flex flex-col items-center justify-center space-y-4">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center bg-primary-100 dark:bg-primary-900/20">
+                  <div className="dark:bg-primary-900/20 flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
                     <Cloud className="h-8 w-8 text-primary-600 dark:text-primary-400" />
                   </div>
 
-                  <div className="text-center space-y-2">
+                  <div className="space-y-2 text-center">
                     <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
-                      {isDragActive
-                        ? "Drop your PDFs here"
-                        : "Upload PDF documents"}
+                      {isDragActive ? "Drop your PDFs here" : "Upload PDF documents"}
                     </h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       Drag and drop up to 10 PDFs, or click to browse
@@ -274,9 +258,9 @@ const UploadDropzone = () => {
                     </p>
                   </div>
 
-                  <div className="flex flex-wrap gap-2 justify-center">
+                  <div className="flex flex-wrap justify-center gap-2">
                     <Badge variant="outline" className="text-xs">
-                      <Files className="w-3 h-3 mr-1" />
+                      <Files className="mr-1 h-3 w-3" />
                       Batch upload
                     </Badge>
                     <Badge variant="outline" className="text-xs">
@@ -290,29 +274,29 @@ const UploadDropzone = () => {
               ) : (
                 // Upload list
                 <div className="space-y-4">
-                  <div className="text-center mb-4">
+                  <div className="mb-4 text-center">
                     <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
                       {hasActive ? "Uploading files..." : "Upload complete"}
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                       {isDragActive
                         ? "Drop more PDFs to add to queue"
                         : "Click or drag to upload more files"}
                     </p>
                   </div>
 
-                  <div className="max-h-64 overflow-y-auto space-y-2">
+                  <div className="max-h-64 space-y-2 overflow-y-auto">
                     {currentUploads.map((upload) => (
                       <Card key={upload.id} className="relative">
                         <CardContent className="p-3">
                           <div className="flex items-center space-x-3">
                             <div
-                              className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                              className={`flex h-10 w-10 items-center justify-center rounded-lg ${
                                 upload.status === "success"
                                   ? "bg-green-100 dark:bg-green-900/20"
                                   : upload.status === "error"
-                                  ? "bg-red-100 dark:bg-red-900/20"
-                                  : "bg-primary-100 dark:bg-primary-900/20"
+                                    ? "bg-red-100 dark:bg-red-900/20"
+                                    : "dark:bg-primary-900/20 bg-primary-100"
                               }`}
                             >
                               {upload.status === "success" ? (
@@ -321,14 +305,14 @@ const UploadDropzone = () => {
                                 <AlertCircle className="h-5 w-5 text-red-600" />
                               ) : upload.status === "uploading" ||
                                 upload.status === "processing" ? (
-                                <Loader2 className="h-5 w-5 text-primary-600 animate-spin" />
+                                <Loader2 className="h-5 w-5 animate-spin text-primary-600" />
                               ) : (
                                 <File className="h-5 w-5 text-primary-600" />
                               )}
                             </div>
 
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-foreground truncate">
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-sm font-medium text-foreground">
                                 {upload.file.name}
                               </p>
                               <div className="flex items-center space-x-2">
@@ -360,11 +344,13 @@ const UploadDropzone = () => {
                                               fileId: upload.dbFileId,
                                             }),
                                           });
-                                          listenForProcessing(
-                                            upload.id,
-                                            upload.dbFileId,
-                                            upload.file.name
-                                          );
+                                          if (upload.dbFileId) {
+                                            listenForProcessing(
+                                              upload.id,
+                                              upload.dbFileId,
+                                              upload.file.name,
+                                            );
+                                          }
                                         }}
                                       >
                                         Retry processing
@@ -388,8 +374,7 @@ const UploadDropzone = () => {
                               </div>
                             </div>
 
-                            {(upload.status === "success" ||
-                              upload.status === "error") && (
+                            {(upload.status === "success" || upload.status === "error") && (
                               <Button
                                 variant="ghost"
                                 size="icon"
@@ -404,8 +389,7 @@ const UploadDropzone = () => {
                             )}
                           </div>
 
-                          {(upload.status === "uploading" ||
-                            upload.status === "processing") && (
+                          {(upload.status === "uploading" || upload.status === "processing") && (
                             <div className="mt-2">
                               <Progress value={upload.progress} className="h-1" />
                             </div>
@@ -416,9 +400,7 @@ const UploadDropzone = () => {
                   </div>
 
                   {currentUploads.length > 0 &&
-                    currentUploads.some(
-                      (u) => u.status === "success" || u.status === "error"
-                    ) && (
+                    currentUploads.some((u) => u.status === "success" || u.status === "error") && (
                       <div className="flex justify-center pt-2">
                         <Button
                           variant="outline"
@@ -448,20 +430,17 @@ const UploadButton = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { getAllUploads } = useUploadStatusStore();
   const activeCount = getAllUploads().filter(
-    (u) => u.status === "uploading" || u.status === "processing"
+    (u) => u.status === "uploading" || u.status === "processing",
   ).length;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 relative">
-          <Upload className="h-4 w-4 mr-2" />
+        <Button className="relative bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg transition-all duration-200 hover:from-primary-700 hover:to-primary-800 hover:shadow-xl">
+          <Upload className="mr-2 h-4 w-4" />
           Upload PDFs
           {activeCount > 0 && (
-            <Badge
-              variant="secondary"
-              className="ml-2 bg-white/20 text-white border-0"
-            >
+            <Badge variant="secondary" className="ml-2 border-0 bg-white/20 text-white">
               {activeCount}
             </Badge>
           )}
@@ -470,11 +449,10 @@ const UploadButton = () => {
 
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-center text-xl font-semibold">
-            Upload Documents
-          </DialogTitle>
+          <DialogTitle className="text-center text-xl font-semibold">Upload Documents</DialogTitle>
           <DialogDescription className="text-center text-muted-foreground">
-            Upload up to 10 PDF documents at once. Each file will be processed with AI-powered analysis.
+            Upload up to 10 PDF documents at once. Each file will be processed with AI-powered
+            analysis.
           </DialogDescription>
         </DialogHeader>
         <UploadDropzone />
