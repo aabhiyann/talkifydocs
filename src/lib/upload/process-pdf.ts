@@ -14,7 +14,6 @@ import { withTimeout } from "@/lib/utils";
 import { Document } from "@langchain/core/documents";
 import { JsonValue } from "@prisma/client/runtime/library";
 
-
 type ProcessPdfParams = {
   fileId: string;
   fileUrl: string;
@@ -63,7 +62,6 @@ export async function processPdfFile({
     metadata: JsonValue | null;
     thumbnailUrl: string | null;
   }> = {};
-
 
   try {
     console.log(`[upload] Starting processing for file ${fileName} (${fileId})`);
@@ -136,7 +134,7 @@ export async function processPdfFile({
     const pinecone = await getPineconeClient();
     const pineconeIndex: PineconeIndex = pinecone.Index(PINECONE_INDEX_NAME);
     const embeddings = new OpenAIEmbeddings({
-      openAIApiKey: process.env.OPENAI_API_KEY,
+      modelName: "text-embedding-3-small",
     });
 
     await withTimeout(
@@ -167,8 +165,8 @@ export async function processPdfFile({
         uploadStatus,
         pageCount: processedData.pageCount,
         summary: processedData.summary,
-        entities: processedData.entities,
-        metadata: processedData.metadata,
+        entities: processedData.entities as any,
+        metadata: processedData.metadata as any,
         thumbnailUrl: processedData.thumbnailUrl,
       },
     });

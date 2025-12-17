@@ -158,7 +158,7 @@ export async function POST(req: NextRequest) {
 
     const llmClient = getLlmClient("groq");
     const llmResponse = await llmClient.createChatCompletion({
-      model: AI.MODEL_NAME,
+      model: AI.GROQ_MODEL,
       temperature: 0.3,
       stream: true,
       messages: [

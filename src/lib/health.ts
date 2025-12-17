@@ -1,4 +1,4 @@
-import { db } from "@/db";
+import { db } from "@/lib/db";
 import { loggers } from "./logger";
 
 interface HealthCheck {

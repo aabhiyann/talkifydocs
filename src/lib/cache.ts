@@ -189,8 +189,8 @@ class MemoryCacheService implements CacheService {
   }
 }
 
-// Initialize cache service
-let cacheService: CacheService;
+// Initialize cache service with fallback
+let cacheService: CacheService = new MemoryCacheService();
 
 async function initializeCache() {
   try {

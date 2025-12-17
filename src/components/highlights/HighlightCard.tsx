@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { ModernCard, ModernCardContent } from "@/components/ui/modern-card";
 import { Button } from "@/components/ui/button";
 import { Trash2, Copy, ExternalLink } from "lucide-react";
 import { deleteHighlight } from "@/actions/highlights";
@@ -18,7 +18,7 @@ interface Highlight {
   citations?: any;
   createdAt: Date | string;
   file: {
-    id: string;
+    id:string;
     name: string;
   };
 }
@@ -84,8 +84,8 @@ export function HighlightCard({ highlight }: HighlightCardProps) {
       : [];
 
   return (
-    <Card className="flex h-full flex-col transition-shadow duration-200 hover:shadow-lg">
-      <CardContent className="flex flex-1 flex-col p-6">
+    <ModernCard variant="elevated" className="flex h-full flex-col">
+      <ModernCardContent className="flex flex-1 flex-col">
         <div className="mb-3 flex items-start justify-between">
           <div className="min-w-0 flex-1">
             <h3 className="mb-2 line-clamp-2 text-lg font-semibold">{highlight.question}</h3>
@@ -139,7 +139,7 @@ export function HighlightCard({ highlight }: HighlightCardProps) {
             View Doc
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </ModernCardContent>
+    </ModernCard>
   );
 }

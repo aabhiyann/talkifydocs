@@ -2,7 +2,7 @@ import { privateProcedure, publicProcedure, router } from "./trpc";
 import { z } from "zod";
 
 import { TRPCError } from "@trpc/server";
-import { db } from "@/db";
+import { db } from "@/lib/db";
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
 import { absoluteUrl } from "@/lib/utils";
 // Stripe imports moved to be conditional to avoid webpack bundling issues

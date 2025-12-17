@@ -1,6 +1,13 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+
+import {
+  ModernCard,
+  ModernCardContent,
+  ModernCardHeader,
+  ModernCardTitle,
+} from "@/components/ui/modern-card";
 import { Activity, Server, Database, AlertCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -45,14 +52,14 @@ export function SystemMetrics({ initialMetrics }: SystemMetricsProps) {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+    <ModernCard>
+      <ModernCardHeader>
+        <ModernCardTitle className="flex items-center gap-2">
           <Activity className="h-5 w-5" />
           System Metrics
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+        </ModernCardTitle>
+      </ModernCardHeader>
+      <ModernCardContent>
         <div className="space-y-4">
           <div className="bg-muted/50 flex items-center justify-between rounded-lg p-3">
             <div className="flex items-center gap-3">
@@ -115,7 +122,7 @@ export function SystemMetrics({ initialMetrics }: SystemMetricsProps) {
             </div>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </ModernCardContent>
+    </ModernCard>
   );
 }

@@ -1,6 +1,13 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+
+import {
+  ModernCard,
+  ModernCardContent,
+  ModernCardHeader,
+  ModernCardTitle,
+} from "@/components/ui/modern-card";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -25,13 +32,13 @@ interface RecentUsersTableProps {
 
 export function RecentUsersTable({ users }: RecentUsersTableProps) {
   return (
-    <Card>
-      <CardHeader>
+    <ModernCard>
+      <ModernCardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
+          <ModernCardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
             Recent Users
-          </CardTitle>
+          </ModernCardTitle>
           <Link href="/admin/users">
             <Button variant="outline" size="sm">
               View All
@@ -39,8 +46,8 @@ export function RecentUsersTable({ users }: RecentUsersTableProps) {
             </Button>
           </Link>
         </div>
-      </CardHeader>
-      <CardContent>
+      </ModernCardHeader>
+      <ModernCardContent>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -102,7 +109,7 @@ export function RecentUsersTable({ users }: RecentUsersTableProps) {
             </tbody>
           </table>
         </div>
-      </CardContent>
-    </Card>
+      </ModernCardContent>
+    </ModernCard>
   );
 }

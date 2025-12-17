@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { ModernCard, ModernCardContent } from "@/components/ui/modern-card";
 import { ArrowUp, ArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -12,8 +12,8 @@ interface StatsCardProps {
 
 export function StatsCard({ title, value, change, trend, icon }: StatsCardProps) {
   return (
-    <Card className="transition-shadow hover:shadow-lg">
-      <CardContent className="p-6">
+    <ModernCard variant="elevated">
+      <ModernCardContent>
         <div className="mb-2 flex items-center justify-between">
           <p className="text-sm font-medium text-muted-foreground">{title}</p>
           {icon && <div className="text-muted-foreground">{icon}</div>}
@@ -38,7 +38,7 @@ export function StatsCard({ title, value, change, trend, icon }: StatsCardProps)
             <span>{change}</span>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </ModernCardContent>
+    </ModernCard>
   );
 }

@@ -1,6 +1,6 @@
 import ChatWrapper from "@/components/chat/ChatWrapper";
 import PdfRenderer from "@/components/PdfRenderer";
-import { db } from "@/db";
+import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import { Metadata, Viewport } from "next";

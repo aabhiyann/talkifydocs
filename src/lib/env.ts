@@ -8,7 +8,7 @@ const envSchema = z.object({
   OPENAI_API_KEY: z.string().min(1, "OpenAI API key is required"),
 
   // Groq
-  GROQ_API_KEY: z.string().optional(),
+  GROQ_API_KEY: z.string().min(1, "Groq API key is required"),
 
   // Pinecone
   PINECONE_API_KEY: z.string().min(1, "Pinecone API key is required"),

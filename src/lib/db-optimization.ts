@@ -1,4 +1,4 @@
-import { db } from "@/db";
+import { db } from "@/lib/db";
 
 // Optimized queries with proper includes and selects
 export const optimizedQueries = {

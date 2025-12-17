@@ -35,7 +35,7 @@ export const messageSchema = z.object({
         message: "Message contains potentially dangerous content",
       },
     ),
-  fileId: z.string().uuid(),
+  fileId: z.string().cuid(),
 });
 
 export const userSchema = z.object({

@@ -1,6 +1,13 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+
+import {
+  ModernCard,
+  ModernCardContent,
+  ModernCardHeader,
+  ModernCardTitle,
+} from "@/components/ui/modern-card";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -41,19 +48,19 @@ export function ErrorLogViewer() {
   }, []);
 
   return (
-    <Card>
-      <CardHeader>
+    <ModernCard>
+      <ModernCardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
+          <ModernCardTitle className="flex items-center gap-2">
             <AlertCircle className="h-5 w-5" />
             Recent Errors
-          </CardTitle>
+          </ModernCardTitle>
           <Button variant="ghost" size="sm" onClick={fetchLogs} disabled={isLoading}>
             <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
           </Button>
         </div>
-      </CardHeader>
-      <CardContent>
+      </ModernCardHeader>
+      <ModernCardContent>
         {isLoading ? (
           <div className="py-8 text-center text-muted-foreground">Loading...</div>
         ) : logs.length === 0 ? (
@@ -96,7 +103,7 @@ export function ErrorLogViewer() {
             ))}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </ModernCardContent>
+    </ModernCard>
   );
 }
