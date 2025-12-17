@@ -1,6 +1,5 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Brain, Shield, Zap, Users, Target, Award } from "lucide-react";
-import Image from "next/image";
 
 export default function AboutPage() {
   const values = [
