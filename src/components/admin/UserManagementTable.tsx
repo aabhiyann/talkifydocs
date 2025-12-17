@@ -1,6 +1,8 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+"use client";
+
+import { ModernCard, ModernCardContent } from "@/components/ui/modern-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,7 +37,11 @@ interface UserManagementTableProps {
   totalPages: number;
 }
 
-export function UserManagementTable({ users, currentPage, totalPages }: UserManagementTableProps) {
+export function UserManagementTable({
+  users,
+  currentPage,
+  totalPages,
+}: UserManagementTableProps) {
   const { toast } = useToast();
   const router = useRouter();
   const [updating, setUpdating] = useState<string | null>(null);
@@ -115,8 +121,8 @@ export function UserManagementTable({ users, currentPage, totalPages }: UserMana
   };
 
   return (
-    <Card>
-      <CardContent className="p-0">
+    <ModernCard padding="none">
+      <ModernCardContent>
         <div className="flex items-center justify-between border-b p-4">
           <h2 className="text-lg font-semibold">Users</h2>
           <Button variant="outline" size="sm" onClick={handleExportCSV}>
@@ -245,7 +251,7 @@ export function UserManagementTable({ users, currentPage, totalPages }: UserMana
             </div>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </ModernCardContent>
+    </ModernCard>
   );
 }

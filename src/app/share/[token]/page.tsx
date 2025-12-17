@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { Metadata } from "next";
-import { Card, CardContent } from "@/components/ui/card";
+import { ModernCard, ModernCardContent } from "@/components/ui/modern-card";
 import { Badge } from "@/components/ui/badge";
 import ReactMarkdown from "react-markdown";
 import Link from "next/link";
@@ -98,11 +98,11 @@ export default async function SharedChatPage({ params }: PageProps) {
         {/* Messages */}
         <div className="space-y-4">
           {conversation.messages.length === 0 ? (
-            <Card>
-              <CardContent className="p-8 text-center">
+            <ModernCard>
+              <ModernCardContent className="p-8 text-center">
                 <p className="text-muted-foreground">This conversation has no messages yet.</p>
-              </CardContent>
-            </Card>
+              </ModernCardContent>
+            </ModernCard>
           ) : (
             conversation.messages.map((message, index) => {
               const citations = Array.isArray(message.citations)
@@ -112,7 +112,7 @@ export default async function SharedChatPage({ params }: PageProps) {
                   : [];
 
               return (
-                <Card
+                <ModernCard
                   key={message.id}
                   className={
                     message.isUserMessage
@@ -120,7 +120,7 @@ export default async function SharedChatPage({ params }: PageProps) {
                       : ""
                   }
                 >
-                  <CardContent className="p-6">
+                  <ModernCardContent>
                     <div className="flex items-start gap-4">
                       {/* Avatar */}
                       <div
@@ -171,8 +171,8 @@ export default async function SharedChatPage({ params }: PageProps) {
                         )}
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </ModernCardContent>
+                </ModernCard>
               );
             })
           )}
@@ -180,8 +180,8 @@ export default async function SharedChatPage({ params }: PageProps) {
 
         {/* CTA Footer */}
         <div className="mt-12 text-center">
-          <Card className="dark:bg-primary-950/20 border-primary-200 bg-primary-50 dark:border-primary-800">
-            <CardContent className="p-8">
+          <ModernCard className="dark:bg-primary-950/20 border-primary-200 bg-primary-50 dark:border-primary-800">
+            <ModernCardContent className="p-8">
               <h3 className="mb-2 text-xl font-semibold">
                 Want to try TalkifyDocs with your own documents?
               </h3>
@@ -194,8 +194,8 @@ export default async function SharedChatPage({ params }: PageProps) {
                   <ExternalLink className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
-            </CardContent>
-          </Card>
+            </ModernCardContent>
+          </ModernCard>
         </div>
       </div>
     </div>
