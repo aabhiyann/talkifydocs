@@ -4,6 +4,7 @@ import { Document } from "@langchain/core/documents";
 import { getPineconeIndex } from "./pinecone";
 import { DocumentMetadata } from "@/types/chat";
 import { Index as PineconeIndex } from "@pinecone-database/pinecone";
+import { loggers } from "../logger";
 
 type AnyDocument = Document & {
   metadata: DocumentMetadata;
@@ -77,7 +78,7 @@ export async function hybridSearch(
           },
         }));
       } catch (error) {
-        console.error(`Error searching namespace ${fileId}:`, error);
+        loggers.chat.error(`Error searching namespace ${fileId}:`, error);
         return [];
       }
     }),

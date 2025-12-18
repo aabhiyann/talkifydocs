@@ -160,7 +160,7 @@ export async function processPdfFile({
 
     loggers.upload.info(`Processing finished successfully for ${fileName}`);
   } catch (error) {
-    console.error(`[upload] Error processing file ${fileName} (${fileId}):`, error);
+    loggers.upload.error(`Error processing file ${fileName} (${fileId}):`, error);
     throw error;
   } finally {
     await db.file.update({

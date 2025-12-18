@@ -5,6 +5,7 @@ import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { captureException } from "@/lib/sentry";
+import { logger } from "@/lib/logger";
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -27,7 +28,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("ErrorBoundary caught an error:", error, errorInfo);
+    logger.error("ErrorBoundary caught an error:", { error, errorInfo });
     // Capture error in Sentry
     captureException(error, {
       component: "ErrorBoundary",

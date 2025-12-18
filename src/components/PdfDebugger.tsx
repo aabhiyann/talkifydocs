@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { RefreshCw, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { logger } from "@/lib/logger";
 
 interface PdfDebuggerProps {
   url: string;
@@ -51,7 +52,7 @@ const PdfDebugger = ({ url }: PdfDebuggerProps) => {
         pdfjsLoaded = true;
         workerConfigured = !!pdfjs.GlobalWorkerOptions.workerSrc;
       } catch (error) {
-        console.error("PDF.js load error:", error);
+        logger.error("PDF.js load error:", error);
       }
 
       setDebugInfo({

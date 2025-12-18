@@ -18,6 +18,10 @@ import {
 } from "./ui/dropdown-menu";
 import SimpleBar from "simplebar-react";
 import PdfFullscreen from "./PdfFullscreen";
+import type * as Pdfjs from "pdfjs-dist";
+import type { PDFDocumentProxy } from "pdfjs-dist/types/src/display/api";
+import type { DocumentProps, PageProps } from "react-pdf";
+import { logger } from "@/lib/logger";
 
 interface PdfRendererProps {
   url: string;
@@ -184,9 +188,9 @@ const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
   };
 
   const onDocumentLoadError = (error: Error) => {
-    console.error("PDF document load error:", error);
-    console.error("PDF URL:", url);
-    console.error("Error details:", {
+    logger.error("PDF document load error:", error);
+    logger.error("PDF URL:", url);
+    logger.error("Error details:", {
       name: error?.name,
       message: error?.message,
       stack: error?.stack,

@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ComponentType } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Expand, Loader2 } from "lucide-react";
 import SimpleBar from "simplebar-react";
 import { useToast } from "./ui/use-toast";
 import { useResizeDetector } from "react-resize-detector";
+import type { DocumentProps, PageProps } from "react-pdf";
+import { logger } from "@/lib/logger";
 
 interface PdfFullscreenProps {
   fileUrl: string;
@@ -13,8 +15,8 @@ interface PdfFullscreenProps {
 const PdfFullscreen = ({ fileUrl }: PdfFullscreenProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [numPages, setNumPages] = useState<number>();
-  const [Document, setDocument] = useState<any>(null);
-  const [Page, setPage] = useState<any>(null);
+  const [DocumentComponent, setDocumentComponent] = useState<ComponentType<DocumentProps> | null>(null);
+  const [PageComponent, setPageComponent] = useState<ComponentType<PageProps> | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const { toast } = useToast();
@@ -24,12 +26,12 @@ const PdfFullscreen = ({ fileUrl }: PdfFullscreenProps) => {
   useEffect(() => {
     const loadPdfComponents = async () => {
       try {
-        const { Document: DocumentComponent, Page: PageComponent } = await import("react-pdf");
-        setDocument(() => DocumentComponent);
-        setPage(() => PageComponent);
+        const { Document, Page } = await import("react-pdf");
+        setDocumentComponent(() => Document);
+        setPageComponent(() => Page);
         setIsLoading(false);
       } catch (error) {
-        console.error("Failed to load PDF components:", error);
+        logger.error("Failed to load PDF components:", error);
         setIsLoading(false);
         toast({
           title: "Error loading PDF viewer",
@@ -65,8 +67,8 @@ const PdfFullscreen = ({ fileUrl }: PdfFullscreenProps) => {
                 <Loader2 className="mb-4 h-8 w-8 animate-spin text-primary-600" />
                 <p className="text-sm text-muted-foreground">Loading PDF viewer...</p>
               </div>
-            ) : Document && Page ? (
-              <Document
+            ) : DocumentComponent && PageComponent ? (
+              <DocumentComponent
                 loading={
                   <div className="flex justify-center">
                     <Loader2 className="my-24 h-6 w-6 animate-spin" />
@@ -88,8 +90,8 @@ const PdfFullscreen = ({ fileUrl }: PdfFullscreenProps) => {
                 {numPages &&
                   new Array(numPages)
                     .fill(0)
-                    .map((_, i) => <Page key={i} width={width ? width : 1} pageNumber={i + 1} />)}
-              </Document>
+                    .map((_, i) => <PageComponent key={i} width={width ? width : 1} pageNumber={i + 1} />)}
+              </DocumentComponent>
             ) : (
               <div className="flex flex-col items-center justify-center py-12">
                 <div className="mb-4 text-destructive">
