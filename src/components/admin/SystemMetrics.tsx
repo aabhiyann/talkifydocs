@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import {
   ModernCard,
   ModernCardContent,
@@ -10,27 +8,30 @@ import {
 } from "@/components/ui/modern-card";
 import { Activity, Server, Database, AlertCircle } from "lucide-react";
 import { trpc } from "@/app/_trpc/client";
+import { memo } from "react";
 
 interface SystemMetricsProps {
   initialMetrics?: {
     avgProcessingTime?: number;
     failedUploads?: number;
     avgMessagesPerUser?: number;
-    storageUsed?: bigint | number;
+    storageUsed?: bigint | number | string;
     activeUsers24h?: number;
     errorRate?: number;
   };
 }
 
-export function SystemMetrics({ initialMetrics }: SystemMetricsProps) {
+export const SystemMetrics = memo(({ initialMetrics }: SystemMetricsProps) => {
   const { data: metrics } = trpc.getSystemMetrics.useQuery(undefined, {
-    initialData: initialMetrics,
+    initialData: initialMetrics as any,
     refetchInterval: 30000,
   });
 
-  const formatBytes = (bytes: bigint | number | undefined) => {
-    if (!bytes) return "0 B";
-    const numBytes = typeof bytes === "bigint" ? Number(bytes) : bytes;
+  const formatBytes = (bytes: bigint | number | string | undefined) => {
+    if (bytes === undefined || bytes === null) return "0 B";
+    const numBytes = typeof bytes === "bigint" ? Number(bytes) : Number(bytes);
+    if (isNaN(numBytes)) return "0 B";
+    
     const sizes = ["B", "KB", "MB", "GB", "TB"];
     if (numBytes === 0) return "0 B";
     const i = Math.floor(Math.log(numBytes) / Math.log(1024));
@@ -111,4 +112,6 @@ export function SystemMetrics({ initialMetrics }: SystemMetricsProps) {
       </ModernCardContent>
     </ModernCard>
   );
-}
+});
+
+SystemMetrics.displayName = "SystemMetrics";

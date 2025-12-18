@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import { ModernCard, ModernCardContent } from "@/components/ui/modern-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,6 +15,7 @@ import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
 import { trpc } from "@/app/_trpc/client";
 import { useRouter } from "next/navigation";
+import { memo } from "react";
 
 interface User {
   id: string;
@@ -36,15 +35,15 @@ interface UserManagementTableProps {
   totalPages: number;
 }
 
-export function UserManagementTable({
+export const UserManagementTable = memo(({
   users,
   currentPage,
   totalPages,
-}: UserManagementTableProps) {
+}: UserManagementTableProps) => {
   const { toast } = useToast();
   const router = useRouter();
 
-  const { mutate: updateUserTier, isLoading: isUpdatingTier } =
+  const { mutate: updateUserTier, isLoading: isUpdatingTier } = 
     trpc.updateUserTier.useMutation({
       onSuccess: (_, { tier }) => {
         toast({
@@ -62,7 +61,7 @@ export function UserManagementTable({
       },
     });
 
-  const { mutate: deleteUser, isLoading: isDeletingUser } =
+  const { mutate: deleteUser, isLoading: isDeletingUser } = 
     trpc.deleteUser.useMutation({
       onSuccess: (_, { userId }) => {
         toast({
@@ -257,4 +256,6 @@ export function UserManagementTable({
       </ModernCardContent>
     </ModernCard>
   );
-}
+});
+
+UserManagementTable.displayName = "UserManagementTable";

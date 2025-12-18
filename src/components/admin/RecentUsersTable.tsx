@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import {
   ModernCard,
   ModernCardContent,
@@ -13,6 +11,7 @@ import { format } from "date-fns";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Users } from "lucide-react";
+import { memo } from "react";
 
 interface User {
   id: string;
@@ -30,7 +29,7 @@ interface RecentUsersTableProps {
   users: User[];
 }
 
-export function RecentUsersTable({ users }: RecentUsersTableProps) {
+export const RecentUsersTable = memo(({ users }: RecentUsersTableProps) => {
   return (
     <ModernCard>
       <ModernCardHeader>
@@ -112,4 +111,6 @@ export function RecentUsersTable({ users }: RecentUsersTableProps) {
       </ModernCardContent>
     </ModernCard>
   );
-}
+});
+
+RecentUsersTable.displayName = "RecentUsersTable";

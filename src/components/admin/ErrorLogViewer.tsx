@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import {
   ModernCard,
   ModernCardContent,
@@ -13,16 +11,17 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { trpc } from "@/app/_trpc/client";
+import { memo } from "react";
 
 interface ErrorLog {
   id: string;
   message: string;
   level: "error" | "warn" | "info";
   timestamp: Date | string;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
 }
 
-export function ErrorLogViewer() {
+export const ErrorLogViewer = memo(() => {
   const {
     data: errorData,
     isLoading,
@@ -31,7 +30,7 @@ export function ErrorLogViewer() {
     refetchInterval: 30000,
   });
 
-  const logs = errorData?.logs || [];
+  const logs = (errorData?.logs || []) as ErrorLog[];
 
   return (
     <ModernCard>
@@ -53,7 +52,7 @@ export function ErrorLogViewer() {
           <div className="py-8 text-center text-muted-foreground">No recent errors</div>
         ) : (
           <div className="max-h-96 space-y-3 overflow-y-auto">
-            {logs.slice(0, 10).map((log: ErrorLog) => (
+            {logs.slice(0, 10).map((log) => (
               <div
                 key={log.id}
                 className="bg-muted/30 hover:bg-muted/50 rounded-lg border p-3 transition-colors"
@@ -92,4 +91,6 @@ export function ErrorLogViewer() {
       </ModernCardContent>
     </ModernCard>
   );
-}
+});
+
+ErrorLogViewer.displayName = "ErrorLogViewer";
