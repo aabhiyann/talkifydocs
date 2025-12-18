@@ -20,6 +20,16 @@ import { Badge } from "./ui/badge";
 import { useUploadStatusStore } from "@/hooks/useUploadStatus";
 import { useUploadThing } from "@/lib/uploadthing";
 
+interface DropFileError {
+  code: string;
+  message: string;
+}
+
+interface FileRejection {
+  file: File;
+  errors: DropFileError[];
+}
+
 const UploadDropzone = () => {
   const router = useRouter();
   const { toast } = useToast();
@@ -69,7 +79,7 @@ const UploadDropzone = () => {
     });
 
   const handleDrop = useCallback(
-    async (acceptedFiles: File[]) => {
+    async (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       if (acceptedFiles.length === 0) return;
 
       const currentUploads = getAllUploads().filter(
