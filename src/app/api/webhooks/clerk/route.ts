@@ -40,7 +40,7 @@ export async function POST(req: Request) {
       "svix-signature": svix_signature,
     }) as WebhookEvent;
   } catch (err) {
-    console.error("Error verifying Clerk webhook:", err);
+    loggers.auth.error({ err }, "Error verifying Clerk webhook");
     return new NextResponse("Error: Invalid signature", { status: 400 });
   }
 
@@ -79,7 +79,7 @@ export async function POST(req: Request) {
       });
     }
   } catch (error) {
-    console.error("Error handling Clerk webhook event:", error);
+    loggers.auth.error({ error, eventType }, "Error handling Clerk webhook event");
     return new NextResponse("Error: Webhook handler failure", {
       status: 500,
     });
