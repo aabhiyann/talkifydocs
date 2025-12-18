@@ -3,12 +3,11 @@
 import { ModernCard, ModernCardContent } from "@/components/ui/modern-card";
 import { Button } from "@/components/ui/button";
 import { Trash2, Copy, ExternalLink } from "lucide-react";
-import { deleteHighlight } from "@/actions/highlights";
+import { trpc } from "@/app/_trpc/client";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import ReactMarkdown from "react-markdown";
 import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 
 interface Highlight {
@@ -30,30 +29,30 @@ interface HighlightCardProps {
 export function HighlightCard({ highlight }: HighlightCardProps) {
   const router = useRouter();
   const { toast } = useToast();
-  const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleDelete = async () => {
+  const { mutate: deleteHighlight, isLoading: isDeleting } =
+    trpc.deleteHighlight.useMutation({
+      onSuccess: () => {
+        toast({
+          title: "Highlight deleted",
+          description: "The highlight has been removed",
+        });
+        router.refresh();
+      },
+      onError: (error) => {
+        toast({
+          title: "Error deleting highlight",
+          description: error.message,
+          variant: "destructive",
+        });
+      },
+    });
+
+  const handleDelete = () => {
     if (!confirm("Are you sure you want to delete this highlight? This action cannot be undone.")) {
       return;
     }
-
-    setIsDeleting(true);
-    try {
-      await deleteHighlight(highlight.id);
-      toast({
-        title: "Highlight deleted",
-        description: "The highlight has been removed",
-      });
-      router.refresh();
-    } catch (error) {
-      toast({
-        title: "Error deleting highlight",
-        description: error instanceof Error ? error.message : "Failed to delete highlight",
-        variant: "destructive",
-      });
-    } finally {
-      setIsDeleting(false);
-    }
+    deleteHighlight({ id: highlight.id });
   };
 
   const handleCopy = async () => {

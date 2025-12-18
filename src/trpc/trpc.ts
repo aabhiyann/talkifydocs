@@ -11,7 +11,6 @@ const middleware = t.middleware;
 const isAuth = middleware(async (opts) => {
   const { ctx } = opts;
 
-  // Check if user exists in context
   if (!ctx.user) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
@@ -27,6 +26,15 @@ const isAuth = middleware(async (opts) => {
   });
 });
 
+const isAdmin = middleware(async (opts) => {
+  const { ctx } = opts;
+  if (ctx.user?.tier !== "ADMIN") {
+    throw new TRPCError({ code: "FORBIDDEN", message: "User is not an admin" });
+  }
+  return opts.next(opts);
+});
+
 export const router = t.router;
 export const publicProcedure = t.procedure;
 export const privateProcedure = t.procedure.use(isAuth);
+export const adminProcedure = t.procedure.use(isAuth).use(isAdmin);

@@ -1,11 +1,14 @@
-import { privateProcedure, publicProcedure, router } from "./trpc";
+import { privateProcedure, publicProcedure, router, adminProcedure } from "./trpc";
 import { z } from "zod";
+import { randomUUID } from "crypto";
+import { format } from "date-fns";
 
 import { TRPCError } from "@trpc/server";
 import { db } from "@/lib/db";
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
 import { absoluteUrl } from "@/lib/utils";
-// Stripe imports moved to be conditional to avoid webpack bundling issues
+import { revalidatePath } from "next/cache";
+import { loggers } from "@/lib/logger";
 
 export const appRouter = router({
   authCallback: publicProcedure.query(async () => {
@@ -548,6 +551,239 @@ ${msg.text}${citationText}`;
           : "http://localhost:3000";
 
       return `${baseUrl}/share/${conversation.shareToken}`;
+    }),
+
+  saveAsHighlight: privateProcedure
+    .input(
+      z.object({
+        question: z.string(),
+        answer: z.string(),
+        fileId: z.string(),
+        citations: z.array(z.any()).optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const { question, answer, fileId, citations } = input;
+
+      const file = await db.file.findFirst({
+        where: {
+          id: fileId,
+          userId,
+        },
+        select: { id: true },
+      });
+
+      if (!file) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "File not found or unauthorized" });
+      }
+
+      const highlight = await db.highlight.create({
+        data: {
+          question,
+          answer,
+          citations,
+          userId,
+          fileId: file.id,
+        },
+        include: {
+          file: true,
+        },
+      });
+
+      revalidatePath("/highlights");
+      return highlight;
+    }),
+
+  getHighlights: privateProcedure
+    .input(
+      z.object({
+        fileId: z.string().optional(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const { fileId } = input;
+
+      return db.highlight.findMany({
+        where: {
+          userId,
+          ...(fileId ? { fileId } : {}),
+        },
+        include: {
+          file: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+    }),
+
+  deleteHighlight: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const { id } = input;
+
+      const highlight = await db.highlight.findUnique({
+        where: { id },
+      });
+
+      if (!highlight) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Highlight not found" });
+      }
+
+      if (highlight.userId !== userId) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
+      }
+
+      await db.highlight.delete({
+        where: { id },
+      });
+
+      revalidatePath("/highlights");
+      return { success: true };
+    }),
+
+  updateUserTier: adminProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        tier: z.enum(["FREE", "PRO", "ADMIN"]),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId, tier } = input;
+      const admin = ctx.user;
+
+      const user = await db.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+      }
+
+      await db.user.update({
+        where: { id: userId },
+        data: { tier },
+      });
+
+      loggers.api.info(
+        {
+          operation: "admin_update_user_tier",
+          adminId: admin.id,
+          targetUserId: userId,
+          oldTier: user.tier,
+          newTier: tier,
+        },
+        "Admin updated user tier",
+      );
+
+      revalidatePath("/admin/users");
+      revalidatePath("/admin");
+      return { success: true };
+    }),
+
+  deleteUser: adminProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = input;
+      const admin = ctx.user;
+
+      const user = await db.user.findUnique({
+        where: { id: userId },
+        include: {
+          _count: {
+            select: {
+              files: true,
+              messages: true,
+              conversations: true,
+            },
+          },
+        },
+      });
+
+      if (!user) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+      }
+
+      if (user.id === admin.id) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Cannot delete your own account" });
+      }
+
+      if (user.tier === "ADMIN" && user.id !== admin.id) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Cannot delete other admin accounts" });
+      }
+
+      await db.user.delete({
+        where: { id: userId },
+      });
+
+      loggers.api.warn(
+        {
+          operation: "admin_delete_user",
+          adminId: admin.id,
+          deletedUserId: userId,
+          deletedUserEmail: user.email,
+          deletedFiles: user._count.files,
+          deletedMessages: user._count.messages,
+          deletedConversations: user._count.conversations,
+        },
+        "Admin deleted user account",
+      );
+
+      revalidatePath("/admin/users");
+      revalidatePath("/admin");
+      return { success: true };
+    }),
+
+    getSystemMetrics: adminProcedure.query(async () => {
+        const [
+            totalUsers,
+            totalFiles,
+            totalMessages,
+            proUsers,
+            failedUploads,
+            storageUsed,
+            activeUsers24h,
+        ] = await Promise.all([
+            db.user.count(),
+            db.file.count(),
+            db.message.count(),
+            db.user.count({ where: { tier: "PRO" } }),
+            db.file.count({
+                where: {
+                    uploadStatus: "FAILED",
+                    createdAt: {
+                        gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
+                    },
+                },
+            }),
+            db.file.aggregate({
+                _sum: { size: true },
+            }),
+            db.user.count({
+                where: {
+                    updatedAt: {
+                        gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
+                    },
+                },
+            }),
+        ]);
+
+        const messagesPerUser = totalUsers > 0 ? totalMessages / totalUsers : 0;
+
+        return {
+            totalUsers,
+            totalFiles,
+            totalMessages,
+            proUsers,
+            failedUploads,
+            storageUsed: storageUsed._sum.size || BigInt(0),
+            avgMessagesPerUser: messagesPerUser,
+            activeUsers24h,
+        };
     }),
 });
 

@@ -6,9 +6,8 @@ import { forwardRef } from "react";
 import { Icons } from "../Icons";
 import { Button } from "../ui/button";
 import { Save } from "lucide-react";
-import { saveAsHighlight } from "@/actions/highlights";
+import { trpc } from "@/app/_trpc/client";
 import { useToast } from "../ui/use-toast";
-import { useState } from "react";
 
 interface MessageProps {
   message: ExtendedMessage;
@@ -21,9 +20,24 @@ interface MessageProps {
 const Message = forwardRef<HTMLDivElement, MessageProps>(
   ({ message, isNextMessageSamePerson, onCitationClick, previousUserMessage, fileId }, ref) => {
     const { toast } = useToast();
-    const [isSaving, setIsSaving] = useState(false);
 
-    const handleSaveHighlight = async () => {
+    const { mutate: saveHighlight, isLoading: isSaving } = trpc.saveAsHighlight.useMutation({
+      onSuccess: () => {
+        toast({
+          title: "Highlight saved",
+          description: "This Q&A pair has been saved to your highlights",
+        });
+      },
+      onError: (error) => {
+        toast({
+          title: "Error saving highlight",
+          description: error.message,
+          variant: "destructive",
+        });
+      },
+    });
+
+    const handleSaveHighlight = () => {
       if (!previousUserMessage || !fileId || typeof message.text !== "string") {
         toast({
           title: "Cannot save highlight",
@@ -33,27 +47,12 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
         return;
       }
 
-      setIsSaving(true);
-      try {
-        await saveAsHighlight(
-          previousUserMessage,
-          message.text,
-          fileId,
-          Array.isArray((message as any).citations) ? (message as any).citations : undefined,
-        );
-        toast({
-          title: "Highlight saved",
-          description: "This Q&A pair has been saved to your highlights",
-        });
-      } catch (error) {
-        toast({
-          title: "Error saving highlight",
-          description: error instanceof Error ? error.message : "Failed to save highlight",
-          variant: "destructive",
-        });
-      } finally {
-        setIsSaving(false);
-      }
+      saveHighlight({
+        question: previousUserMessage,
+        answer: message.text,
+        fileId,
+        citations: Array.isArray((message as any).citations) ? (message as any).citations : undefined,
+      });
     };
 
     return (

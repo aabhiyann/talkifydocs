@@ -8,15 +8,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Download, Share2, FileText, Link2, X } from "lucide-react";
-import {
-  exportChatAsMarkdown,
-  createShareableLink,
-  revokeShareableLink,
-  getShareableLink,
-} from "@/actions/export";
+import { Download, Share2, FileText, Link2, X, Loader2 } from "lucide-react";
+import { trpc } from "@/app/_trpc/client";
 import { useToast } from "@/components/ui/use-toast";
-import { useState, useEffect } from "react";
 
 interface ChatExportMenuProps {
   conversationId: string;
@@ -24,30 +18,19 @@ interface ChatExportMenuProps {
 
 export function ChatExportMenu({ conversationId }: ChatExportMenuProps) {
   const { toast } = useToast();
-  const [isExporting, setIsExporting] = useState(false);
-  const [isSharing, setIsSharing] = useState(false);
-  const [shareUrl, setShareUrl] = useState<string | null>(null);
-  const [isLoadingShare, setIsLoadingShare] = useState(true);
 
-  useEffect(() => {
-    // Check if share link already exists
-    getShareableLink(conversationId)
-      .then((url) => {
-        setShareUrl(url);
-      })
-      .catch(() => {
-        setShareUrl(null);
-      })
-      .finally(() => {
-        setIsLoadingShare(false);
-      });
-  }, [conversationId]);
+  const { data: shareUrl, isLoading: isLoadingShare } = trpc.getShareableLink.useQuery(
+    { conversationId },
+    {
+      refetchOnWindowFocus: false,
+      staleTime: Infinity,
+    },
+  );
 
-  const handleExportMarkdown = async () => {
-    setIsExporting(true);
-    try {
-      const markdown = await exportChatAsMarkdown(conversationId);
+  const utils = trpc.useContext();
 
+  const { mutate: exportMarkdown, isLoading: isExporting } = trpc.exportChatAsMarkdown.useMutation({
+    onSuccess: (markdown) => {
       const blob = new Blob([markdown], { type: "text/markdown" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -57,42 +40,54 @@ export function ChatExportMenu({ conversationId }: ChatExportMenuProps) {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-
       toast({
         title: "Chat exported",
         description: "Chat has been exported as Markdown",
       });
-    } catch (error) {
+    },
+    onError: (error) => {
       toast({
         title: "Export failed",
-        description: error instanceof Error ? error.message : "Failed to export chat",
+        description: error.message,
         variant: "destructive",
       });
-    } finally {
-      setIsExporting(false);
-    }
-  };
+    },
+  });
 
-  const handleCreateShare = async () => {
-    setIsSharing(true);
-    try {
-      const url = await createShareableLink(conversationId);
-      setShareUrl(url);
-      await navigator.clipboard.writeText(url);
+  const { mutate: createShareLink, isLoading: isCreatingShare } = trpc.createShareableLink.useMutation({
+    onSuccess: (url) => {
+      utils.getShareableLink.setData({ conversationId }, url);
+      navigator.clipboard.writeText(url);
       toast({
         title: "Share link created",
         description: "Share link has been copied to clipboard",
       });
-    } catch (error) {
+    },
+    onError: (error) => {
       toast({
         title: "Failed to create share link",
-        description: error instanceof Error ? error.message : "Failed to create share link",
+        description: error.message,
         variant: "destructive",
       });
-    } finally {
-      setIsSharing(false);
-    }
-  };
+    },
+  });
+
+  const { mutate: revokeShareLink, isLoading: isRevokingShare } = trpc.revokeShareableLink.useMutation({
+    onSuccess: () => {
+      utils.getShareableLink.setData({ conversationId }, null);
+      toast({
+        title: "Share link revoked",
+        description: "The share link has been disabled",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Failed to revoke link",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
 
   const handleCopyShareLink = async () => {
     if (!shareUrl) return;
@@ -111,35 +106,28 @@ export function ChatExportMenu({ conversationId }: ChatExportMenuProps) {
     }
   };
 
-  const handleRevokeShare = async () => {
-    try {
-      await revokeShareableLink(conversationId);
-      setShareUrl(null);
-      toast({
-        title: "Share link revoked",
-        description: "The share link has been disabled",
-      });
-    } catch (error) {
-      toast({
-        title: "Failed to revoke link",
-        description: error instanceof Error ? error.message : "Failed to revoke share link",
-        variant: "destructive",
-      });
-    }
-  };
+  const isLoading = isExporting || isCreatingShare || isRevokingShare;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" disabled={isLoadingShare}>
-          <Download className="mr-2 h-4 w-4" />
+        <Button variant="outline" size="sm" disabled={isLoadingShare || isLoading}>
+          {isLoading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Download className="mr-2 h-4 w-4" />
+          )}
           Export
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuItem onClick={handleExportMarkdown} disabled={isExporting}>
-          <FileText className="mr-2 h-4 w-4" />
-          {isExporting ? "Exporting..." : "Export as Markdown"}
+        <DropdownMenuItem onClick={() => exportMarkdown({ conversationId })} disabled={isExporting}>
+          {isExporting ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <FileText className="mr-2 h-4 w-4" />
+          )}
+          Export as Markdown
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         {shareUrl ? (
@@ -148,15 +136,23 @@ export function ChatExportMenu({ conversationId }: ChatExportMenuProps) {
               <Link2 className="mr-2 h-4 w-4" />
               Copy Share Link
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleRevokeShare}>
-              <X className="mr-2 h-4 w-4" />
+            <DropdownMenuItem onClick={() => revokeShareLink({ conversationId })} disabled={isRevokingShare}>
+              {isRevokingShare ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <X className="mr-2 h-4 w-4" />
+              )}
               Revoke Share Link
             </DropdownMenuItem>
           </>
         ) : (
-          <DropdownMenuItem onClick={handleCreateShare} disabled={isSharing}>
-            <Share2 className="mr-2 h-4 w-4" />
-            {isSharing ? "Creating..." : "Create Share Link"}
+          <DropdownMenuItem onClick={() => createShareLink({ conversationId })} disabled={isCreatingShare}>
+            {isCreatingShare ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Share2 className="mr-2 h-4 w-4" />
+            )}
+            Create Share Link
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>

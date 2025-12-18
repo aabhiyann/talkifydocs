@@ -1,4 +1,4 @@
-import { getHighlights } from "@/actions/highlights";
+import { createServerClient } from "@/trpc/server";
 import { HighlightCard } from "@/components/highlights/HighlightCard";
 import { HighlightsSearch } from "@/components/highlights/HighlightsSearch";
 import { Metadata } from "next";
@@ -9,7 +9,8 @@ export const metadata: Metadata = {
 };
 
 export default async function HighlightsPage() {
-  const highlights = await getHighlights();
+  const serverClient = await createServerClient();
+  const highlights = await serverClient.getHighlights({});
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
