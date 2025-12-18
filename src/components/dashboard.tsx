@@ -37,9 +37,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Badge } from "./ui/badge";
 import { Input } from "./ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { File } from "@prisma/client";
 
 const Dashboard = memo(() => {
@@ -86,7 +84,7 @@ const Dashboard = memo(() => {
   const filteredAndSortedFiles = useMemo(() => {
     if (!files) return [];
 
-    let filtered = files;
+    let filtered = [...files];
 
     // Apply search filter
     if (searchQuery) {
@@ -96,7 +94,7 @@ const Dashboard = memo(() => {
     }
 
     // Apply sorting
-    filtered.sort((a, b) => {
+    return filtered.sort((a, b) => {
       let comparison = 0;
 
       switch (filters.sortBy) {
@@ -107,14 +105,12 @@ const Dashboard = memo(() => {
           comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
           break;
         case "size":
-          comparison = Number(a.size) - Number(b.size); // Convert BigInt to Number for comparison
+          comparison = Number(a.size) - Number(b.size);
           break;
       }
 
       return filters.sortOrder === "asc" ? comparison : -comparison;
     });
-
-    return filtered;
   }, [files, searchQuery, filters]);
 
   if (error) {

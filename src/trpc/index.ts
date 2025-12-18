@@ -799,7 +799,7 @@ ${msg.text}${citationText}`;
             totalMessages,
             proUsers,
             failedUploads,
-            storageUsed: storageUsed._sum.size || BigInt(0),
+            storageUsed: (storageUsed._sum.size || BigInt(0)).toString(),
             avgMessagesPerUser: messagesPerUser,
             activeUsers24h,
         };
@@ -897,9 +897,6 @@ ${msg.text}${citationText}`;
                 content: msg.text,
             }));
 
-import { AI } from "@/config/ai";
-
-// ... inside onSendMessage ...
             const openaiResponse = await openai.chat.completions.create({
                 model: AI.OPENAI_MODEL,
                 temperature: 0,
