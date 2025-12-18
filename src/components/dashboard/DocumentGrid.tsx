@@ -1,4 +1,5 @@
 import { DocumentCard } from "./DocumentCard";
+import { memo } from "react";
 
 type FileSummary = {
   id: string;
@@ -24,6 +25,8 @@ export const DocumentGrid = ({ files, viewMode, onDelete, onRetry, isDemo = fals
     return null;
   }
 
+  const MemoizedDocumentCard = memo(DocumentCard);
+
   return (
     <div
       className={
@@ -36,7 +39,7 @@ export const DocumentGrid = ({ files, viewMode, onDelete, onRetry, isDemo = fals
           className="animate-scale-in"
           style={{ animationDelay: `${index * 100}ms` }}
         >
-          <DocumentCard
+          <MemoizedDocumentCard
             file={file}
             viewMode={viewMode}
             onDelete={onDelete}

@@ -3,7 +3,7 @@ import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
 import { Loader2, MessageSquare, Bot, User, ArrowUp } from "lucide-react";
 import Skeleton from "react-loading-skeleton";
 import Message from "./Message";
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, memo } from "react";
 import { ChatContext } from "./ChatContext";
 import { useIntersection } from "@mantine/hooks";
 import { Card, CardContent } from "../ui/card";
@@ -16,7 +16,7 @@ interface MessagesProps {
   onCitationClick?: (payload: { fileId: string; page?: number; citation?: Citation }) => void;
 }
 
-const Messages = ({ fileId, onCitationClick }: MessagesProps) => {
+const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
   const { isLoading: isAiThinking } = useContext(ChatContext);
 
   const { data, isLoading, fetchNextPage } = trpc.getFileMessages.useInfiniteQuery(
