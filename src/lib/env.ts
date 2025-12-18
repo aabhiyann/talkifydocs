@@ -18,9 +18,9 @@ const envSchema = z.object({
   STRIPE_SECRET_KEY: z.string().min(1, "Stripe secret key is required"),
   STRIPE_WEBHOOK_SECRET: z.string().min(1, "Stripe webhook secret is required"),
 
-  // UploadThing
-  UPLOADTHING_SECRET: z.string().min(1, "UploadThing secret is required"),
-  UPLOADTHING_APP_ID: z.string().min(1, "UploadThing app ID is required"),
+  // UploadThing (Optional after Vercel Blob migration)
+  UPLOADTHING_SECRET: z.string().optional(),
+  UPLOADTHING_APP_ID: z.string().optional(),
 
   // Vercel Blob
   BLOB_READ_WRITE_TOKEN: z
