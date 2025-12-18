@@ -12,7 +12,7 @@ import { AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { useState, useEffect } from "react";
+import { trpc } from "@/app/_trpc/client";
 
 interface ErrorLog {
   id: string;
@@ -23,29 +23,15 @@ interface ErrorLog {
 }
 
 export function ErrorLogViewer() {
-  const [logs, setLogs] = useState<ErrorLog[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    data: errorData,
+    isLoading,
+    refetch,
+  } = trpc.getErrorLogs.useQuery(undefined, {
+    refetchInterval: 30000,
+  });
 
-  const fetchLogs = async () => {
-    setIsLoading(true);
-    try {
-      const res = await fetch("/api/admin/error-logs");
-      if (res.ok) {
-        const data = await res.json();
-        setLogs(data.logs || []);
-      }
-    } catch (error) {
-      console.error("Failed to fetch error logs:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchLogs();
-    const interval = setInterval(fetchLogs, 30000); // Refresh every 30s
-    return () => clearInterval(interval);
-  }, []);
+  const logs = errorData?.logs || [];
 
   return (
     <ModernCard>
@@ -55,7 +41,7 @@ export function ErrorLogViewer() {
             <AlertCircle className="h-5 w-5" />
             Recent Errors
           </ModernCardTitle>
-          <Button variant="ghost" size="sm" onClick={fetchLogs} disabled={isLoading}>
+          <Button variant="ghost" size="sm" onClick={() => refetch()} disabled={isLoading}>
             <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
           </Button>
         </div>
@@ -67,7 +53,7 @@ export function ErrorLogViewer() {
           <div className="py-8 text-center text-muted-foreground">No recent errors</div>
         ) : (
           <div className="max-h-96 space-y-3 overflow-y-auto">
-            {logs.slice(0, 10).map((log) => (
+            {logs.slice(0, 10).map((log: ErrorLog) => (
               <div
                 key={log.id}
                 className="bg-muted/30 hover:bg-muted/50 rounded-lg border p-3 transition-colors"

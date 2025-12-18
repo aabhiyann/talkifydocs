@@ -67,6 +67,12 @@ const Dashboard = memo(() => {
     },
   });
 
+  const { mutate: retryProcessing } = trpc.retryUploadProcessing.useMutation({
+    onSuccess: () => {
+      utils.getUserFiles.invalidate();
+    },
+  });
+
   const handleDeleteFile = useCallback(
     (id: string) => {
       if (confirm("Are you sure you want to delete this file? This action cannot be undone.")) {
@@ -250,17 +256,7 @@ const Dashboard = memo(() => {
             files={filteredAndSortedFiles}
             viewMode={viewMode}
             onDelete={handleDeleteFile}
-            onRetry={async (fileId) => {
-              await fetch("/api/process-upload", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ fileId }),
-              });
-              // getUserFiles query will pick up updated status via refetch
-              utils.getUserFiles.invalidate();
-            }}
+            onRetry={(fileId) => retryProcessing({ fileId })}
           />
         ) : (
           <div className="animate-fade-in py-16 text-center">

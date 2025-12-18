@@ -2,13 +2,26 @@ import { privateProcedure, publicProcedure, router, adminProcedure } from "./trp
 import { z } from "zod";
 import { randomUUID } from "crypto";
 import { format } from "date-fns";
-
 import { TRPCError } from "@trpc/server";
 import { db } from "@/lib/db";
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
 import { absoluteUrl } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { loggers } from "@/lib/logger";
+import { observable } from "@trpc/server/observable";
+import EventEmitter from "eventemitter3";
+import { openai } from "@/lib/openai";
+import { ChatOpenAI } from "@langchain/openai";
+import { getPineconeClient } from "@/lib/pinecone";
+import { PINECONE_INDEX_NAME } from "@/config/pinecone";
+import { OpenAIEmbeddings } from "@langchain/openai";
+import { PineconeStore } from "@langchain/pinecone";
+import { LangChainStream, StreamingTextResponse } from "ai";
+import { Document } from "@langchain/core/documents";
+
+const eventEmitter = new EventEmitter();
+
+export const appRouter = router({
 
 export const appRouter = router({
   authCallback: publicProcedure.query(async () => {
@@ -785,6 +798,365 @@ ${msg.text}${citationText}`;
             activeUsers24h,
         };
     }),
+
+    onSendMessage: privateProcedure
+        .input(z.object({ fileId: z.string(), message: z.string() }))
+        .subscription(async ({ input, ctx }) => {
+            const { fileId, message } = input;
+            const { user } = ctx;
+
+            const ee = new EventEmitter();
+
+            const file = await db.file.findFirst({
+                where: {
+                    id: fileId,
+                    userId: user.id,
+                },
+            });
+
+            if (!file) {
+                throw new TRPCError({ code: "NOT_FOUND", message: "File not found" });
+            }
+
+            let conversation = await db.conversation.findFirst({
+                where: {
+                    userId: user.id,
+                    conversationFiles: {
+                        some: {
+                            fileId,
+                        },
+                    },
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+            });
+
+            if (!conversation) {
+                conversation = await db.conversation.create({
+                    data: {
+                        title: file.name,
+                        userId: user.id,
+                        conversationFiles: {
+                            create: {
+                                fileId,
+                            },
+                        },
+                    },
+                });
+            }
+
+            await db.message.create({
+                data: {
+                    text: message,
+                    isUserMessage: true,
+                    userId: user.id,
+                    fileId,
+                    conversationId: conversation.id,
+                },
+            });
+
+            const embeddings = new OpenAIEmbeddings({
+                modelName: "text-embedding-3-small",
+            });
+
+            const pinecone = await getPineconeClient();
+            const pineconeIndex = pinecone.Index(PINECONE_INDEX_NAME);
+
+            const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
+                pineconeIndex: pineconeIndex,
+                namespace: file.id,
+            });
+
+            const results = (await vectorStore.similaritySearch(message, 4)) as Document[];
+
+            const prevMessages = await db.message.findMany({
+                where: {
+                    conversationId: conversation.id,
+                },
+                orderBy: {
+                    createdAt: "asc",
+                },
+                take: 6,
+            });
+
+            const formattedPrevMessages = prevMessages.map((msg) => ({
+                role: msg.isUserMessage ? ("user" as const) : ("assistant" as const),
+                content: msg.text,
+            }));
+
+            const openaiResponse = await openai.chat.completions.create({
+                model: "gpt-3.5-turbo",
+                temperature: 0,
+                stream: true,
+                messages: [
+                    {
+                        role: "system",
+                        content: "Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format.",
+                    },
+                    {
+                        role: "user",
+                        content: `Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format. \nIf you don't know the answer, just say that you don't know, don't try to make up an answer.
+              
+        \n----------------\n
+        
+        PREVIOUS CONVERSATION:
+        ${formattedPrevMessages.map((message) => {
+            if (message.role === "user") return `User: ${message.content}\n`;
+            return `Assistant: ${message.content}\n`;
+        })}
+        
+        \n----------------\n
+        CONTEXT:
+        ${results.map((r) => r.pageContent).join("\n\n")}
+        
+        USER INPUT: ${message}`,
+                    },
+                ],
+            });
+
+            let fullResponse = "";
+            (async () => {
+                for await (const chunk of openaiResponse) {
+                    const token = chunk.choices[0]?.delta?.content || "";
+                    fullResponse += token;
+                    ee.emit("chunk", token);
+                }
+                ee.emit("end");
+
+                await db.message.create({
+                    data: {
+                        text: fullResponse,
+                        isUserMessage: false,
+                        fileId,
+                        userId: user.id,
+                        conversationId: conversation.id,
+                    },
+                });
+            })();
+
+
+            return observable<{ chunk: string }>((emit) => {
+                const onChunk = (chunk: string) => emit.next({ chunk });
+                const onEnd = () => emit.complete();
+
+                ee.on("chunk", onChunk);
+                ee.on("end", onEnd);
+
+                return () => {
+                    ee.off("chunk", onChunk);
+                    ee.off("end", onEnd);
+                };
+            });
+        }),
+
+    healthCheck: publicProcedure.query(async () => {
+        const startTime = Date.now();
+        const checks: Record<string, { status: string; latency?: number; error?: string }> = {};
+
+        // Check database
+        const dbStart = Date.now();
+        try {
+            await db.$queryRaw`SELECT 1`;
+            checks.database = {
+                status: "up",
+                latency: Date.now() - dbStart,
+            };
+        } catch (error) {
+            checks.database = {
+                status: "down",
+                error: error instanceof Error ? error.message : "Unknown error",
+            };
+        }
+
+        // Check Pinecone
+        const pineconeStart = Date.now();
+        try {
+            const pinecone = await getPineconeClient();
+            await pinecone.listIndexes();
+            checks.pinecone = {
+                status: "up",
+                latency: Date.now() - pineconeStart,
+            };
+        } catch (error) {
+            checks.pinecone = {
+                status: "down",
+                error: error instanceof Error ? error.message : "Unknown error",
+            };
+        }
+
+        // Check Redis/Cache (optional)
+        try {
+            const { cacheService } = await import("@/lib/cache");
+            const testKey = `health:check:${Date.now()}`;
+            await cacheService.set(testKey, { test: true }, 10);
+            const cached = await cacheService.get(testKey);
+            await cacheService.del(testKey);
+            checks.cache = {
+                status: cached ? "up" : "down",
+            };
+        } catch (error) {
+            checks.cache = {
+                status: "down",
+                error: error instanceof Error ? error.message : "Unknown error",
+            };
+        }
+
+        const allHealthy = Object.values(checks).every((check) => check.status === "up");
+        const totalLatency = Date.now() - startTime;
+
+        const health = {
+            status: allHealthy ? "healthy" : "unhealthy",
+            timestamp: new Date().toISOString(),
+            services: checks,
+            latency: totalLatency,
+        };
+
+        loggers.api.info(
+            {
+                health: health.status,
+                checks: Object.keys(checks).length,
+                latency: totalLatency,
+            },
+            "Health check requested",
+        );
+
+        return health;
+    }),
+
+    checkAdminStatus: privateProcedure.query(({ ctx }) => {
+        return { isAdmin: ctx.user?.tier === "ADMIN" };
+    }),
+
+    getConversations: privateProcedure.query(async ({ ctx }) => {
+        const { userId } = ctx;
+        return db.conversation.findMany({
+            where: { userId },
+            orderBy: { updatedAt: "desc" },
+            include: {
+                conversationFiles: {
+                    include: {
+                        file: true,
+                    },
+                },
+            },
+        });
+    }),
+
+    demoChat: publicProcedure
+        .input(z.object({ messages: z.array(z.object({ role: z.enum(["user", "assistant", "system"]), content: z.string() })) }))
+        .subscription(async ({ input }) => {
+            const { messages } = input;
+
+            const ee = new EventEmitter();
+
+            const model = new ChatOpenAI({
+                modelName: "gpt-4o-mini",
+                temperature: 0.4,
+                streaming: true,
+            });
+
+            const systemPrompt =
+                "You are the demo assistant for TalkifyDocs. Answer briefly and helpfully based only on the user's message. " +
+                "Mention occasionally that this is a demo and that real accounts can upload and chat with their own PDFs.";
+
+            (async () => {
+                const streamResponse = await model.stream([
+                    { role: "system", content: systemPrompt },
+                    ...messages,
+                ]);
+
+                for await (const chunk of streamResponse) {
+                    ee.emit("chunk", chunk.content);
+                }
+                ee.emit("end");
+            })();
+
+            return observable<{ chunk: string }>((emit) => {
+                const onChunk = (chunk: string) => emit.next({ chunk });
+                const onEnd = () => emit.complete();
+
+                ee.on("chunk", onChunk);
+                ee.on("end", onEnd);
+
+                return () => {
+                    ee.off("chunk", onChunk);
+                    ee.off("end", onEnd);
+                };
+            });
+        }),
+
+    getErrorLogs: adminProcedure.query(async () => {
+        const failedFiles = await db.file.findMany({
+            where: {
+                uploadStatus: "FAILED",
+            },
+            take: 10,
+            orderBy: {
+                updatedAt: "desc",
+            },
+            select: {
+                id: true,
+                name: true,
+                uploadStatus: true,
+                updatedAt: true,
+            },
+        });
+
+        const errorLogs = failedFiles.map((file) => ({
+            id: file.id,
+            message: `File upload failed: ${file.name}`,
+            level: "error" as const,
+            timestamp: file.updatedAt,
+            context: {
+                fileId: file.id,
+                fileName: file.name,
+            },
+        }));
+
+        return { logs: errorLogs };
+    }),
+
+    retryUploadProcessing: privateProcedure
+        .input(z.object({ fileId: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+            const { fileId } = input;
+
+            const file = await db.file.findFirst({
+                where: {
+                    id: fileId,
+                    userId,
+                },
+                select: {
+                    id: true,
+                    url: true,
+                    name: true,
+                },
+            });
+
+            if (!file) {
+                throw new TRPCError({ code: "NOT_FOUND", message: "File not found" });
+            }
+
+            await db.file.update({
+                where: { id: file.id },
+                data: { uploadStatus: "PROCESSING" },
+            });
+
+            // Fire-and-forget re-processing
+            void import("@/lib/upload/process-pdf").then(({ processPdfFile }) => {
+                processPdfFile({
+                    fileId: file.id,
+                    fileUrl: file.url,
+                    fileName: file.name,
+                }).catch((error) => {
+                    loggers.api.error("Retry processing error:", error);
+                });
+            });
+
+            return { ok: true };
+        }),
 });
 
 export type AppRouter = typeof appRouter;

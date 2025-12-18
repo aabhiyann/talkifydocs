@@ -1,6 +1,5 @@
 import { ReactNode, createContext, useRef, useState, useCallback, useMemo } from "react";
 import { useToast } from "../ui/use-toast";
-import { useMutation } from "@tanstack/react-query";
 import { trpc } from "@/app/_trpc/client";
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
 
@@ -37,7 +36,6 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
   const { toast } = useToast();
   const backupMessage = useRef("");
 
-  // Get message count for context
   const { data: messagesData } = trpc.getFileMessages.useInfiniteQuery(
     {
       fileId,
@@ -68,94 +66,10 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
     }
   }, []);
 
-  const { mutate: sendMessage } = useMutation({
-    mutationFn: async ({ message }: { message: string }) => {
-      const response = await fetch("/api/message", {
-        method: "POST",
-        body: JSON.stringify({
-          fileId,
-          message,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to send message");
-      }
-
-      return response.body;
-    },
-    onMutate: async ({ message }) => {
-      backupMessage.current = message;
-      setMessage("");
-
-      // Cancel any outgoing refetches
-      await utils.getFileMessages.cancel();
-
-      // Snapshot the previous value
-      const previousMessages = utils.getFileMessages.getInfiniteData();
-
-      // Optimistically update to the new value
-      utils.getFileMessages.setInfiniteData({ fileId, limit: INFINITE_QUERY_LIMIT }, (old) => {
-        if (!old) {
-          return {
-            pages: [],
-            pageParams: [],
-          };
-        }
-
-        let newPages = [...old.pages];
-        let latestPage = newPages[0]!;
-
-        latestPage.messages = [
-          {
-            createdAt: new Date().toISOString(),
-            id: crypto.randomUUID(),
-            text: message,
-            isUserMessage: true,
-          },
-          ...latestPage.messages,
-        ];
-
-        newPages[0] = latestPage;
-
-        return {
-          ...old,
-          pages: newPages,
-        };
-      });
-
-      setIsLoading(true);
-
-      return {
-        previousMessages: previousMessages?.pages.flatMap((page) => page.messages) ?? [],
-      };
-    },
-    onSuccess: async (stream) => {
-      setIsLoading(false);
-
-      if (!stream) {
-        return toast({
-          title: "There was a problem sending this message",
-          description: "Please refresh this page and try again.",
-          variant: "destructive",
-        });
-      }
-
-      const reader = stream.getReader();
-      const decoder = new TextDecoder();
-      let done = false;
-
-      // accumulated response
-      let accResponse = "";
-
-      while (!done) {
-        const { value, done: doneReading } = await reader.read();
-        done = doneReading;
-        const chunkValue = decoder.decode(value);
-
-        accResponse += chunkValue;
-
-        // append chunk to the last message
+  trpc.onSendMessage.useSubscription(
+    { fileId, message },
+    {
+      onData: ({ chunk }) => {
         utils.getFileMessages.setInfiniteData({ fileId, limit: INFINITE_QUERY_LIMIT }, (old) => {
           if (!old) return { pages: [], pageParams: [] };
 
@@ -169,7 +83,7 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
                 return {
                   ...message,
                   id: crypto.randomUUID(),
-                  text: accResponse,
+                  text: (message.text as string) + chunk,
                   isUserMessage: false,
                 };
               }
@@ -181,8 +95,8 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
               updatedMessages = [
                 {
                   createdAt: new Date().toISOString(),
-                  id: crypto.randomUUID(),
-                  text: accResponse,
+                  id: "loading-message",
+                  text: chunk,
                   isUserMessage: false,
                 },
                 ...updatedMessages,
@@ -197,43 +111,59 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
 
           return { ...old, pages: newPages };
         });
-      }
-    },
-    onError: (_, __, context) => {
-      setMessage(backupMessage.current);
-      setIsLoading(false);
-
-      // rollback to the previous value
-      if (context?.previousMessages) {
-        utils.getFileMessages.setInfiniteData({ fileId, limit: INFINITE_QUERY_LIMIT }, (old) => {
-          if (!old) return { pages: [], pageParams: [] };
-
-          return {
-            ...old,
-            pages: [
-              {
-                messages: context.previousMessages,
-                nextCursor: undefined,
-              },
-              ...old.pages.slice(1),
-            ],
-          };
+      },
+      onError: (err) => {
+        setIsLoading(false);
+        toast({
+          title: "Error",
+          description: "There was an error sending your message. Please try again.",
+          variant: "destructive",
         });
-      }
-
-      return toast({
-        title: "Error",
-        description: "There was an error sending your message. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
+      },
+      onComplete: () => {
+        setIsLoading(false);
+      },
+    }
+  );
 
   const addMessage = useCallback(() => {
     if (!canSendMessage) return;
+    
+    // Optimistically update the UI
+    const previousMessages = utils.getFileMessages.getInfiniteData();
+    utils.getFileMessages.setInfiniteData({ fileId, limit: INFINITE_QUERY_LIMIT }, (old) => {
+        if (!old) {
+            return {
+                pages: [],
+                pageParams: [],
+            };
+        }
 
-    sendMessage({ message: message.trim() });
-  }, [sendMessage, message, canSendMessage]);
+        let newPages = [...old.pages];
+        let latestPage = newPages[0]!;
+
+        latestPage.messages = [
+            {
+                createdAt: new Date().toISOString(),
+                id: crypto.randomUUID(),
+                text: message.trim(),
+                isUserMessage: true,
+            },
+            ...latestPage.messages,
+        ];
+
+        newPages[0] = latestPage;
+
+        return {
+            ...old,
+            pages: newPages,
+        };
+    });
+
+    setMessage("");
+    setIsLoading(true);
+
+  }, [canSendMessage, message, utils, fileId]);
 
   const value = useMemo(
     () => ({

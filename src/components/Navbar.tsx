@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import Link from "next/link";
 import { buttonVariants, Button } from "./ui/button";
+import { trpc } from "@/app/_trpc/client";
+import { trpc } from "@/app/_trpc/client";
 import {
   ArrowRight,
   Menu,
@@ -23,9 +25,13 @@ import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
   const pathname = usePathname();
   const { user } = useUser();
+
+  const { data: adminStatus } = trpc.checkAdminStatus.useQuery(undefined, {
+    enabled: !!user,
+  });
+  const isAdmin = adminStatus?.isAdmin || false;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,18 +40,6 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  useEffect(() => {
-    if (user) {
-      // Check admin status via API
-      fetch("/api/admin/check")
-        .then((res) => res.json())
-        .then((data) => setIsAdmin(data.isAdmin || false))
-        .catch(() => setIsAdmin(false));
-    } else {
-      setIsAdmin(false);
-    }
-  }, [user]);
 
   const isActive = (path: string) => pathname === path;
 
