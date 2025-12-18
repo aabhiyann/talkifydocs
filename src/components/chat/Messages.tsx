@@ -9,10 +9,11 @@ import { useIntersection } from "@mantine/hooks";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
+import { Citation } from "@/types/chat";
 
 interface MessagesProps {
   fileId: string;
-  onCitationClick?: (payload: { fileId: string; page?: number; citation?: any }) => void;
+  onCitationClick?: (payload: { fileId: string; page?: number; citation?: Citation }) => void;
 }
 
 const Messages = ({ fileId, onCitationClick }: MessagesProps) => {
