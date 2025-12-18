@@ -1,4 +1,5 @@
 import { getPineconeClient } from "@/lib/pinecone";
+import { Index, CreateIndexRequest } from "@pinecone-database/pinecone";
 
 const INDEX_NAME = "talkifydocs";
 
@@ -7,7 +8,7 @@ async function main() {
 
   try {
     const existing = await pinecone.listIndexes();
-    const exists = existing?.some((idx: any) => idx.name === INDEX_NAME);
+    const exists = existing?.some((idx: Index) => idx.name === INDEX_NAME);
 
     if (!exists) {
       console.log(`Creating Pinecone index: ${INDEX_NAME}`);
@@ -21,7 +22,7 @@ async function main() {
             region: "us-east-1",
           },
         },
-      } as any);
+      } as CreateIndexRequest);
       console.log("Pinecone index created successfully.");
     } else {
       console.log("Pinecone index already exists.");
