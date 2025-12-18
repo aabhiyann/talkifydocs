@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { useUploadStatusStore } from "@/hooks/useUploadStatus";
-import { useUploadThing } from "@/lib/uploadthing";
+import { upload } from "@vercel/blob/client";
 
 interface DropFileError {
   code: string;
@@ -33,60 +33,25 @@ interface FileRejection {
 const UploadDropzone = () => {
   const router = useRouter();
   const { toast } = useToast();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const {
-    uploads,
     addUpload,
     updateUpload,
     removeUpload,
     clearCompleted,
     getAllUploads,
-    hasActiveUploads,
   } = useUploadStatusStore();
-
-    const { startUpload, isUploading } = useUploadThing("pdfUploader", {
-        onClientUploadComplete: (res) => {
-            if (!res) {
-                return;
-            }
-            const [fileResponse] = res;
-            const uploadId = fileResponse.serverData.id;
-            
-            updateUpload(uploadId, { status: "processing" });
-            
-            setTimeout(() => {
-                router.push(`/dashboard/${fileResponse.serverData.id}`);
-            }, 1000);
-        },
-        onUploadProgress: (p) => {
-            const activeUpload = uploads.find(u => u.status === 'uploading');
-            if (activeUpload) {
-                updateUpload(activeUpload.id, { progress: p });
-            }
-        },
-        onUploadError: (error) => {
-            const activeUpload = uploads.find(u => u.status === 'uploading');
-            if (activeUpload) {
-                updateUpload(activeUpload.id, { status: "error", error: error.message });
-            }
-            toast({
-                title: "Upload failed",
-                description: error.message,
-                variant: "destructive",
-            });
-        },
-    });
 
   const handleDrop = useCallback(
     async (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       if (acceptedFiles.length === 0) return;
 
-      const currentUploads = getAllUploads().filter(
+      const currentActiveUploads = getAllUploads().filter(
         (u) => u.status === "uploading" || u.status === "processing",
       );
 
-      if (currentUploads.length + acceptedFiles.length > 10) {
+      if (currentActiveUploads.length + acceptedFiles.length > 10) {
         toast({
           title: "Batch limit exceeded",
           description: "You can upload up to 10 files at once.",
@@ -95,11 +60,50 @@ const UploadDropzone = () => {
         return;
       }
 
-      const uploadIds = acceptedFiles.map((file) => addUpload(file));
+      setIsUploading(true);
+
+      for (const file of acceptedFiles) {
+        const uploadId = addUpload(file);
+        
+        try {
+          updateUpload(uploadId, { status: "uploading" });
+          
+          const newBlob = await upload(file.name, file, {
+            access: "public",
+            handleUploadUrl: "/api/upload/blob",
+            onUploadProgress: (progressEvent) => {
+              updateUpload(uploadId, { progress: progressEvent.percentage });
+            },
+          });
+
+          updateUpload(uploadId, { status: "processing", progress: 100 });
+          
+          // Since we can't easily get the DB ID back from Vercel Blob's client upload 
+          // (it's created in a background webhook), we'll just mark it as success 
+          // after a short delay or let the user see it in the dashboard.
+          // For single file uploads, we might want to redirect eventually.
+          
+          setTimeout(() => {
+            updateUpload(uploadId, { status: "success" });
+            if (acceptedFiles.length === 1) {
+              // Optionally redirect to dashboard if it was just one file
+              // router.push('/dashboard');
+            }
+          }, 2000);
+
+        } catch (error) {
+          updateUpload(uploadId, { status: "error", error: (error as Error).message });
+          toast({
+            title: "Upload failed",
+            description: (error as Error).message,
+            variant: "destructive",
+          });
+        }
+      }
       
-      startUpload(acceptedFiles);
+      setIsUploading(false);
     },
-    [addUpload, getAllUploads, startUpload, toast],
+    [addUpload, updateUpload, getAllUploads, toast],
   );
 
   const currentUploads = getAllUploads();
