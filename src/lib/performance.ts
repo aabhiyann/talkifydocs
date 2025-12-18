@@ -34,7 +34,7 @@ class PerformanceMonitor {
   end(name: string): number | null {
     const metric = this.metrics.get(name);
     if (!metric) {
-      console.warn(`Performance metric "${name}" not found`);
+      logger.warn(`Performance metric "${name}" not found`);
       return null;
     }
 

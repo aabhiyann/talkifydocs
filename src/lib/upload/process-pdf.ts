@@ -99,7 +99,7 @@ export async function processPdfFile({
     }
 
     if (blob.type && blob.type !== "application/pdf") {
-      console.warn(`[upload] Warning: file type is ${blob.type}, expected application/pdf`);
+      loggers.upload.warn(`Warning: file type is ${blob.type}, expected application/pdf`);
     }
 
     const tempFile = new File([blob], fileName, { type: "application/pdf" });

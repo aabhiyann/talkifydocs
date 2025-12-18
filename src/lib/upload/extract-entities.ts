@@ -1,5 +1,6 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
+import { loggers } from "../logger";
 
 export async function extractEntities(text: string) {
   const model = new ChatOpenAI({
@@ -31,7 +32,7 @@ Respond with only valid JSON, no additional text.
   try {
     return JSON.parse(response.content as string);
   } catch (error) {
-    console.warn("[upload] Failed to parse entities JSON:", error);
+    loggers.upload.warn("Failed to parse entities JSON:", error);
     return {
       people: [],
       organizations: [],

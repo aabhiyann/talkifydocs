@@ -3,11 +3,12 @@ import { NextResponse } from "next/server";
 import { Webhook } from "svix";
 import type { WebhookEvent } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
+import { loggers } from "@/lib/logger";
 
 const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
 if (!WEBHOOK_SECRET) {
-  console.warn("[Clerk Webhook] CLERK_WEBHOOK_SECRET is not set. Webhook verification will fail.");
+  loggers.auth.warn("[Clerk Webhook] CLERK_WEBHOOK_SECRET is not set. Webhook verification will fail.");
 }
 
 export async function POST(req: Request) {
