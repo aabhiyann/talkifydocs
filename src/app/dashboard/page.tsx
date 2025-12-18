@@ -1,4 +1,4 @@
-import Dashboard from "@/components/dashboard";
+import Dashboard from "@/components/Dashboard";
 import { getCurrentUser } from "@/lib/auth";
 
 const Page = async () => {
