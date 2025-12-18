@@ -4,7 +4,7 @@ import { StatsCard } from "@/components/admin/StatsCard";
 import { RecentUsersTable } from "@/components/admin/RecentUsersTable";
 import { SystemMetrics } from "@/components/admin/SystemMetrics";
 import { ErrorLogViewer } from "@/components/admin/ErrorLogViewer";
-import { getSystemMetrics } from "@/actions/admin";
+import { createServerClient } from "@/trpc/server";
 import { Users, FileText, MessageSquare, Crown } from "lucide-react";
 
 export default async function AdminDashboard() {
@@ -30,7 +30,8 @@ export default async function AdminDashboard() {
   });
 
   // System metrics
-  const metrics = await getSystemMetrics();
+  const serverClient = await createServerClient();
+  const metrics = await serverClient.getSystemMetrics();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">

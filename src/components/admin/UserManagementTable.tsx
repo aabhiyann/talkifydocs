@@ -12,11 +12,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical, Crown, User, Trash2, Download } from "lucide-react";
+import { MoreVertical, Crown, User, Trash2, Download, Loader2 } from "lucide-react";
 import { format } from "date-fns";
-import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { updateUserTier, deleteUser } from "@/actions/admin";
+import { trpc } from "@/app/_trpc/client";
 import { useRouter } from "next/navigation";
 
 interface User {
@@ -44,29 +43,48 @@ export function UserManagementTable({
 }: UserManagementTableProps) {
   const { toast } = useToast();
   const router = useRouter();
-  const [updating, setUpdating] = useState<string | null>(null);
 
-  const handleTierChange = async (userId: string, newTier: "FREE" | "PRO" | "ADMIN") => {
-    setUpdating(userId);
-    try {
-      await updateUserTier(userId, newTier);
-      toast({
-        title: "User tier updated",
-        description: `User tier changed to ${newTier}`,
-      });
-      router.refresh();
-    } catch (error) {
-      toast({
-        title: "Error updating tier",
-        description: error instanceof Error ? error.message : "Failed to update user tier",
-        variant: "destructive",
-      });
-    } finally {
-      setUpdating(null);
-    }
+  const { mutate: updateUserTier, isLoading: isUpdatingTier } =
+    trpc.updateUserTier.useMutation({
+      onSuccess: (_, { tier }) => {
+        toast({
+          title: "User tier updated",
+          description: `User tier changed to ${tier}`,
+        });
+        router.refresh();
+      },
+      onError: (error) => {
+        toast({
+          title: "Error updating tier",
+          description: error.message,
+          variant: "destructive",
+        });
+      },
+    });
+
+  const { mutate: deleteUser, isLoading: isDeletingUser } =
+    trpc.deleteUser.useMutation({
+      onSuccess: (_, { userId }) => {
+        toast({
+          title: "User deleted",
+          description: `User has been deleted`,
+        });
+        router.refresh();
+      },
+      onError: (error) => {
+        toast({
+          title: "Error deleting user",
+          description: error.message,
+          variant: "destructive",
+        });
+      },
+    });
+
+  const handleTierChange = (userId: string, newTier: "FREE" | "PRO" | "ADMIN") => {
+    updateUserTier({ userId, tier: newTier });
   };
 
-  const handleDelete = async (userId: string, userEmail: string) => {
+  const handleDelete = (userId: string, userEmail: string) => {
     if (
       !confirm(
         `Are you sure you want to delete user ${userEmail}? This will delete all their files, messages, and conversations. This action cannot be undone.`,
@@ -74,24 +92,7 @@ export function UserManagementTable({
     ) {
       return;
     }
-
-    setUpdating(userId);
-    try {
-      await deleteUser(userId);
-      toast({
-        title: "User deleted",
-        description: `User ${userEmail} has been deleted`,
-      });
-      router.refresh();
-    } catch (error) {
-      toast({
-        title: "Error deleting user",
-        description: error instanceof Error ? error.message : "Failed to delete user",
-        variant: "destructive",
-      });
-    } finally {
-      setUpdating(null);
-    }
+    deleteUser({ userId });
   };
 
   const handleExportCSV = () => {
@@ -119,6 +120,8 @@ export function UserManagementTable({
       description: "User data has been exported as CSV",
     });
   };
+
+  const isLoading = isUpdatingTier || isDeletingUser;
 
   return (
     <ModernCard padding="none">
@@ -180,29 +183,29 @@ export function UserManagementTable({
                       <div className="flex justify-end">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" disabled={updating === user.id}>
-                              <MoreVertical className="h-4 w-4" />
+                            <Button variant="ghost" size="sm" disabled={isLoading}>
+                              {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <MoreVertical className="h-4 w-4" />}
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <div className="px-2 py-1.5 text-xs font-semibold">Change Tier</div>
                             <DropdownMenuItem
                               onClick={() => handleTierChange(user.id, "FREE")}
-                              disabled={user.tier === "FREE" || updating === user.id}
+                              disabled={user.tier === "FREE" || isLoading}
                             >
                               <User className="mr-2 h-4 w-4" />
                               Free
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => handleTierChange(user.id, "PRO")}
-                              disabled={user.tier === "PRO" || updating === user.id}
+                              disabled={user.tier === "PRO" || isLoading}
                             >
                               <Crown className="mr-2 h-4 w-4" />
                               Pro
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => handleTierChange(user.id, "ADMIN")}
-                              disabled={user.tier === "ADMIN" || updating === user.id}
+                              disabled={user.tier === "ADMIN" || isLoading}
                             >
                               <Crown className="mr-2 h-4 w-4" />
                               Admin
@@ -210,7 +213,7 @@ export function UserManagementTable({
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                               onClick={() => handleDelete(user.id, user.email)}
-                              disabled={updating === user.id}
+                              disabled={isLoading}
                               className="text-destructive focus:text-destructive"
                             >
                               <Trash2 className="mr-2 h-4 w-4" />
