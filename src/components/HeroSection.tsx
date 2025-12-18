@@ -8,44 +8,33 @@ import { buttonVariants } from "./ui/button";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-primary-950 dark:via-secondary-900 dark:to-accent-950" />
-        {/* Animated Background Shapes */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-primary-400/20 to-accent-400/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-accent-400/20 to-primary-400/20 rounded-full blur-3xl animate-pulse delay-1000" />
-      </div>
+    <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-20">
+      <div className="absolute inset-0 -z-10 bg-background" />
 
-      <MaxWidthWrapper className="relative z-10">
-        <div className="text-center space-y-8">
-          {/* Badge */}
-          <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full glass border border-primary-200/50 dark:border-primary-700/50 shadow-soft">
-            <Sparkles className="w-4 h-4 text-primary-600" />
-            <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
-              {marketing.hero.badge}
-            </span>
+      <MaxWidthWrapper className="relative z-10 max-w-6xl">
+        <div className="space-y-8 text-center">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-2">
+            <Sparkles className="h-4 w-4 text-primary" />
+            <span className="text-sm font-medium text-primary">Now with Groq & Gemini</span>
           </div>
 
-          {/* Main Content */}
           <div className="space-y-6">
-            <h1 className="text-display-2xl md:text-display-xl lg:text-display-2xl font-extrabold bg-gradient-to-r from-primary-600 via-accent-600 to-primary-600 bg-clip-text text-transparent animate-fade-in">
-              {marketing.hero.heading}
+            <h1 className="mb-6 font-serif text-6xl font-bold tracking-tight text-foreground md:text-7xl">
+              AI Chat With a Brain.
             </h1>
 
-            <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-3xl mx-auto leading-relaxed animate-slide-up">
-              {marketing.hero.subheading}
+            <p className="mx-auto mb-8 max-w-2xl text-xl leading-relaxed text-muted-foreground">
+              Upload your PDFs and chat with them using advanced AI. Get instant answers with
+              citations.
             </p>
           </div>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up">
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               href="/dashboard"
               className={buttonVariants({
                 size: "lg",
-                className:
-                  "gradient-primary hover:shadow-strong text-white px-8 py-4 rounded-xl font-semibold shadow-medium hover:shadow-dramatic transition-all duration-300 hover:scale-105 focus-ring",
+                className: "bg-primary text-primary-foreground",
               })}
             >
               {marketing.hero.ctas.primary}
@@ -53,52 +42,53 @@ const HeroSection = () => {
             </Link>
 
             <Link
-              href="/pricing"
+              href="/demo"
               className={buttonVariants({
                 variant: "outline",
                 size: "lg",
-                className:
-                  "px-8 py-4 rounded-xl font-semibold border-2 border-primary-200 dark:border-primary-700 hover:border-primary-300 dark:hover:border-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-300 hover:scale-105 focus-ring",
+              })}
+            >
+              Try Demo
+            </Link>
+
+            <Link
+              href="/pricing"
+              className={buttonVariants({
+                variant: "secondary",
+                size: "lg",
               })}
             >
               {marketing.hero.ctas.secondary}
             </Link>
           </div>
 
-          {/* Feature Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
-            <div className="group glass rounded-2xl p-6 border border-primary-100/50 dark:border-primary-700/50 hover:bg-white/80 dark:hover:bg-secondary-800/80 transition-all duration-300 hover:scale-105 hover:shadow-strong animate-bounce-in">
-              <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                <Zap className="w-6 h-6 text-white" />
+          <div className="mt-20 grid grid-cols-1 gap-8 md:grid-cols-3">
+            <div className="rounded-xl border border-border bg-card p-8">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-secondary">
+                <Zap className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-heading-lg text-secondary-900 dark:text-secondary-100 mb-2">
-                Lightning Fast
-              </h3>
-              <p className="text-body-sm text-secondary-600 dark:text-secondary-400">
+              <h3 className="mb-3 font-serif text-xl font-semibold">Lightning Fast</h3>
+              <p className="text-muted-foreground">
                 Get instant answers from your documents with our advanced AI processing
               </p>
             </div>
 
-            <div className="group glass rounded-2xl p-6 border border-primary-100/50 dark:border-primary-700/50 hover:bg-white/80 dark:hover:bg-secondary-800/80 transition-all duration-300 hover:scale-105 hover:shadow-strong animate-bounce-in delay-200">
-              <div className="w-12 h-12 rounded-xl gradient-accent flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                <Shield className="w-6 h-6 text-white" />
+            <div className="rounded-xl border border-border bg-card p-8">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-secondary">
+                <Shield className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-heading-lg text-secondary-900 dark:text-secondary-100 mb-2">
-                Secure & Private
-              </h3>
-              <p className="text-body-sm text-secondary-600 dark:text-secondary-400">
+              <h3 className="mb-3 font-serif text-xl font-semibold">Secure & Private</h3>
+              <p className="text-muted-foreground">
                 Your documents are encrypted and processed securely with enterprise-grade security
               </p>
             </div>
 
-            <div className="group glass rounded-2xl p-6 border border-primary-100/50 dark:border-primary-700/50 hover:bg-white/80 dark:hover:bg-secondary-800/80 transition-all duration-300 hover:scale-105 hover:shadow-strong animate-bounce-in delay-400">
-              <div className="w-12 h-12 rounded-xl gradient-secondary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                <Sparkles className="w-6 h-6 text-white" />
+            <div className="rounded-xl border border-border bg-card p-8">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-secondary">
+                <Sparkles className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-heading-lg text-secondary-900 dark:text-secondary-100 mb-2">
-                Smart Analysis
-              </h3>
-              <p className="text-body-sm text-secondary-600 dark:text-secondary-400">
+              <h3 className="mb-3 font-serif text-xl font-semibold">Smart Analysis</h3>
+              <p className="text-muted-foreground">
                 Advanced AI understands context and provides intelligent, accurate responses
               </p>
             </div>

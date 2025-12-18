@@ -1,6 +1,5 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Brain, Shield, Zap, Users, Target, Award } from "lucide-react";
-import Image from "next/image";
 
 export default function AboutPage() {
   const values = [
@@ -19,26 +18,22 @@ export default function AboutPage() {
     {
       icon: Zap,
       title: "Lightning Fast",
-      description:
-        "Get instant answers and insights from your documents in real-time.",
+      description: "Get instant answers and insights from your documents in real-time.",
     },
     {
       icon: Users,
       title: "User-Centric",
-      description:
-        "We design every feature with our users' needs and feedback at the center.",
+      description: "We design every feature with our users' needs and feedback at the center.",
     },
     {
       icon: Target,
       title: "Precision",
-      description:
-        "Deliver accurate, contextual responses that help you make informed decisions.",
+      description: "Deliver accurate, contextual responses that help you make informed decisions.",
     },
     {
       icon: Award,
       title: "Excellence",
-      description:
-        "Committed to delivering the highest quality document analysis experience.",
+      description: "Committed to delivering the highest quality document analysis experience.",
     },
   ];
 
@@ -70,11 +65,11 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-primary-50/30 dark:from-secondary-900 dark:to-primary-950/30">
+    <div className="to-primary-50/30 dark:to-primary-950/30 min-h-screen bg-gradient-to-b from-white dark:from-secondary-900">
       {/* Hero Section */}
-      <section className="py-24 relative overflow-hidden">
+      <section className="relative overflow-hidden py-24">
         <div className="absolute inset-0 -z-10">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-primary-400/20 to-accent-400/20 rounded-full blur-3xl" />
+          <div className="from-primary-400/20 to-accent-400/20 absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r blur-3xl" />
         </div>
 
         <MaxWidthWrapper>
@@ -82,10 +77,9 @@ export default function AboutPage() {
             <h1 className="text-display-lg mb-6 bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
               About TalkifyDocs
             </h1>
-            <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-3xl mx-auto leading-relaxed">
-              We&apos;re on a mission to transform how people interact with
-              documents through the power of artificial intelligence, making
-              information more accessible and actionable.
+            <p className="text-body-lg mx-auto max-w-3xl leading-relaxed text-secondary-600 dark:text-secondary-300">
+              We&apos;re on a mission to transform how people interact with documents through the
+              power of artificial intelligence, making information more accessible and actionable.
             </p>
           </div>
         </MaxWidthWrapper>
@@ -94,31 +88,29 @@ export default function AboutPage() {
       {/* Mission Section */}
       <section className="py-16">
         <MaxWidthWrapper>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
             <div>
               <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
                 Our Mission
               </h2>
-              <p className="text-body-lg text-secondary-600 dark:text-secondary-300 mb-6">
-                At TalkifyDocs, we believe that every document contains valuable
-                insights waiting to be discovered. Our mission is to make these
-                insights instantly accessible through conversational AI,
-                empowering individuals and organizations to make better
-                decisions faster.
+              <p className="text-body-lg mb-6 text-secondary-600 dark:text-secondary-300">
+                At TalkifyDocs, we believe that every document contains valuable insights waiting to
+                be discovered. Our mission is to make these insights instantly accessible through
+                conversational AI, empowering individuals and organizations to make better decisions
+                faster.
               </p>
               <p className="text-body-md text-secondary-600 dark:text-secondary-300">
-                Founded in 2024, we&apos;ve built TalkifyDocs from the ground up
-                with a focus on accuracy, security, and user experience. Our
-                team combines deep expertise in AI, machine learning, and user
-                interface design to create tools that truly understand your
-                content.
+                Founded in 2024, we&apos;ve built TalkifyDocs from the ground up with a focus on
+                accuracy, security, and user experience. Our team combines deep expertise in AI,
+                machine learning, and user interface design to create tools that truly understand
+                your content.
               </p>
             </div>
             <div className="glass rounded-3xl p-8">
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
-                    <Brain className="w-6 h-6 text-white" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600">
+                    <Brain className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <h3 className="text-heading-md text-secondary-900 dark:text-secondary-100">
@@ -130,8 +122,8 @@ export default function AboutPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center">
-                    <Shield className="w-6 h-6 text-white" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-accent-500 to-accent-600">
+                    <Shield className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <h3 className="text-heading-md text-secondary-900 dark:text-secondary-100">
@@ -143,8 +135,8 @@ export default function AboutPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-secondary-500 to-secondary-600 flex items-center justify-center">
-                    <Zap className="w-6 h-6 text-white" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-secondary-500 to-secondary-600">
+                    <Zap className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <h3 className="text-heading-md text-secondary-900 dark:text-secondary-100">
@@ -162,25 +154,25 @@ export default function AboutPage() {
       </section>
 
       {/* Values Section */}
-      <section className="py-16 bg-gradient-to-b from-primary-50/30 to-white dark:from-primary-950/30 dark:to-secondary-900">
+      <section className="from-primary-50/30 dark:from-primary-950/30 bg-gradient-to-b to-white py-16 dark:to-secondary-900">
         <MaxWidthWrapper>
-          <div className="text-center mb-16">
+          <div className="mb-16 text-center">
             <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
               Our Values
             </h2>
-            <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-2xl mx-auto">
+            <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-secondary-300">
               These core values guide everything we do at TalkifyDocs
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {values.map((value, index) => (
               <div
                 key={index}
-                className="glass rounded-2xl p-8 text-center hover:scale-105 transition-all duration-300"
+                className="glass rounded-2xl p-8 text-center transition-all duration-300 hover:scale-105"
               >
-                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
-                  <value.icon className="w-8 h-8 text-white" />
+                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500">
+                  <value.icon className="h-8 w-8 text-white" />
                 </div>
                 <h3 className="text-heading-lg mb-4 text-secondary-900 dark:text-secondary-100">
                   {value.title}
@@ -197,22 +189,22 @@ export default function AboutPage() {
       {/* Team Section */}
       <section className="py-16">
         <MaxWidthWrapper>
-          <div className="text-center mb-16">
+          <div className="mb-16 text-center">
             <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
               Meet Our Team
             </h2>
-            <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-2xl mx-auto">
+            <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-secondary-300">
               The passionate people behind TalkifyDocs
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
             {team.map((member, index) => (
               <div
                 key={index}
-                className="glass rounded-2xl p-6 text-center hover:scale-105 transition-all duration-300"
+                className="glass rounded-2xl p-6 text-center transition-all duration-300 hover:scale-105"
               >
-                <div className="w-24 h-24 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
+                <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500">
                   <span className="text-2xl font-bold text-white">
                     {member.name
                       .split(" ")
@@ -223,7 +215,7 @@ export default function AboutPage() {
                 <h3 className="text-heading-md mb-2 text-secondary-900 dark:text-secondary-100">
                   {member.name}
                 </h3>
-                <p className="text-body-sm text-primary-600 dark:text-primary-400 mb-3 font-medium">
+                <p className="text-body-sm mb-3 font-medium text-primary-600 dark:text-primary-400">
                   {member.role}
                 </p>
                 <p className="text-body-sm text-secondary-600 dark:text-secondary-400">
@@ -236,20 +228,20 @@ export default function AboutPage() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-gradient-to-b from-white to-primary-50/30 dark:from-secondary-900 dark:to-primary-950/30">
+      <section className="to-primary-50/30 dark:to-primary-950/30 bg-gradient-to-b from-white py-16 dark:from-secondary-900">
         <MaxWidthWrapper>
-          <div className="text-center mb-16">
+          <div className="mb-16 text-center">
             <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
               By the Numbers
             </h2>
-            <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-2xl mx-auto">
+            <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-secondary-300">
               Our impact in numbers
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
             <div className="text-center">
-              <div className="text-display-lg font-bold text-primary-600 dark:text-primary-400 mb-2">
+              <div className="text-display-lg mb-2 font-bold text-primary-600 dark:text-primary-400">
                 10K+
               </div>
               <div className="text-body-md text-secondary-600 dark:text-secondary-400">
@@ -257,7 +249,7 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="text-center">
-              <div className="text-display-lg font-bold text-accent-600 dark:text-accent-400 mb-2">
+              <div className="text-display-lg mb-2 font-bold text-accent-600 dark:text-accent-400">
                 5K+
               </div>
               <div className="text-body-md text-secondary-600 dark:text-secondary-400">
@@ -265,20 +257,16 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="text-center">
-              <div className="text-display-lg font-bold text-secondary-600 dark:text-secondary-400 mb-2">
+              <div className="text-display-lg mb-2 font-bold text-secondary-600 dark:text-secondary-400">
                 99.9%
               </div>
-              <div className="text-body-md text-secondary-600 dark:text-secondary-400">
-                Uptime
-              </div>
+              <div className="text-body-md text-secondary-600 dark:text-secondary-400">Uptime</div>
             </div>
             <div className="text-center">
-              <div className="text-display-lg font-bold text-primary-600 dark:text-primary-400 mb-2">
+              <div className="text-display-lg mb-2 font-bold text-primary-600 dark:text-primary-400">
                 24/7
               </div>
-              <div className="text-body-md text-secondary-600 dark:text-secondary-400">
-                Support
-              </div>
+              <div className="text-body-md text-secondary-600 dark:text-secondary-400">Support</div>
             </div>
           </div>
         </MaxWidthWrapper>

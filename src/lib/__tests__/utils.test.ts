@@ -1,48 +1,48 @@
-import { cn, absoluteUrl } from '../utils'
+import { cn, absoluteUrl } from "../utils";
 
-describe('Utils', () => {
-  describe('cn', () => {
-    it('should merge class names correctly', () => {
-      expect(cn('class1', 'class2')).toBe('class1 class2')
-    })
+describe("Utils", () => {
+  describe("cn", () => {
+    it("should merge class names correctly", () => {
+      expect(cn("class1", "class2")).toBe("class1 class2");
+    });
 
-    it('should handle conditional classes', () => {
-      expect(cn('class1', { class2: true, class3: false })).toBe('class1 class2')
-    })
+    it("should handle conditional classes", () => {
+      expect(cn("class1", { class2: true, class3: false })).toBe("class1 class2");
+    });
 
-    it('should handle undefined and null values', () => {
-      expect(cn('class1', undefined, null, 'class2')).toBe('class1 class2')
-    })
-  })
+    it("should handle undefined and null values", () => {
+      expect(cn("class1", undefined, null, "class2")).toBe("class1 class2");
+    });
+  });
 
-  describe('absoluteUrl', () => {
+  describe("absoluteUrl", () => {
     // Mock window to be undefined for server-side tests
-    const originalWindow = global.window
-    
+    const originalWindow = global.window;
+
     beforeEach(() => {
-      delete (global as any).window
-    })
-    
+      delete (global as any).window;
+    });
+
     afterEach(() => {
-      global.window = originalWindow
-    })
+      global.window = originalWindow;
+    });
 
-    it('should return path when window is undefined', () => {
-      expect(absoluteUrl('/test')).toBe('/test')
-    })
+    it("should return path when window is undefined", () => {
+      expect(absoluteUrl("/test")).toBe("/test");
+    });
 
-    it.skip('should use VERCEL_URL when available', () => {
-      const originalEnv = process.env.VERCEL_URL
-      process.env.VERCEL_URL = 'test.vercel.app'
-      expect(absoluteUrl('/test')).toBe('https://test.vercel.app/test')
-      process.env.VERCEL_URL = originalEnv
-    })
+    it.skip("should use VERCEL_URL when available", () => {
+      const originalEnv = process.env.VERCEL_URL;
+      process.env.VERCEL_URL = "test.vercel.app";
+      expect(absoluteUrl("/test")).toBe("https://test.vercel.app/test");
+      process.env.VERCEL_URL = originalEnv;
+    });
 
-    it.skip('should use localhost when VERCEL_URL is not available', () => {
-      const originalEnv = process.env.PORT
-      process.env.PORT = '3001'
-      expect(absoluteUrl('/test')).toBe('http://localhost:3001/test')
-      process.env.PORT = originalEnv
-    })
-  })
-})
+    it.skip("should use localhost when VERCEL_URL is not available", () => {
+      const originalEnv = process.env.PORT;
+      process.env.PORT = "3001";
+      expect(absoluteUrl("/test")).toBe("http://localhost:3001/test");
+      process.env.PORT = originalEnv;
+    });
+  });
+});

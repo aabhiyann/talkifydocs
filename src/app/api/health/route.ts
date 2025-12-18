@@ -1,29 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getSystemHealth } from '@/lib/health'
-import { logger } from '@/lib/logger'
+import { NextRequest, NextResponse } from "next/server";
+import { createServerClient } from "@/trpc/server";
+import { loggers } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   try {
-    const health = await getSystemHealth()
-    
-    logger.info({
-      health: health.status,
-      checks: health.checks.length,
-    }, 'Health check requested')
-    
+    const serverClient = await createServerClient();
+    const health = await serverClient.healthCheck();
+
     return NextResponse.json(health, {
-      status: health.status === 'healthy' ? 200 : 503,
-    })
+      status: health.status === "healthy" ? 200 : 503,
+    });
   } catch (error) {
-    logger.error({ error }, 'Health check failed')
-    
+    loggers.api.error({ error }, "Health check failed");
+
     return NextResponse.json(
       {
-        status: 'unhealthy',
-        message: 'Health check failed',
+        status: "unhealthy",
+        message: "Health check failed",
         timestamp: new Date().toISOString(),
+        error: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
 }

@@ -1,14 +1,30 @@
 import Redis from "ioredis";
+import { Redis as UpstashRedis } from "@upstash/redis";
 import { loggers } from "./logger";
 
-// Redis client configuration
-const redis = new Redis({
-  host: process.env.REDIS_HOST || "localhost",
-  port: parseInt(process.env.REDIS_PORT || "6379"),
-  password: process.env.REDIS_PASSWORD,
-  maxRetriesPerRequest: 3,
-  lazyConnect: true,
-});
+// Use Upstash Redis if available (serverless-friendly), otherwise fallback to ioredis
+let redis: Redis | UpstashRedis;
+let useUpstash = false;
+
+if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+  // Use Upstash Redis (serverless-friendly)
+  redis = new UpstashRedis({
+    url: process.env.UPSTASH_REDIS_REST_URL,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN,
+  }) as any;
+  useUpstash = true;
+  loggers.api.info("Using Upstash Redis for caching");
+} else {
+  // Fallback to ioredis for local development
+  redis = new Redis({
+    host: process.env.REDIS_HOST || "localhost",
+    port: parseInt(process.env.REDIS_PORT || "6379"),
+    password: process.env.REDIS_PASSWORD,
+    maxRetriesPerRequest: 3,
+    lazyConnect: true,
+  });
+  loggers.api.info("Using ioredis for caching");
+}
 
 // Cache configuration
 const CACHE_TTL = {
@@ -40,7 +56,12 @@ interface CacheService {
 class RedisCacheService implements CacheService {
   async get<T>(key: string): Promise<T | null> {
     try {
-      const value = await redis.get(key);
+      let value: string | null;
+      if (useUpstash) {
+        value = await (redis as UpstashRedis).get<string>(key);
+      } else {
+        value = await (redis as Redis).get(key);
+      }
       if (!value) return null;
 
       loggers.api.debug({ operation: "cache_get", key });
@@ -54,10 +75,18 @@ class RedisCacheService implements CacheService {
   async set(key: string, value: any, ttl?: number): Promise<void> {
     try {
       const serialized = JSON.stringify(value);
-      if (ttl) {
-        await redis.setex(key, ttl, serialized);
+      if (useUpstash) {
+        if (ttl) {
+          await (redis as UpstashRedis).set(key, serialized, { ex: ttl });
+        } else {
+          await (redis as UpstashRedis).set(key, serialized);
+        }
       } else {
-        await redis.set(key, serialized);
+        if (ttl) {
+          await (redis as Redis).setex(key, ttl, serialized);
+        } else {
+          await (redis as Redis).set(key, serialized);
+        }
       }
 
       loggers.api.debug({ operation: "cache_set", key, ttl });
@@ -68,7 +97,11 @@ class RedisCacheService implements CacheService {
 
   async del(key: string): Promise<void> {
     try {
-      await redis.del(key);
+      if (useUpstash) {
+        await (redis as UpstashRedis).del(key);
+      } else {
+        await (redis as Redis).del(key);
+      }
       loggers.api.debug({ operation: "cache_del", key });
     } catch (error) {
       loggers.api.error({ operation: "cache_del", key, error });
@@ -77,9 +110,19 @@ class RedisCacheService implements CacheService {
 
   async delPattern(pattern: string): Promise<void> {
     try {
-      const keys = await redis.keys(pattern);
+      let keys: string[];
+      if (useUpstash) {
+        // Upstash supports keys() method
+        keys = await (redis as UpstashRedis).keys(pattern);
+      } else {
+        keys = await (redis as Redis).keys(pattern);
+      }
       if (keys.length > 0) {
-        await redis.del(...keys);
+        if (useUpstash) {
+          await Promise.all(keys.map((k) => (redis as UpstashRedis).del(k)));
+        } else {
+          await (redis as Redis).del(...keys);
+        }
         loggers.api.debug({
           operation: "cache_del_pattern",
           pattern,
@@ -93,7 +136,12 @@ class RedisCacheService implements CacheService {
 
   async exists(key: string): Promise<boolean> {
     try {
-      const result = await redis.exists(key);
+      let result: number;
+      if (useUpstash) {
+        result = (await (redis as UpstashRedis).exists(key)) ? 1 : 0;
+      } else {
+        result = await (redis as Redis).exists(key);
+      }
       return result === 1;
     } catch (error) {
       loggers.api.error({ operation: "cache_exists", key, error });
@@ -141,19 +189,33 @@ class MemoryCacheService implements CacheService {
   }
 }
 
-// Initialize cache service
-let cacheService: CacheService;
+// Initialize cache service with fallback
+let cacheService: CacheService = new MemoryCacheService();
 
-try {
-  // Try to connect to Redis
-  await redis.ping();
-  cacheService = new RedisCacheService();
-  loggers.api.info("Redis cache service initialized");
-} catch (error) {
-  // Fallback to memory cache
-  cacheService = new MemoryCacheService();
-  loggers.api.warn("Redis not available, using memory cache");
+async function initializeCache() {
+  try {
+    if (useUpstash) {
+      // Upstash Redis is always available (REST API)
+      cacheService = new RedisCacheService();
+      loggers.api.info("Upstash Redis cache service initialized");
+    } else {
+      // Try to connect to Redis
+      await (redis as Redis).ping();
+      cacheService = new RedisCacheService();
+      loggers.api.info("Redis cache service initialized");
+    }
+  } catch (error) {
+    // Fallback to memory cache
+    cacheService = new MemoryCacheService();
+    loggers.api.warn("Redis not available, using memory cache");
+  }
 }
+
+// Initialize cache (don't await in module scope to avoid blocking)
+initializeCache().catch((error) => {
+  loggers.api.error({ error }, "Failed to initialize cache, using memory fallback");
+  cacheService = new MemoryCacheService();
+});
 
 export { cacheService, cacheKeys, CACHE_TTL };
 
@@ -161,7 +223,7 @@ export { cacheService, cacheKeys, CACHE_TTL };
 export function withCache<T extends any[], R>(
   fn: (...args: T) => Promise<R>,
   keyGenerator: (...args: T) => string,
-  ttl?: number
+  ttl?: number,
 ) {
   return async (...args: T): Promise<R> => {
     const key = keyGenerator(...args);

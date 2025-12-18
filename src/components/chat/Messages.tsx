@@ -12,22 +12,22 @@ import { Badge } from "../ui/badge";
 
 interface MessagesProps {
   fileId: string;
+  onCitationClick?: (payload: { fileId: string; page?: number; citation?: any }) => void;
 }
 
-const Messages = ({ fileId }: MessagesProps) => {
+const Messages = ({ fileId, onCitationClick }: MessagesProps) => {
   const { isLoading: isAiThinking } = useContext(ChatContext);
 
-  const { data, isLoading, fetchNextPage } =
-    trpc.getFileMessages.useInfiniteQuery(
-      {
-        fileId,
-        limit: INFINITE_QUERY_LIMIT,
-      },
-      {
-        getNextPageParam: (lastPage) => lastPage?.nextCursor,
-        keepPreviousData: true,
-      }
-    );
+  const { data, isLoading, fetchNextPage } = trpc.getFileMessages.useInfiniteQuery(
+    {
+      fileId,
+      limit: INFINITE_QUERY_LIMIT,
+    },
+    {
+      getNextPageParam: (lastPage) => lastPage?.nextCursor,
+      keepPreviousData: true,
+    },
+  );
 
   const messages = data?.pages.flatMap((page) => page.messages);
 
@@ -43,10 +43,7 @@ const Messages = ({ fileId }: MessagesProps) => {
     ),
   };
 
-  const combinedMessages = [
-    ...(isAiThinking ? [loadingMessage] : []),
-    ...(messages ?? []),
-  ];
+  const combinedMessages = [...(isAiThinking ? [loadingMessage] : []), ...(messages ?? [])];
 
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
@@ -67,17 +64,17 @@ const Messages = ({ fileId }: MessagesProps) => {
 
   if (isLoading) {
     return (
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        <div className="max-w-4xl mx-auto space-y-4">
+      <div className="flex-1 space-y-4 overflow-y-auto p-4">
+        <div className="mx-auto max-w-4xl space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
             <Card key={i} className="animate-pulse">
               <CardContent className="p-4">
                 <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700" />
+                  <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700" />
                   <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4" />
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
+                    <div className="h-4 w-1/4 rounded bg-gray-200 dark:bg-gray-700" />
+                    <div className="h-4 w-3/4 rounded bg-gray-200 dark:bg-gray-700" />
+                    <div className="h-4 w-1/2 rounded bg-gray-200 dark:bg-gray-700" />
                   </div>
                 </div>
               </CardContent>
@@ -90,22 +87,19 @@ const Messages = ({ fileId }: MessagesProps) => {
 
   if (combinedMessages.length === 0) {
     return (
-      <div className="flex-1 flex items-center justify-center p-4">
-        <div className="text-center max-w-md mx-auto">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center">
+      <div className="flex flex-1 items-center justify-center p-4">
+        <div className="mx-auto max-w-md text-center">
+          <div className="dark:bg-primary-900/20 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
             <MessageSquare className="h-8 w-8 text-primary-600" />
           </div>
-          <h3 className="text-heading-md font-semibold text-foreground mb-2">
+          <h3 className="text-heading-md mb-2 font-semibold text-foreground">
             Start a conversation
           </h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Ask questions about your document to get AI-powered insights and
-            answers.
+          <p className="mb-6 text-gray-600 dark:text-gray-400">
+            Ask questions about your document to get AI-powered insights and answers.
           </p>
           <div className="space-y-2">
-            <p className="text-body-sm text-gray-500 dark:text-gray-400">
-              Try asking:
-            </p>
+            <p className="text-body-sm text-gray-500 dark:text-gray-400">Try asking:</p>
             <div className="space-y-1">
               <Badge variant="outline" className="mr-1">
                 &quot;What is this document about?&quot;
@@ -125,7 +119,7 @@ const Messages = ({ fileId }: MessagesProps) => {
 
   return (
     <div className="flex-1 overflow-y-auto p-4">
-      <div className="max-w-4xl mx-auto space-y-4">
+      <div className="mx-auto max-w-4xl space-y-4">
         {/* Load More Button */}
         {data?.pages[0]?.nextCursor && (
           <div className="flex justify-center">
@@ -142,76 +136,60 @@ const Messages = ({ fileId }: MessagesProps) => {
         )}
 
         {/* Messages */}
-        {combinedMessages.map((message, index) => (
-          <div
-            key={message.id}
-            ref={
-              index === combinedMessages.length - 1 ? lastMessageRef : undefined
-            }
-            className={`flex ${
-              message.isUserMessage ? "justify-end" : "justify-start"
-            }`}
-          >
-            <div
-              className={`flex items-start space-x-3 max-w-[80%] ${
-                message.isUserMessage ? "flex-row-reverse space-x-reverse" : ""
-              }`}
-            >
-              {/* Avatar */}
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  message.isUserMessage
-                    ? "bg-primary-600 text-white"
-                    : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
-                }`}
-              >
-                {message.isUserMessage ? (
-                  <User className="h-4 w-4" />
-                ) : (
-                  <Bot className="h-4 w-4" />
-                )}
-              </div>
+        {combinedMessages.map((message, index) => {
+          // Find the previous user message for assistant messages
+          const previousUserMessage = !message.isUserMessage
+            ? (() => {
+                for (let i = index - 1; i >= 0; i--) {
+                  const prevMsg = combinedMessages[i];
+                  if (prevMsg?.isUserMessage && typeof prevMsg.text === "string") {
+                    return prevMsg.text;
+                  }
+                }
+                return undefined;
+              })()
+            : undefined;
 
-              {/* Message Content */}
-              <Card
-                className={`${
-                  message.isUserMessage
-                    ? "bg-primary-600 text-white border-primary-600"
-                    : "bg-card border-border"
+          return (
+            <div
+              key={message.id}
+              ref={index === combinedMessages.length - 1 ? lastMessageRef : undefined}
+              className={`flex ${message.isUserMessage ? "justify-end" : "justify-start"}`}
+            >
+              <div
+                className={`flex max-w-[80%] items-start space-x-3 ${
+                  message.isUserMessage ? "flex-row-reverse space-x-reverse" : ""
                 }`}
               >
-                <CardContent className="p-4">
-                  <div className="space-y-2">
-                    <div className="text-sm font-medium opacity-70">
-                      {message.isUserMessage ? "You" : "AI Assistant"}
-                    </div>
-                    <div
-                      className={`${
-                        message.isUserMessage
-                          ? "text-white"
-                          : "text-foreground"
-                      }`}
-                    >
-                      <Message
-                        message={message}
-                        isNextMessageSamePerson={false}
-                      />
-                    </div>
-                    <div
-                      className={`text-xs opacity-60 ${
-                        message.isUserMessage
-                          ? "text-white"
-                          : "text-gray-500 dark:text-gray-400"
-                      }`}
-                    >
-                      {new Date(message.createdAt).toLocaleTimeString()}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                {/* Avatar */}
+                <div
+                  className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full ${
+                    message.isUserMessage
+                      ? "bg-primary-600 text-white"
+                      : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+                  }`}
+                >
+                  {message.isUserMessage ? (
+                    <User className="h-4 w-4" />
+                  ) : (
+                    <Bot className="h-4 w-4" />
+                  )}
+                </div>
+
+                {/* Message Content - Wist Style */}
+                <div className="max-w-[80%]">
+                  <Message
+                    message={message}
+                    isNextMessageSamePerson={false}
+                    onCitationClick={onCitationClick}
+                    previousUserMessage={previousUserMessage}
+                    fileId={fileId}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {/* Intersection Observer */}
         <div ref={ref} className="h-4" />

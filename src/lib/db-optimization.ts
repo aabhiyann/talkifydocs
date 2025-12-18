@@ -1,4 +1,4 @@
-import { db } from "@/db";
+import { db } from "@/lib/db";
 
 // Optimized queries with proper includes and selects
 export const optimizedQueries = {
@@ -72,29 +72,25 @@ export const optimizedQueries = {
 // Batch operations for better performance
 export const batchOperations = {
   // Create multiple messages in one transaction
-  createMessages: async (messages: Array<{
-    text: string;
-    isUserMessage: boolean;
-    userId: string;
-    fileId: string;
-  }>) => {
-    return db.$transaction(
-      messages.map(message => 
-        db.message.create({ data: message })
-      )
-    );
+  createMessages: async (
+    messages: Array<{
+      text: string;
+      isUserMessage: boolean;
+      userId: string;
+      fileId: string;
+    }>,
+  ) => {
+    return db.$transaction(messages.map((message) => db.message.create({ data: message })));
   },
 
   // Update multiple files in one transaction
-  updateFiles: async (updates: Array<{
-    id: string;
-    data: any;
-  }>) => {
-    return db.$transaction(
-      updates.map(({ id, data }) =>
-        db.file.update({ where: { id }, data })
-      )
-    );
+  updateFiles: async (
+    updates: Array<{
+      id: string;
+      data: any;
+    }>,
+  ) => {
+    return db.$transaction(updates.map(({ id, data }) => db.file.update({ where: { id }, data })));
   },
 };
 
@@ -105,13 +101,13 @@ export const cacheConfig = {
     ttl: 5 * 60 * 1000, // 5 minutes
     key: (userId: string) => `user-files:${userId}`,
   },
-  
+
   // Cache file details for 10 minutes
   fileDetails: {
     ttl: 10 * 60 * 1000, // 10 minutes
     key: (fileId: string) => `file-details:${fileId}`,
   },
-  
+
   // Cache user subscription for 1 hour
   userSubscription: {
     ttl: 60 * 60 * 1000, // 1 hour

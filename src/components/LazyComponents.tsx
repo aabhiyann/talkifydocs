@@ -16,13 +16,11 @@ const LoadingSpinner = () => (
 // Higher-order component for lazy loading with suspense
 export function withLazyLoading<T extends object>(
   Component: React.ComponentType<T>,
-  fallback?: React.ComponentType
+  fallback?: React.ComponentType,
 ) {
   return function LazyComponent(props: T) {
     return (
-      <Suspense
-        fallback={fallback ? React.createElement(fallback) : <LoadingSpinner />}
-      >
+      <Suspense fallback={fallback ? React.createElement(fallback) : <LoadingSpinner />}>
         <Component {...props} />
       </Suspense>
     );

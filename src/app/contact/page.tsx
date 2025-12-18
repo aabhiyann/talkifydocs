@@ -88,11 +88,11 @@ export default function ContactPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-primary-50/30 dark:from-secondary-900 dark:to-primary-950/30">
+    <div className="to-primary-50/30 dark:to-primary-950/30 min-h-screen bg-gradient-to-b from-white dark:from-secondary-900">
       {/* Hero Section */}
-      <section className="py-24 relative overflow-hidden">
+      <section className="relative overflow-hidden py-24">
         <div className="absolute inset-0 -z-10">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-primary-400/20 to-accent-400/20 rounded-full blur-3xl" />
+          <div className="from-primary-400/20 to-accent-400/20 absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r blur-3xl" />
         </div>
 
         <MaxWidthWrapper>
@@ -100,9 +100,9 @@ export default function ContactPage() {
             <h1 className="text-display-lg mb-6 bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
               Get in Touch
             </h1>
-            <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-3xl mx-auto leading-relaxed">
-              We&apos;re here to help! Reach out to our support team or explore
-              our resources to get the most out of TalkifyDocs.
+            <p className="text-body-lg mx-auto max-w-3xl leading-relaxed text-secondary-600 dark:text-secondary-300">
+              We&apos;re here to help! Reach out to our support team or explore our resources to get
+              the most out of TalkifyDocs.
             </p>
           </div>
         </MaxWidthWrapper>
@@ -111,26 +111,21 @@ export default function ContactPage() {
       {/* Contact Methods */}
       <section className="py-16">
         <MaxWidthWrapper>
-          <div className="text-center mb-16">
+          <div className="mb-16 text-center">
             <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
               Contact Methods
             </h2>
-            <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-2xl mx-auto">
+            <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-secondary-300">
               Choose the way that works best for you
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {contactMethods.map((method, index) => (
-              <ModernCard
-                key={index}
-                variant="glass"
-                hover={true}
-                className="text-center"
-              >
+              <ModernCard key={index} variant="glass" hover={true} className="text-center">
                 <ModernCardContent className="space-y-4">
-                  <div className="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
-                    <method.icon className="w-6 h-6 text-white" />
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500">
+                    <method.icon className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <ModernCardTitle size="md" className="mb-2">
@@ -139,7 +134,7 @@ export default function ContactPage() {
                     <ModernCardDescription className="mb-3">
                       {method.description}
                     </ModernCardDescription>
-                    <p className="text-body-sm text-primary-600 dark:text-primary-400 font-medium mb-4">
+                    <p className="text-body-sm mb-4 font-medium text-primary-600 dark:text-primary-400">
                       {method.contact}
                     </p>
                     <Button variant="outline" size="sm" className="w-full">
@@ -154,30 +149,30 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Form & Info */}
-      <section className="py-16 bg-gradient-to-b from-primary-50/30 to-white dark:from-primary-950/30 dark:to-secondary-900">
+      <section className="from-primary-50/30 dark:from-primary-950/30 bg-gradient-to-b to-white py-16 dark:to-secondary-900">
         <MaxWidthWrapper>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+          <div className="grid grid-cols-1 gap-16 lg:grid-cols-2">
             {/* Contact Form */}
             <div>
               <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
                 Send us a Message
               </h2>
-              <p className="text-body-lg text-secondary-600 dark:text-secondary-300 mb-8">
-                Have a question or need help? Fill out the form below and
-                we&apos;ll get back to you as soon as possible.
+              <p className="text-body-lg mb-8 text-secondary-600 dark:text-secondary-300">
+                Have a question or need help? Fill out the form below and we&apos;ll get back to you
+                as soon as possible.
               </p>
 
               <ModernCard variant="glass" className="p-8">
                 <form className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
-                      <label className="block text-body-sm font-medium text-secondary-900 dark:text-secondary-100 mb-2">
+                      <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
                         First Name
                       </label>
                       <Input placeholder="Enter your first name" />
                     </div>
                     <div>
-                      <label className="block text-body-sm font-medium text-secondary-900 dark:text-secondary-100 mb-2">
+                      <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
                         Last Name
                       </label>
                       <Input placeholder="Enter your last name" />
@@ -185,34 +180,28 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="block text-body-sm font-medium text-secondary-900 dark:text-secondary-100 mb-2">
+                    <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
                       Email Address
                     </label>
-                    <Input
-                      type="email"
-                      placeholder="Enter your email address"
-                    />
+                    <Input type="email" placeholder="Enter your email address" />
                   </div>
 
                   <div>
-                    <label className="block text-body-sm font-medium text-secondary-900 dark:text-secondary-100 mb-2">
+                    <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
                       Subject
                     </label>
                     <Input placeholder="What's this about?" />
                   </div>
 
                   <div>
-                    <label className="block text-body-sm font-medium text-secondary-900 dark:text-secondary-100 mb-2">
+                    <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
                       Message
                     </label>
-                    <Textarea
-                      placeholder="Tell us how we can help you..."
-                      rows={6}
-                    />
+                    <Textarea placeholder="Tell us how we can help you..." rows={6} />
                   </div>
 
                   <Button className="w-full bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700">
-                    <Send className="w-4 h-4 mr-2" />
+                    <Send className="mr-2 h-4 w-4" />
                     Send Message
                   </Button>
                 </form>
@@ -224,19 +213,18 @@ export default function ContactPage() {
               <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
                 Office Information
               </h2>
-              <p className="text-body-lg text-secondary-600 dark:text-secondary-300 mb-8">
-                Visit us at our headquarters or reach out through any of these
-                channels.
+              <p className="text-body-lg mb-8 text-secondary-600 dark:text-secondary-300">
+                Visit us at our headquarters or reach out through any of these channels.
               </p>
 
               <div className="space-y-6">
                 <ModernCard variant="glass" className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-5 h-5 text-white" />
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-600">
+                      <MapPin className="h-5 w-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-heading-md text-secondary-900 dark:text-secondary-100 mb-1">
+                      <h3 className="text-heading-md mb-1 text-secondary-900 dark:text-secondary-100">
                         Address
                       </h3>
                       <p className="text-body-md text-secondary-600 dark:text-secondary-400">
@@ -252,11 +240,11 @@ export default function ContactPage() {
 
                 <ModernCard variant="glass" className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center flex-shrink-0">
-                      <Clock className="w-5 h-5 text-white" />
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-accent-500 to-accent-600">
+                      <Clock className="h-5 w-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-heading-md text-secondary-900 dark:text-secondary-100 mb-1">
+                      <h3 className="text-heading-md mb-1 text-secondary-900 dark:text-secondary-100">
                         Business Hours
                       </h3>
                       <p className="text-body-md text-secondary-600 dark:text-secondary-400">
@@ -272,11 +260,11 @@ export default function ContactPage() {
 
                 <ModernCard variant="glass" className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-secondary-500 to-secondary-600 flex items-center justify-center flex-shrink-0">
-                      <CheckCircle className="w-5 h-5 text-white" />
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-secondary-500 to-secondary-600">
+                      <CheckCircle className="h-5 w-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-heading-md text-secondary-900 dark:text-secondary-100 mb-1">
+                      <h3 className="text-heading-md mb-1 text-secondary-900 dark:text-secondary-100">
                         Response Time
                       </h3>
                       <p className="text-body-md text-secondary-600 dark:text-secondary-400">
@@ -298,30 +286,28 @@ export default function ContactPage() {
       {/* FAQ Section */}
       <section className="py-16">
         <MaxWidthWrapper>
-          <div className="text-center mb-16">
+          <div className="mb-16 text-center">
             <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
               Frequently Asked Questions
             </h2>
-            <p className="text-body-lg text-secondary-600 dark:text-secondary-300 max-w-2xl mx-auto">
+            <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-secondary-300">
               Find answers to common questions about TalkifyDocs
             </p>
           </div>
 
-          <div className="max-w-4xl mx-auto space-y-4">
+          <div className="mx-auto max-w-4xl space-y-4">
             {faqs.map((faq, index) => (
               <ModernCard key={index} variant="glass" className="p-6">
                 <details className="group">
-                  <summary className="flex items-center justify-between cursor-pointer list-none">
-                    <h3 className="text-heading-md text-secondary-900 dark:text-secondary-100 group-open:text-primary-600 dark:group-open:text-primary-400">
+                  <summary className="flex cursor-pointer list-none items-center justify-between">
+                    <h3 className="text-heading-md text-secondary-900 group-open:text-primary-600 dark:text-secondary-100 dark:group-open:text-primary-400">
                       {faq.question}
                     </h3>
-                    <div className="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center group-open:rotate-180 transition-transform duration-200">
-                      <span className="text-primary-600 dark:text-primary-400 text-sm">
-                        +
-                      </span>
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 transition-transform duration-200 group-open:rotate-180 dark:bg-primary-900">
+                      <span className="text-sm text-primary-600 dark:text-primary-400">+</span>
                     </div>
                   </summary>
-                  <div className="mt-4 pt-4 border-t border-secondary-200 dark:border-secondary-700">
+                  <div className="mt-4 border-t border-secondary-200 pt-4 dark:border-secondary-700">
                     <p className="text-body-md text-secondary-600 dark:text-secondary-400">
                       {faq.answer}
                     </p>

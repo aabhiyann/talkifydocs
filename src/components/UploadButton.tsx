@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,304 +11,228 @@ import {
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import Dropzone from "react-dropzone";
-import {
-  Cloud,
-  File,
-  Loader2,
-  Upload,
-  X,
-  CheckCircle2,
-  AlertCircle,
-} from "lucide-react";
+import { Cloud, File, Files, Loader2, Upload, X, CheckCircle2, AlertCircle } from "lucide-react";
 import { Progress } from "./ui/progress";
-import { useUploadThing } from "@/lib/uploadthing";
 import { useToast } from "./ui/use-toast";
-import { trpc } from "@/app/_trpc/client";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
+import { useUploadStatusStore } from "@/hooks/useUploadStatus";
+import { useUploadThing } from "@/lib/uploadthing";
 
 const UploadDropzone = () => {
   const router = useRouter();
-  const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const [uploadStatus, setUploadStatus] = useState<
-    "idle" | "uploading" | "processing" | "success" | "error"
-  >("idle");
-  const [errorMessage, setErrorMessage] = useState<string>("");
-
   const { toast } = useToast();
+  const [isOpen, setIsOpen] = useState(false);
 
-  const { startUpload } = useUploadThing("pdfUploader");
+  const {
+    uploads,
+    addUpload,
+    updateUpload,
+    removeUpload,
+    clearCompleted,
+    getAllUploads,
+    hasActiveUploads,
+  } = useUploadStatusStore();
 
-  const { mutate: startPolling } = trpc.getFile.useMutation({
-    onSuccess: (file) => {
-      setUploadStatus("success");
-      setTimeout(() => {
-        router.push(`/dashboard/${file.id}`);
-      }, 1000);
-    },
-    onError: (error) => {
-      setUploadStatus("error");
-      let errorMsg = error.message || "Failed to process file";
+    const { startUpload, isUploading } = useUploadThing("pdfUploader", {
+        onClientUploadComplete: (res) => {
+            if (!res) {
+                return;
+            }
+            const [fileResponse] = res;
+            const uploadId = fileResponse.serverData.id;
+            
+            updateUpload(uploadId, { status: "processing" });
+            
+            setTimeout(() => {
+                router.push(`/dashboard/${fileResponse.serverData.id}`);
+            }, 1000);
+        },
+        onUploadProgress: (p) => {
+            const activeUpload = uploads.find(u => u.status === 'uploading');
+            if (activeUpload) {
+                updateUpload(activeUpload.id, { progress: p });
+            }
+        },
+        onUploadError: (error) => {
+            const activeUpload = uploads.find(u => u.status === 'uploading');
+            if (activeUpload) {
+                updateUpload(activeUpload.id, { status: "error", error: error.message });
+            }
+            toast({
+                title: "Upload failed",
+                description: error.message,
+                variant: "destructive",
+            });
+        },
+    });
 
-      // Provide more specific error messages
-      if (errorMsg.includes("RetryError")) {
-        errorMsg =
-          "File processing is taking longer than expected. Please try again.";
-      } else if (errorMsg.includes("setup")) {
-        errorMsg =
-          "The PDF file appears to be corrupted or unsupported. Please try a different file.";
-      } else if (errorMsg.includes("timeout")) {
-        errorMsg =
-          "File processing timed out. Please try again with a smaller file.";
+  const handleDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      if (acceptedFiles.length === 0) return;
+
+      const currentUploads = getAllUploads().filter(
+        (u) => u.status === "uploading" || u.status === "processing",
+      );
+
+      if (currentUploads.length + acceptedFiles.length > 10) {
+        toast({
+          title: "Batch limit exceeded",
+          description: "You can upload up to 10 files at once.",
+          variant: "destructive",
+        });
+        return;
       }
 
-      setErrorMessage(errorMsg);
+      const uploadIds = acceptedFiles.map((file) => addUpload(file));
+      
+      startUpload(acceptedFiles);
     },
-    retry: true,
-    retryDelay: 1000, // Increased retry delay
-  });
+    [addUpload, getAllUploads, startUpload, toast],
+  );
 
-  const startSimulatedProgress = () => {
-    setUploadProgress(0);
-    setUploadStatus("uploading");
-
-    const interval = setInterval(() => {
-      setUploadProgress((prevProgress) => {
-        if (prevProgress >= 90) {
-          clearInterval(interval);
-          setUploadStatus("processing");
-          return prevProgress;
-        }
-        return prevProgress + Math.random() * 10;
-      });
-    }, 200);
-
-    return interval;
-  };
-
-  const resetUpload = () => {
-    setIsUploading(false);
-    setUploadProgress(0);
-    setUploadStatus("idle");
-    setErrorMessage("");
-  };
+  const currentUploads = getAllUploads();
+  const hasUploads = currentUploads.length > 0;
 
   return (
     <div className="w-full">
       <Dropzone
-        multiple={false}
+        multiple={true}
         accept={{
           "application/pdf": [".pdf"],
         }}
-        maxSize={4 * 1024 * 1024} // 4MB
-        onDrop={async (acceptedFile, rejectedFiles) => {
-          if (rejectedFiles.length > 0) {
-            const error = rejectedFiles[0].errors[0];
-            let message = "File rejected";
-
-            if (error.code === "file-too-large") {
-              message = "File is too large. Maximum size is 4MB.";
-            } else if (error.code === "file-invalid-type") {
-              message = "Only PDF files are allowed.";
-            }
-
-            setErrorMessage(message);
-            setUploadStatus("error");
-            return;
-          }
-
-          setIsUploading(true);
-          setErrorMessage("");
-
-          const progressInterval = startSimulatedProgress();
-
-          try {
-            // handle file uploading
-            const res = await startUpload(acceptedFile);
-
-            if (!res) {
-              throw new Error("Upload failed");
-            }
-
-            const [fileResponse] = res;
-            const key = fileResponse?.key;
-
-            if (!key) {
-              throw new Error("No file key returned");
-            }
-
-            clearInterval(progressInterval);
-            setUploadProgress(100);
-
-            startPolling({ key });
-          } catch (error) {
-            clearInterval(progressInterval);
-            setUploadStatus("error");
-            setErrorMessage(
-              error instanceof Error ? error.message : "Upload failed"
-            );
-          }
-        }}
+        onDrop={handleDrop}
       >
-        {({ getRootProps, getInputProps, acceptedFiles, isDragActive }) => (
+        {({ getRootProps, getInputProps, isDragActive }) => (
           <div
             {...getRootProps()}
-            className={`relative border-2 border-dashed rounded-xl transition-all duration-300 cursor-pointer ${
+            className={`relative cursor-pointer rounded-xl border-2 border-dashed transition-all duration-300 ${
               isDragActive
-                ? "border-primary-400 bg-primary-50 dark:bg-primary-900/10"
-                : uploadStatus === "error"
-                ? "border-red-300 bg-red-50 dark:bg-red-900/10"
-                : uploadStatus === "success"
-                ? "border-primary-300 bg-primary-50 dark:bg-primary-900/10"
-                : "border-gray-300 hover:border-primary-400 hover:bg-gray-50 dark:border-gray-600 dark:hover:border-primary-500 dark:hover:bg-gray-800/50"
+                ? "dark:bg-primary-900/10 border-primary-400 bg-primary-50"
+                : hasUploads
+                  ? "border-primary-300 bg-slate-50 dark:bg-slate-900/10"
+                  : "dark:hover:bg-gray-800/50 border-gray-300 hover:border-primary-400 hover:bg-gray-50 dark:border-gray-600 dark:hover:border-primary-500"
             }`}
           >
             <div className="p-8">
-              <div className="flex flex-col items-center justify-center space-y-4">
-                {/* Upload Icon */}
-                <div
-                  className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors duration-200 ${
-                    uploadStatus === "success"
-                      ? "bg-green-100 dark:bg-green-900/20"
-                      : uploadStatus === "error"
-                      ? "bg-red-100 dark:bg-red-900/20"
-                      : "bg-primary-100 dark:bg-primary-900/20"
-                  }`}
-                >
-                  {uploadStatus === "success" ? (
-                    <CheckCircle2 className="h-8 w-8 text-primary-600 dark:text-primary-400" />
-                  ) : uploadStatus === "error" ? (
-                    <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
-                  ) : isUploading ? (
-                    <Loader2 className="h-8 w-8 text-primary-600 animate-spin" />
-                  ) : (
+              {!hasUploads ? (
+                <div className="flex flex-col items-center justify-center space-y-4">
+                  <div className="dark:bg-primary-900/20 flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
                     <Cloud className="h-8 w-8 text-primary-600 dark:text-primary-400" />
-                  )}
+                  </div>
+                  <div className="space-y-2 text-center">
+                    <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+                      {isDragActive ? "Drop your PDFs here" : "Upload PDF documents"}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Drag and drop up to 10 PDFs, or click to browse
+                    </p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">
+                      Free plan: 50MB per file • Pro plan: 200MB per file
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    <Badge variant="outline" className="text-xs">
+                      <Files className="mr-1 h-3 w-3" />
+                      Batch upload
+                    </Badge>
+                  </div>
                 </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="mb-4 text-center">
+                    <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+                      {isUploading ? "Uploading files..." : "Uploads"}
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                      {isDragActive
+                        ? "Drop more PDFs to add to queue"
+                        : "Click or drag to upload more files"}
+                    </p>
+                  </div>
+                  <div className="max-h-64 space-y-2 overflow-y-auto">
+                    {currentUploads.map((upload) => (
+                      <Card key={upload.id} className="relative">
+                        <CardContent className="p-3">
+                          <div className="flex items-center space-x-3">
+                            <div
+                              className={`flex h-10 w-10 items-center justify-center rounded-lg ${
+                                upload.status === "success"
+                                  ? "bg-green-100 dark:bg-green-900/20"
+                                  : upload.status === "error"
+                                    ? "bg-red-100 dark:bg-red-900/20"
+                                    : "dark:bg-primary-900/20 bg-primary-100"
+                              }`}
+                            >
+                              {upload.status === "success" ? (
+                                <CheckCircle2 className="h-5 w-5 text-green-600" />
+                              ) : upload.status === "error" ? (
+                                <AlertCircle className="h-5 w-5 text-red-600" />
+                              ) : upload.status === "uploading" ||
+                                upload.status === "processing" ? (
+                                <Loader2 className="h-5 w-5 animate-spin text-primary-600" />
+                              ) : (
+                                <File className="h-5 w-5 text-primary-600" />
+                              )}
+                            </div>
 
-                {/* Upload Text */}
-                <div className="text-center space-y-2">
-                  {uploadStatus === "success" ? (
-                    <>
-                      <h3 className="text-lg font-semibold text-primary-700 dark:text-primary-300">
-                        Upload Successful!
-                      </h3>
-                      <p className="text-sm text-primary-600 dark:text-primary-400">
-                        Redirecting to your document...
-                      </p>
-                    </>
-                  ) : uploadStatus === "error" ? (
-                    <>
-                      <h3 className="text-lg font-semibold text-red-700 dark:text-red-300">
-                        Upload Failed
-                      </h3>
-                      <p className="text-sm text-red-600 dark:text-red-400">
-                        {errorMessage}
-                      </p>
-                    </>
-                  ) : isUploading ? (
-                    <>
-                      <h3 className="text-lg font-semibold text-primary-700 dark:text-primary-300">
-                        {uploadStatus === "processing"
-                          ? "Processing..."
-                          : "Uploading..."}
-                      </h3>
-                      <p className="text-sm text-primary-600 dark:text-primary-400">
-                        {uploadStatus === "processing"
-                          ? "AI is analyzing your document..."
-                          : "Please wait while we upload your file..."}
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
-                        {isDragActive
-                          ? "Drop your PDF here"
-                          : "Upload a PDF document"}
-                      </h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Drag and drop your PDF here, or click to browse
-                      </p>
-                      <p className="text-xs text-gray-400 dark:text-gray-500">
-                        Maximum file size: 4MB
-                      </p>
-                    </>
-                  )}
-                </div>
-
-                {/* File Preview */}
-                {acceptedFiles &&
-                  acceptedFiles[0] &&
-                  uploadStatus !== "success" && (
-                    <Card className="w-full max-w-sm">
-                      <CardContent className="p-4">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center">
-                            <File className="h-5 w-5 text-primary-600" />
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-sm font-medium text-foreground">
+                                {upload.file.name}
+                              </p>
+                              <div className="flex items-center space-x-2">
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                  {(upload.file.size / 1024 / 1024).toFixed(1)} MB
+                                </p>
+                                {upload.status === "error" && (
+                                  <p className="text-xs text-red-600 dark:text-red-400">
+                                    {upload.error}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                            {(upload.status === "success" || upload.status === "error") && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeUpload(upload.id);
+                                }}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            )}
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground truncate">
-                              {acceptedFiles[0].name}
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {(acceptedFiles[0].size / 1024 / 1024).toFixed(2)}{" "}
-                              MB
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                {/* Progress Bar */}
-                {isUploading && uploadStatus !== "error" && (
-                  <div className="w-full max-w-sm space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600 dark:text-gray-400">
-                        {uploadStatus === "processing"
-                          ? "Processing"
-                          : "Uploading"}
-                      </span>
-                      <span className="text-gray-600 dark:text-gray-400">
-                        {Math.round(uploadProgress)}%
-                      </span>
+                          {(upload.status === "uploading" || upload.status === "processing") && (
+                            <div className="mt-2">
+                              <Progress value={upload.progress} className="h-1" />
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                  {currentUploads.length > 0 && (
+                    <div className="flex justify-center pt-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          clearCompleted();
+                        }}
+                      >
+                        Clear completed
+                      </Button>
                     </div>
-                    <Progress value={uploadProgress} className="h-2" />
-                  </div>
-                )}
-
-                {/* Action Buttons */}
-                {uploadStatus === "error" && (
-                  <div className="flex space-x-2">
-                    <Button onClick={resetUpload} variant="outline" size="sm">
-                      Try Again
-                    </Button>
-                    <Button onClick={() => window.location.reload()} size="sm">
-                      Refresh Page
-                    </Button>
-                  </div>
-                )}
-
-                {/* Upload Requirements */}
-                {uploadStatus === "idle" && (
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    <Badge variant="outline" className="text-xs">
-                      PDF only
-                    </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      Max 4MB
-                    </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      Secure upload
-                    </Badge>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
             </div>
-
-            <input {...getInputProps()} type="file" className="hidden" />
+            <input {...getInputProps()} type="file" multiple className="hidden" />
           </div>
         )}
       </Dropzone>
@@ -317,30 +241,36 @@ const UploadDropzone = () => {
 };
 
 const UploadButton = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const { getAllUploads } = useUploadStatusStore();
+    const activeCount = getAllUploads().filter(
+        (u) => u.status === "uploading" || u.status === "processing",
+    ).length;
 
-  return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button className="bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white shadow-lg hover:shadow-xl transition-all duration-200">
-          <Upload className="h-4 w-4 mr-2" />
-          Upload PDF
-        </Button>
-      </DialogTrigger>
-
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-center text-xl font-semibold">
-            Upload Document
-          </DialogTitle>
-          <DialogDescription className="text-center text-muted-foreground">
-            Upload a PDF document to start chatting with AI-powered insights.
-          </DialogDescription>
-        </DialogHeader>
-        <UploadDropzone />
-      </DialogContent>
-    </Dialog>
-  );
+    return (
+        <Dialog open={isOpen} onOpenChange={(v) => { if (!v) setIsOpen(v) }}>
+            <DialogTrigger asChild onClick={() => setIsOpen(true)}>
+                <Button className="relative bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg transition-all duration-200 hover:from-primary-700 hover:to-primary-800 hover:shadow-xl">
+                    <Upload className="mr-2 h-4 w-4" />
+                    Upload PDFs
+                    {activeCount > 0 && (
+                        <Badge variant="secondary" className="ml-2 border-0 bg-white/20 text-white">
+                            {activeCount}
+                        </Badge>
+                    )}
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                    <DialogTitle className="text-center text-xl font-semibold">Upload Documents</DialogTitle>
+                    <DialogDescription className="text-center text-muted-foreground">
+                        Upload up to 10 PDF documents at once. Each file will be processed with AI-powered analysis.
+                    </DialogDescription>
+                </DialogHeader>
+                <UploadDropzone />
+            </DialogContent>
+        </Dialog>
+    );
 };
 
 export default UploadButton;

@@ -1,26 +1,40 @@
-// import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/dist/types/server";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { TRPCError, initTRPC } from "@trpc/server";
+import type { AuthenticatedUser } from "@/lib/auth";
 
-const t = initTRPC.create();
+const t = initTRPC
+  .context<{
+    user?: AuthenticatedUser | null;
+  }>()
+  .create();
 const middleware = t.middleware;
 
 const isAuth = middleware(async (opts) => {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
+  const { ctx } = opts;
 
-  if (!user || !user.id) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
+  if (!ctx.user) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "User not authenticated",
+    });
   }
 
   return opts.next({
     ctx: {
-      userId: user.id,
-      user,
+      userId: ctx.user.id,
+      user: ctx.user,
     },
   });
+});
+
+const isAdmin = middleware(async (opts) => {
+  const { ctx } = opts;
+  if (ctx.user?.tier !== "ADMIN") {
+    throw new TRPCError({ code: "FORBIDDEN", message: "User is not an admin" });
+  }
+  return opts.next(opts);
 });
 
 export const router = t.router;
 export const publicProcedure = t.procedure;
 export const privateProcedure = t.procedure.use(isAuth);
+export const adminProcedure = t.procedure.use(isAuth).use(isAdmin);

@@ -29,19 +29,16 @@ if [ ! -f ".env.local" ]; then
 # Database
 DATABASE_URL="postgresql://username:password@localhost:5432/talkifydocs"
 
-# Authentication (Kinde)
-KINDE_CLIENT_ID="your_kinde_client_id"
-KINDE_CLIENT_SECRET="your_kinde_client_secret"
-KINDE_ISSUER_URL="https://your-domain.kinde.com"
-KINDE_SITE_URL="http://localhost:3000"
-KINDE_POST_LOGOUT_REDIRECT_URL="http://localhost:3000"
-KINDE_POST_LOGIN_REDIRECT_URL="http://localhost:3000/dashboard"
+# Authentication (Clerk)
+CLERK_SECRET_KEY="sk_test_your_clerk_secret_key"
+CLERK_WEBHOOK_SECRET="whsec_your_clerk_webhook_secret"
 
 # OpenAI
 OPENAI_API_KEY="sk-your_openai_api_key"
 
 # Pinecone
 PINECONE_API_KEY="your_pinecone_api_key"
+PINECONE_ENVIRONMENT="gcp-starter"
 
 # Stripe (for payments)
 STRIPE_SECRET_KEY="sk_test_your_stripe_secret_key"
@@ -59,9 +56,9 @@ REDIS_PASSWORD=""
 # Logging
 LOG_LEVEL="debug"
 
-# Next.js
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="your_nextauth_secret"
+# App
+NODE_ENV="development"
+PORT="3000"
 EOF
     echo "📝 Created .env.local template. Please update it with your actual values."
 fi

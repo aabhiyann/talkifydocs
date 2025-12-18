@@ -21,13 +21,9 @@ PINECONE_ENVIRONMENT="gcp-starter"
 UPLOADTHING_SECRET="sk_live_your-uploadthing-secret-here"
 UPLOADTHING_APP_ID="your-uploadthing-app-id-here"
 
-# Kinde Auth (Your keys from Kinde)
-KINDE_CLIENT_ID="your-kinde-client-id-here"
-KINDE_CLIENT_SECRET="your-kinde-client-secret-here"
-KINDE_ISSUER_URL="https://your-domain.kinde.com"
-KINDE_SITE_URL="http://localhost:3000"
-KINDE_POST_LOGOUT_REDIRECT_URL="http://localhost:3000"
-KINDE_POST_LOGIN_REDIRECT_URL="http://localhost:3000"
+# Clerk Auth (Your keys from Clerk)
+CLERK_SECRET_KEY="sk_test_your-clerk-secret-key-here"
+CLERK_WEBHOOK_SECRET="whsec_your-clerk-webhook-secret-here"
 
 # Stripe (Your keys from Stripe Dashboard)
 STRIPE_SECRET_KEY="sk_test_your-stripe-secret-key-here"

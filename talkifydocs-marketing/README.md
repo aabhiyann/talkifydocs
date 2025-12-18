@@ -4,13 +4,13 @@ This folder contains adapted versions of the TalkifyDocs case study for various 
 
 ### Files Overview
 
-| File                            | Platform               | Length      | Best For                          |
-| ------------------------------- | ---------------------- | ----------- | --------------------------------- |
-| `01-linkedin-article.md`        | LinkedIn Article       | ~1200 words | Long-form, professional audience  |
-| `02-linkedin-short-post.md`     | LinkedIn Post          | ~400 words  | Quick engagement, feed visibility |
-| `03-twitter-thread.md`          | Twitter/X              | 12–15 tweets| Tech audience, virality potential |
-| `04-dev-to-medium.md`           | Dev.to/Medium/Hashnode | ~2000 words | SEO, technical depth, evergreen   |
-| `05-reddit-post.md`             | Reddit                 | ~500 words  | Community discussion, feedback    |
+| File                        | Platform               | Length       | Best For                          |
+| --------------------------- | ---------------------- | ------------ | --------------------------------- |
+| `01-linkedin-article.md`    | LinkedIn Article       | ~1200 words  | Long-form, professional audience  |
+| `02-linkedin-short-post.md` | LinkedIn Post          | ~400 words   | Quick engagement, feed visibility |
+| `03-twitter-thread.md`      | Twitter/X              | 12–15 tweets | Tech audience, virality potential |
+| `04-dev-to-medium.md`       | Dev.to/Medium/Hashnode | ~2000 words  | SEO, technical depth, evergreen   |
+| `05-reddit-post.md`         | Reddit                 | ~500 words   | Community discussion, feedback    |
 
 ### Posting Strategy (Suggested)
 
@@ -109,5 +109,3 @@ Before posting, update these placeholders:
 
 - Focus on learnings and trade-offs, not just self-promo.
 - Be ready to answer technical questions and accept constructive criticism.
-
-

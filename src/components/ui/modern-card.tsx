@@ -11,8 +11,7 @@ interface ModernCardProps {
 }
 
 const variants = {
-  default:
-    "bg-white dark:bg-secondary-800 border border-secondary-200 dark:border-secondary-700",
+  default: "bg-white dark:bg-secondary-800 border border-secondary-200 dark:border-secondary-700",
   elevated:
     "bg-white dark:bg-secondary-800 shadow-medium border border-secondary-200 dark:border-secondary-700",
   glass:
@@ -54,7 +53,7 @@ export function ModernCard({
         paddings[padding],
         rounded[roundedVariant],
         hover && "hover:scale-[1.02] hover:shadow-lg",
-        className
+        className,
       )}
     >
       {children}
@@ -67,10 +66,7 @@ interface ModernCardHeaderProps {
   className?: string;
 }
 
-export function ModernCardHeader({
-  children,
-  className,
-}: ModernCardHeaderProps) {
+export function ModernCardHeader({ children, className }: ModernCardHeaderProps) {
   return <div className={cn("space-y-1.5 pb-4", className)}>{children}</div>;
 }
 
@@ -80,11 +76,7 @@ interface ModernCardTitleProps {
   size?: "sm" | "md" | "lg" | "xl";
 }
 
-export function ModernCardTitle({
-  children,
-  className,
-  size = "md",
-}: ModernCardTitleProps) {
+export function ModernCardTitle({ children, className, size = "md" }: ModernCardTitleProps) {
   const sizeClasses = {
     sm: "text-heading-sm",
     md: "text-heading-md",
@@ -97,7 +89,7 @@ export function ModernCardTitle({
       className={cn(
         "font-semibold text-secondary-900 dark:text-secondary-100",
         sizeClasses[size],
-        className
+        className,
       )}
     >
       {children}
@@ -110,17 +102,9 @@ interface ModernCardDescriptionProps {
   className?: string;
 }
 
-export function ModernCardDescription({
-  children,
-  className,
-}: ModernCardDescriptionProps) {
+export function ModernCardDescription({ children, className }: ModernCardDescriptionProps) {
   return (
-    <p
-      className={cn(
-        "text-body-sm text-secondary-600 dark:text-secondary-400",
-        className
-      )}
-    >
+    <p className={cn("text-body-sm text-secondary-600 dark:text-secondary-400", className)}>
       {children}
     </p>
   );
@@ -131,10 +115,7 @@ interface ModernCardContentProps {
   className?: string;
 }
 
-export function ModernCardContent({
-  children,
-  className,
-}: ModernCardContentProps) {
+export function ModernCardContent({ children, className }: ModernCardContentProps) {
   return <div className={cn("space-y-4", className)}>{children}</div>;
 }
 
@@ -143,11 +124,6 @@ interface ModernCardFooterProps {
   className?: string;
 }
 
-export function ModernCardFooter({
-  children,
-  className,
-}: ModernCardFooterProps) {
-  return (
-    <div className={cn("flex items-center pt-4", className)}>{children}</div>
-  );
+export function ModernCardFooter({ children, className }: ModernCardFooterProps) {
+  return <div className={cn("flex items-center pt-4", className)}>{children}</div>;
 }

@@ -1,8 +1,6 @@
 import { NextRequest } from "next/server";
 import { loggers } from "./logger";
-
-// Rate limiting store (in production, use Redis)
-const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+import { db } from "@/lib/db";
 
 // Rate limiting configuration
 const RATE_LIMITS = {
@@ -47,54 +45,70 @@ export function sanitizeFileName(fileName: string): string {
     .substring(0, 255); // Limit length
 }
 
-// Rate limiting
-export function checkRateLimit(
+// Rate limiting using Prisma-backed RateLimit model
+export async function checkRateLimit(
   identifier: string,
-  limitType: keyof typeof RATE_LIMITS
-): { allowed: boolean; remaining: number; resetTime: number } {
+  limitType: keyof typeof RATE_LIMITS,
+): Promise<{ allowed: boolean; remaining: number; resetTime: number }> {
   const limit = RATE_LIMITS[limitType];
-  const now = Date.now();
-  const key = `${identifier}:${limitType}`;
+  const now = new Date();
+  const windowStart = new Date(now.getTime() - limit.windowMs);
 
-  const current = rateLimitStore.get(key);
+  const existing = await db.rateLimit.findFirst({
+    where: {
+      identifier,
+      operation: limitType,
+      windowStart: {
+        gte: windowStart,
+      },
+    },
+    orderBy: {
+      windowStart: "desc",
+    },
+  });
 
-  if (!current || now > current.resetTime) {
-    // Reset or create new entry
-    rateLimitStore.set(key, {
-      count: 1,
-      resetTime: now + limit.windowMs,
+  // No record in current window → create one
+  if (!existing) {
+    await db.rateLimit.create({
+      data: {
+        identifier,
+        operation: limitType,
+        count: 1,
+        windowStart: now,
+      },
     });
 
     return {
       allowed: true,
       remaining: limit.requests - 1,
-      resetTime: now + limit.windowMs,
+      resetTime: now.getTime() + limit.windowMs,
     };
   }
 
-  if (current.count >= limit.requests) {
+  if (existing.count >= limit.requests) {
     loggers.api.warn({
       operation: "rate_limit_exceeded",
       identifier,
       limitType,
-      count: current.count,
+      count: existing.count,
     });
 
     return {
       allowed: false,
       remaining: 0,
-      resetTime: current.resetTime,
+      resetTime: existing.windowStart.getTime() + limit.windowMs,
     };
   }
 
-  // Increment counter
-  current.count++;
-  rateLimitStore.set(key, current);
+  const updated = await db.rateLimit.update({
+    where: { id: existing.id },
+    data: { count: { increment: 1 } },
+  });
 
   return {
     allowed: true,
-    remaining: limit.requests - current.count,
-    resetTime: current.resetTime,
+    remaining: limit.requests - updated.count,
+    resetTime: updated.windowStart.getTime() + limit.windowMs,
   };
 }
 
@@ -143,8 +157,7 @@ export function getSecurityHeaders(): Record<string, string> {
     "X-Frame-Options": "DENY",
     "X-XSS-Protection": "1; mode=block",
     "Referrer-Policy": "strict-origin-when-cross-origin",
-    "Permissions-Policy":
-      "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=(), interest-cohort=()",
     "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
     "Content-Security-Policy":
       "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:;",
@@ -167,12 +180,4 @@ export function getClientIP(req: NextRequest): string {
   return "unknown";
 }
 
-// Clean up expired rate limit entries
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, value] of rateLimitStore.entries()) {
-    if (now > value.resetTime) {
-      rateLimitStore.delete(key);
-    }
-  }
-}, 5 * 60 * 1000); // Clean up every 5 minutes
+// Note: Cleanup of old RateLimit rows can be handled via a scheduled job/cron.

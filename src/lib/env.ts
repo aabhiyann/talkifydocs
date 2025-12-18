@@ -7,6 +7,9 @@ const envSchema = z.object({
   // OpenAI
   OPENAI_API_KEY: z.string().min(1, "OpenAI API key is required"),
 
+  // Groq
+  GROQ_API_KEY: z.string().min(1, "Groq API key is required"),
+
   // Pinecone
   PINECONE_API_KEY: z.string().min(1, "Pinecone API key is required"),
   PINECONE_ENVIRONMENT: z.string().min(1, "Pinecone environment is required"),
@@ -19,24 +22,46 @@ const envSchema = z.object({
   UPLOADTHING_SECRET: z.string().min(1, "UploadThing secret is required"),
   UPLOADTHING_APP_ID: z.string().min(1, "UploadThing app ID is required"),
 
-  // Kinde Auth
-  KINDE_CLIENT_ID: z.string().min(1, "Kinde client ID is required"),
-  KINDE_CLIENT_SECRET: z.string().min(1, "Kinde client secret is required"),
-  KINDE_ISSUER_URL: z.string().url("Invalid Kinde issuer URL"),
-  KINDE_SITE_URL: z.string().url("Invalid Kinde site URL"),
-  KINDE_POST_LOGOUT_REDIRECT_URL: z
+  // Vercel Blob
+  BLOB_READ_WRITE_TOKEN: z
     .string()
-    .url("Invalid post logout redirect URL"),
-  KINDE_POST_LOGIN_REDIRECT_URL: z
+    .min(1, "BLOB_READ_WRITE_TOKEN is required for Vercel Blob uploads"),
+
+  // Clerk Auth
+  CLERK_SECRET_KEY: z.string().min(1, "Clerk secret key is required"),
+  CLERK_WEBHOOK_SECRET: z.string().min(1, "Clerk webhook secret is required for user sync"),
+
+  // Clerk public configuration
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z
     .string()
-    .url("Invalid post login redirect URL"),
+    .min(1, "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is required"),
+  NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().default("/sign-in"),
+  NEXT_PUBLIC_CLERK_SIGN_UP_URL: z.string().default("/sign-up"),
+  NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: z.string().default("/dashboard"),
+  NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string().default("/dashboard"),
 
   // App
-  NODE_ENV: z
-    .enum(["development", "production", "test"])
-    .default("development"),
+  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   PORT: z.string().default("3000"),
   VERCEL_URL: z.string().optional(),
+  NEXT_PUBLIC_APP_URL: z.string().url().optional(),
+
+  // Redis (Upstash)
+  UPSTASH_REDIS_REST_URL: z.string().url().optional(),
+  UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
+  REDIS_HOST: z.string().optional(),
+  REDIS_PORT: z.string().optional(),
+  REDIS_PASSWORD: z.string().optional(),
+
+  // Sentry
+  SENTRY_DSN: z.string().url().optional(),
+  SENTRY_TRACES_SAMPLE_RATE: z.string().optional(),
+
+  // Google Analytics
+  NEXT_PUBLIC_GA_ID: z.string().optional(),
+
+  // Pinecone Index Name
+  PINECONE_INDEX: z.string().optional(),
 });
 
 // Only validate environment variables at runtime, not during build
@@ -46,23 +71,25 @@ try {
 } catch (error) {
   // During build time or when env vars are missing, use defaults
   env = {
-    DATABASE_URL:
-      process.env.DATABASE_URL || "postgresql://localhost:5432/talkifydocs",
+    DATABASE_URL: process.env.DATABASE_URL || "postgresql://localhost:5432/talkifydocs",
     OPENAI_API_KEY: process.env.OPENAI_API_KEY || "",
+    GROQ_API_KEY: process.env.GROQ_API_KEY || "",
     PINECONE_API_KEY: process.env.PINECONE_API_KEY || "",
     PINECONE_ENVIRONMENT: process.env.PINECONE_ENVIRONMENT || "gcp-starter",
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || "",
     UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET || "",
     UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID || "",
-    KINDE_CLIENT_ID: process.env.KINDE_CLIENT_ID || "",
-    KINDE_CLIENT_SECRET: process.env.KINDE_CLIENT_SECRET || "",
-    KINDE_ISSUER_URL: process.env.KINDE_ISSUER_URL || "https://localhost:3000",
-    KINDE_SITE_URL: process.env.KINDE_SITE_URL || "https://localhost:3000",
-    KINDE_POST_LOGOUT_REDIRECT_URL:
-      process.env.KINDE_POST_LOGOUT_REDIRECT_URL || "https://localhost:3000",
-    KINDE_POST_LOGIN_REDIRECT_URL:
-      process.env.KINDE_POST_LOGIN_REDIRECT_URL || "https://localhost:3000",
+    BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN || "",
+    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY || "",
+    CLERK_WEBHOOK_SECRET: process.env.CLERK_WEBHOOK_SECRET || "",
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "",
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL || "/sign-in",
+    NEXT_PUBLIC_CLERK_SIGN_UP_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL || "/sign-up",
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL:
+      process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL || "/dashboard",
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL:
+      process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL || "/dashboard",
     NODE_ENV: process.env.NODE_ENV || "development",
     PORT: process.env.PORT || "3000",
     VERCEL_URL: process.env.VERCEL_URL,

@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  ChevronDown,
-  ChevronUp,
-  Loader2,
-  RotateCw,
-  Search,
-} from "lucide-react";
+import { ChevronDown, ChevronUp, Loader2, RotateCw, Search } from "lucide-react";
 import { useToast } from "./ui/use-toast";
 import { useResizeDetector } from "react-resize-detector";
 import { Button } from "./ui/button";
@@ -27,9 +21,17 @@ import PdfFullscreen from "./PdfFullscreen";
 
 interface PdfRendererProps {
   url: string;
+  /**
+   * Optional externally controlled page number (1-based).
+   */
+  page?: number;
+  /**
+   * Callback when the current page changes in the viewer.
+   */
+  onPageChange?: (page: number) => void;
 }
 
-const PdfRenderer = ({ url }: PdfRendererProps) => {
+const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
   const { toast } = useToast();
   const { width, ref } = useResizeDetector();
 
@@ -46,12 +48,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   const [loadTimeout, setLoadTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const isLoadingPdf =
-    isLoading ||
-    renderedScale !== scale ||
-    !pdfjsLib ||
-    !Document ||
-    !Page ||
-    !mounted;
+    isLoading || renderedScale !== scale || !pdfjsLib || !Document || !Page || !mounted;
 
   // Set mounted state to prevent hydration issues
   useEffect(() => {
@@ -71,8 +68,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
           setIsLoading(false);
           toast({
             title: "PDF Loading Timeout",
-            description:
-              "PDF viewer is taking too long to load. Please refresh the page.",
+            description: "PDF viewer is taking too long to load. Please refresh the page.",
             variant: "destructive",
           });
         }, 30000); // 30 second timeout
@@ -90,8 +86,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
         }
 
         // Import react-pdf components
-        const { Document: DocumentComponent, Page: PageComponent } =
-          await import("react-pdf");
+        const { Document: DocumentComponent, Page: PageComponent } = await import("react-pdf");
         setDocument(() => DocumentComponent);
         setPage(() => PageComponent);
 
@@ -127,9 +122,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   }, [mounted, toast, loadTimeout]);
 
   const CustomPageValidator = z.object({
-    page: z
-      .string()
-      .refine((num) => Number(num) > 0 && Number(num) <= numPages!),
+    page: z.string().refine((num) => Number(num) > 0 && Number(num) <= numPages!),
   });
 
   type TCustomPageValidator = z.infer<typeof CustomPageValidator>;
@@ -147,18 +140,27 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   });
 
   const handlePageSubmit = ({ page }: TCustomPageValidator) => {
-    setCurrPage(Number(page));
-    setValue("page", String(page));
+    const next = Number(page);
+    setCurrPage(next);
+    setValue("page", String(next));
+    onPageChange?.(next);
   };
 
   const handlePageChange = (direction: "up" | "down") => {
-    if (direction === "up") {
-      setCurrPage((prev) => (prev + 1 > numPages! ? numPages! : prev + 1));
-      setValue("page", String(currPage + 1));
-    } else {
-      setCurrPage((prev) => (prev - 1 > 1 ? prev - 1 : 1));
-      setValue("page", String(currPage - 1));
-    }
+    setCurrPage((prev) => {
+      if (!numPages) return prev;
+      const next =
+        direction === "up"
+          ? prev + 1 > numPages
+            ? numPages
+            : prev + 1
+          : prev - 1 > 1
+            ? prev - 1
+            : 1;
+      setValue("page", String(next));
+      onPageChange?.(next);
+      return next;
+    });
   };
 
   const handleScaleChange = (newScale: number) => {
@@ -191,8 +193,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
     } else if (error?.name === "MissingPDFException") {
       errorMessage = "The PDF file could not be found or accessed.";
     } else if (error?.message?.includes("CORS")) {
-      errorMessage =
-        "CORS error: The PDF file cannot be loaded due to security restrictions.";
+      errorMessage = "CORS error: The PDF file cannot be loaded due to security restrictions.";
     } else if (error?.message?.includes("network")) {
       errorMessage = "Network error: Unable to load the PDF file.";
     }
@@ -208,9 +209,16 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
     setRenderedScale(scale);
   };
 
+  // Sync external page prop into internal state & input
+  useEffect(() => {
+    if (typeof page !== "number" || page <= 0) return;
+    setCurrPage(page);
+    setValue("page", String(page));
+  }, [page, setValue]);
+
   if (isLoadingPdf) {
     return (
-      <div className="flex items-center justify-center h-full min-h-[400px]">
+      <div className="flex h-full min-h-[400px] items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
           <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
           <p className="text-sm text-muted-foreground">Loading PDF viewer...</p>
@@ -228,11 +236,11 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
 
   if (!Document || !Page) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex h-full items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
           <div className="text-destructive">
             <svg
-              className="h-12 w-12 mx-auto"
+              className="mx-auto h-12 w-12"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -245,17 +253,11 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
               />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-foreground">
-            Failed to load PDF viewer
-          </h3>
-          <p className="text-sm text-muted-foreground text-center">
+          <h3 className="text-lg font-semibold text-foreground">Failed to load PDF viewer</h3>
+          <p className="text-center text-sm text-muted-foreground">
             There was an error loading the PDF viewer. Please refresh the page.
           </p>
-          <Button
-            onClick={() => window.location.reload()}
-            variant="outline"
-            size="sm"
-          >
+          <Button onClick={() => window.location.reload()} variant="outline" size="sm">
             Refresh Page
           </Button>
         </div>
@@ -264,7 +266,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   }
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex w-full flex-col">
       {/* PDF Controls */}
       <div className="flex items-center justify-between border-b border-border bg-background px-2 py-2">
         <div className="flex items-center gap-2">
@@ -281,17 +283,14 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
           <div className="flex items-center gap-1.5">
             <Input
               {...register("page")}
-              className={cn(
-                "w-12 h-8",
-                errors.page && "focus-visible:ring-red-500"
-              )}
+              className={cn("h-8 w-12", errors.page && "focus-visible:ring-red-500")}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleSubmit(handlePageSubmit)();
                 }
               }}
             />
-            <p className="text-sm text-muted-foreground space-x-1">
+            <p className="space-x-1 text-sm text-muted-foreground">
               <span>/</span>
               <span>{numPages ?? "x"}</span>
             </p>
@@ -318,18 +317,10 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onSelect={() => handleScaleChange(1)}>
-                100%
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => handleScaleChange(1.5)}>
-                150%
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => handleScaleChange(2)}>
-                200%
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => handleScaleChange(0.5)}>
-                50%
-              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleScaleChange(1)}>100%</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleScaleChange(1.5)}>150%</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleScaleChange(2)}>200%</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleScaleChange(0.5)}>50%</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -347,16 +338,14 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
       </div>
 
       {/* PDF Viewer */}
-      <div className="flex-1 w-full max-h-screen">
+      <div className="max-h-screen w-full flex-1">
         <SimpleBar autoHide={false} className="max-h-[calc(100vh-10rem)]">
           <div ref={ref}>
             <Document
               loading={
                 <div className="flex flex-col items-center justify-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary-600 mb-4" />
-                  <p className="text-sm text-muted-foreground">
-                    Loading PDF...
-                  </p>
+                  <Loader2 className="mb-4 h-8 w-8 animate-spin text-primary-600" />
+                  <p className="text-sm text-muted-foreground">Loading PDF...</p>
                 </div>
               }
               onLoadError={onDocumentLoadError}
@@ -365,9 +354,9 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
               className="max-h-full"
               error={
                 <div className="flex flex-col items-center justify-center py-12">
-                  <div className="text-destructive mb-4">
+                  <div className="mb-4 text-destructive">
                     <svg
-                      className="h-12 w-12 mx-auto"
+                      className="mx-auto h-12 w-12"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -380,18 +369,12 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
                       />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
-                    Failed to load PDF
-                  </h3>
-                  <p className="text-sm text-muted-foreground text-center mb-4">
-                    There was an error loading the PDF document. This might be
-                    due to a network issue or an unsupported file format.
+                  <h3 className="mb-2 text-lg font-semibold text-foreground">Failed to load PDF</h3>
+                  <p className="mb-4 text-center text-sm text-muted-foreground">
+                    There was an error loading the PDF document. This might be due to a network
+                    issue or an unsupported file format.
                   </p>
-                  <Button
-                    onClick={() => window.location.reload()}
-                    variant="outline"
-                    size="sm"
-                  >
+                  <Button onClick={() => window.location.reload()} variant="outline" size="sm">
                     Refresh Page
                   </Button>
                 </div>

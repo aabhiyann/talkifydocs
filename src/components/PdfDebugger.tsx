@@ -88,21 +88,19 @@ const PdfDebugger = ({ url }: PdfDebuggerProps) => {
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <h4 className="font-medium mb-2">File Status</h4>
+            <h4 className="mb-2 font-medium">File Status</h4>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="text-sm">File Accessible:</span>
-                <Badge
-                  variant={debugInfo.fileExists ? "default" : "destructive"}
-                >
+                <Badge variant={debugInfo.fileExists ? "default" : "destructive"}>
                   {debugInfo.fileExists ? (
                     <>
-                      <CheckCircle2 className="h-3 w-3 mr-1" />
+                      <CheckCircle2 className="mr-1 h-3 w-3" />
                       Yes
                     </>
                   ) : (
                     <>
-                      <AlertCircle className="h-3 w-3 mr-1" />
+                      <AlertCircle className="mr-1 h-3 w-3" />
                       No
                     </>
                   )}
@@ -110,13 +108,7 @@ const PdfDebugger = ({ url }: PdfDebuggerProps) => {
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-sm">Content Type:</span>
-                <Badge
-                  variant={
-                    debugInfo.contentType.includes("pdf")
-                      ? "default"
-                      : "secondary"
-                  }
-                >
+                <Badge variant={debugInfo.contentType.includes("pdf") ? "default" : "secondary"}>
                   {debugInfo.contentType || "Unknown"}
                 </Badge>
               </div>
@@ -132,21 +124,19 @@ const PdfDebugger = ({ url }: PdfDebuggerProps) => {
           </div>
 
           <div>
-            <h4 className="font-medium mb-2">PDF.js Status</h4>
+            <h4 className="mb-2 font-medium">PDF.js Status</h4>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="text-sm">PDF.js Loaded:</span>
-                <Badge
-                  variant={debugInfo.pdfjsLoaded ? "default" : "destructive"}
-                >
+                <Badge variant={debugInfo.pdfjsLoaded ? "default" : "destructive"}>
                   {debugInfo.pdfjsLoaded ? (
                     <>
-                      <CheckCircle2 className="h-3 w-3 mr-1" />
+                      <CheckCircle2 className="mr-1 h-3 w-3" />
                       Yes
                     </>
                   ) : (
                     <>
-                      <AlertCircle className="h-3 w-3 mr-1" />
+                      <AlertCircle className="mr-1 h-3 w-3" />
                       No
                     </>
                   )}
@@ -154,19 +144,15 @@ const PdfDebugger = ({ url }: PdfDebuggerProps) => {
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-sm">Worker Configured:</span>
-                <Badge
-                  variant={
-                    debugInfo.workerConfigured ? "default" : "destructive"
-                  }
-                >
+                <Badge variant={debugInfo.workerConfigured ? "default" : "destructive"}>
                   {debugInfo.workerConfigured ? (
                     <>
-                      <CheckCircle2 className="h-3 w-3 mr-1" />
+                      <CheckCircle2 className="mr-1 h-3 w-3" />
                       Yes
                     </>
                   ) : (
                     <>
-                      <AlertCircle className="h-3 w-3 mr-1" />
+                      <AlertCircle className="mr-1 h-3 w-3" />
                       No
                     </>
                   )}
@@ -177,40 +163,27 @@ const PdfDebugger = ({ url }: PdfDebuggerProps) => {
         </div>
 
         {debugInfo.error && (
-          <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
-            <h4 className="font-medium text-red-800 dark:text-red-200 mb-1">
-              Error
-            </h4>
-            <p className="text-sm text-red-600 dark:text-red-300">
-              {debugInfo.error}
-            </p>
+          <div className="rounded-lg bg-red-50 p-3 dark:bg-red-900/20">
+            <h4 className="mb-1 font-medium text-red-800 dark:text-red-200">Error</h4>
+            <p className="text-sm text-red-600 dark:text-red-300">{debugInfo.error}</p>
           </div>
         )}
 
         <div className="flex gap-2">
-          <Button
-            onClick={runDiagnostics}
-            disabled={isChecking}
-            variant="outline"
-            size="sm"
-          >
+          <Button onClick={runDiagnostics} disabled={isChecking} variant="outline" size="sm">
             {isChecking ? (
               <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Checking...
               </>
             ) : (
               <>
-                <RefreshCw className="h-4 w-4 mr-2" />
+                <RefreshCw className="mr-2 h-4 w-4" />
                 Recheck
               </>
             )}
           </Button>
-          <Button
-            onClick={() => window.location.reload()}
-            variant="outline"
-            size="sm"
-          >
+          <Button onClick={() => window.location.reload()} variant="outline" size="sm">
             Refresh Page
           </Button>
         </div>

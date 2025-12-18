@@ -1,0 +1,54 @@
+name: Lighthouse CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+          # Use dummy values for build (actual values needed only at runtime)
+          DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_dummy
+          CLERK_SECRET_KEY: sk_test_dummy
+          OPENAI_API_KEY: sk-dummy
+          PINECONE_API_KEY: dummy
+          PINECONE_ENVIRONMENT: gcp-starter
+          PINECONE_INDEX: dummy
+          STRIPE_SECRET_KEY: sk_test_dummy
+          STRIPE_WEBHOOK_SECRET: whsec_dummy
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_dummy
+          BLOB_READ_WRITE_TOKEN: vercel_blob_dummy
+          CLERK_WEBHOOK_SECRET: whsec_dummy
+          UPLOADTHING_SECRET: dummy
+          UPLOADTHING_APP_ID: dummy
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          urls: |
+            ${{ secrets.LIGHTHOUSE_URL || 'https://talkifydocs.vercel.app' }}
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+          configPath: .lighthouserc.json
+        continue-on-error: true

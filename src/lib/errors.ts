@@ -1,3 +1,5 @@
+import { logError } from "./logger";
+
 export class AppError extends Error {
   public readonly code: string;
   public readonly statusCode: number;
@@ -7,7 +9,7 @@ export class AppError extends Error {
     message: string,
     code: string,
     statusCode: number = 500,
-    isOperational: boolean = true
+    isOperational: boolean = true,
   ) {
     super(message);
     this.code = code;
@@ -20,11 +22,7 @@ export class AppError extends Error {
 
 export class ValidationError extends AppError {
   constructor(message: string, field?: string) {
-    super(
-      field ? `${field}: ${message}` : message,
-      "VALIDATION_ERROR",
-      400
-    );
+    super(field ? `${field}: ${message}` : message, "VALIDATION_ERROR", 400);
   }
 }
 
@@ -75,12 +73,9 @@ export interface ErrorResponse {
 }
 
 // Create standardized error response
-export function createErrorResponse(
-  error: Error | AppError,
-  path?: string
-): ErrorResponse {
+export function createErrorResponse(error: Error | AppError, path?: string): ErrorResponse {
   const isAppError = error instanceof AppError;
-  
+
   return {
     error: isAppError ? error.code : "INTERNAL_ERROR",
     code: isAppError ? error.code : "INTERNAL_ERROR",
@@ -92,16 +87,24 @@ export function createErrorResponse(
 }
 
 // Handle different error types
-export function handleError(error: unknown): ErrorResponse {
+export function handleError(error: unknown, context: Record<string, any> = {}): ErrorResponse {
+  const err = error instanceof Error ? error : new Error(String(error));
+  logError(err, context);
+
+  // Capture error in Sentry for production
+  if (process.env.NODE_ENV === "production") {
+    try {
+      const { captureException } = require("./sentry");
+      captureException(err, { extra: context });
+    } catch (sentryError) {
+      // Sentry not available, continue without it
+      console.error("Failed to capture error in Sentry:", sentryError);
+    }
+  }
+
   if (error instanceof AppError) {
     return createErrorResponse(error);
   }
-  
-  if (error instanceof Error) {
-    return createErrorResponse(error);
-  }
-  
-  return createErrorResponse(
-    new AppError("An unknown error occurred", "UNKNOWN_ERROR")
-  );
+
+  return createErrorResponse(new AppError("An unknown error occurred", "UNKNOWN_ERROR"));
 }
