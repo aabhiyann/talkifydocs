@@ -1,3 +1,5 @@
+import { logger } from "./logger";
+
 // Performance monitoring utilities
 
 interface InternalPerformanceMetric {
@@ -44,7 +46,7 @@ class PerformanceMonitor {
 
     // Log in development
     if (process.env.NODE_ENV === "development") {
-      console.log(`⏱️  ${name}: ${duration.toFixed(2)}ms`);
+      logger.debug(`⏱️  ${name}: ${duration.toFixed(2)}ms`);
     }
 
     // Remove from active metrics
@@ -114,7 +116,7 @@ export function monitorComponentRender(componentName: string) {
 // Web Vitals monitoring
 export function reportWebVitals(metric: WebVitalMetric) {
   if (process.env.NODE_ENV === "development") {
-    console.log("Web Vitals:", metric);
+    logger.debug("Web Vitals:", metric);
   }
 
   // In production, you might want to send this to an analytics service
