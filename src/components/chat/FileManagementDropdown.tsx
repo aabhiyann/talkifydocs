@@ -9,8 +9,8 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Plus, X, MoreVertical } from "lucide-react";
-import { addFileToConversation, removeFileFromConversation } from "@/actions/conversations";
+import { Plus, X, MoreVertical, Loader2 } from "lucide-react";
+import { trpc } from "@/app/_trpc/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import type { File } from "@prisma/client";
@@ -35,40 +35,71 @@ export function FileManagementDropdown({
   onFileAdded,
   onFileRemoved,
 }: FileManagementDropdownProps) {
-  const [isLoading, setIsLoading] = useState<string | null>(null);
+  const [loadingFile, setLoadingFile] = useState<string | null>(null);
   const { toast } = useToast();
   const router = useRouter();
+
+  const utils = trpc.useContext();
+
+  const { mutate: addFile, isLoading: isAdding } = trpc.addFileToConversation.useMutation({
+    onSuccess: (_, { fileId }) => {
+      const file = availableFiles.find((f) => f.id === fileId);
+      if (file) {
+        onFileAdded(file);
+      }
+      utils.getConversationMessages.invalidate({ conversationId });
+      router.refresh();
+      toast({
+        title: "File added",
+        description: "The file has been added to the conversation",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error adding file",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+    onSettled: () => {
+      setLoadingFile(null);
+    },
+  });
+
+  const { mutate: removeFile, isLoading: isRemoving } = trpc.removeFileFromConversation.useMutation({
+    onSuccess: (_, { fileId }) => {
+      onFileRemoved(fileId);
+      utils.getConversationMessages.invalidate({ conversationId });
+      router.refresh();
+      toast({
+        title: "File removed",
+        description: "The file has been removed from the conversation",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error removing file",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+    onSettled: () => {
+      setLoadingFile(null);
+    },
+  });
+
 
   const currentFileIds = new Set(currentFiles.map((cf) => cf.fileId));
   const canAddFiles = availableFiles.filter(
     (f) => !currentFileIds.has(f.id) && currentFiles.length < 5,
   );
 
-  const handleAddFile = async (fileId: string) => {
-    setIsLoading(fileId);
-    try {
-      await addFileToConversation(conversationId, fileId);
-      const file = availableFiles.find((f) => f.id === fileId);
-      if (file) {
-        onFileAdded(file);
-        router.refresh();
-      }
-      toast({
-        title: "File added",
-        description: "The file has been added to the conversation",
-      });
-    } catch (error) {
-      toast({
-        title: "Error adding file",
-        description: error instanceof Error ? error.message : "Failed to add file",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(null);
-    }
+  const handleAddFile = (fileId: string) => {
+    setLoadingFile(fileId);
+    addFile({ conversationId, fileId });
   };
 
-  const handleRemoveFile = async (fileId: string) => {
+  const handleRemoveFile = (fileId: string) => {
     if (currentFiles.length <= 1) {
       toast({
         title: "Cannot remove file",
@@ -77,26 +108,11 @@ export function FileManagementDropdown({
       });
       return;
     }
-
-    setIsLoading(fileId);
-    try {
-      await removeFileFromConversation(conversationId, fileId);
-      onFileRemoved(fileId);
-      router.refresh();
-      toast({
-        title: "File removed",
-        description: "The file has been removed from the conversation",
-      });
-    } catch (error) {
-      toast({
-        title: "Error removing file",
-        description: error instanceof Error ? error.message : "Failed to remove file",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(null);
-    }
+    setLoadingFile(fileId);
+    removeFile({ conversationId, fileId });
   };
+
+  const isLoading = isAdding || isRemoving;
 
   return (
     <DropdownMenu>
@@ -113,9 +129,13 @@ export function FileManagementDropdown({
               <DropdownMenuItem
                 key={file.id}
                 onClick={() => handleAddFile(file.id)}
-                disabled={isLoading === file.id}
+                disabled={isLoading && loadingFile === file.id}
               >
-                <Plus className="mr-2 h-4 w-4" />
+                {isLoading && loadingFile === file.id ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Plus className="mr-2 h-4 w-4" />
+                )}
                 <span className="truncate">{file.name}</span>
               </DropdownMenuItem>
             ))}
@@ -129,10 +149,14 @@ export function FileManagementDropdown({
               <DropdownMenuItem
                 key={cf.fileId}
                 onClick={() => handleRemoveFile(cf.fileId)}
-                disabled={isLoading === cf.fileId}
+                disabled={isLoading && loadingFile === cf.fileId}
                 className="text-destructive focus:text-destructive"
               >
-                <X className="mr-2 h-4 w-4" />
+                {isLoading && loadingFile === cf.fileId ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <X className="mr-2 h-4 w-4" />
+                )}
                 <span className="truncate">{cf.file.name}</span>
               </DropdownMenuItem>
             ))}

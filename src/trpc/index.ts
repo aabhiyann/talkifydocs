@@ -16,11 +16,6 @@ export const appRouter = router({
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
 
-    // User is already upserted in getCurrentUser; just ensure record exists
-    await db.user.findUniqueOrThrow({
-      where: { id: user.id },
-    });
-
     return { success: true };
   }),
 
@@ -194,6 +189,211 @@ export const appRouter = router({
       });
 
       return file;
+    }),
+
+  createConversation: privateProcedure
+    .input(
+      z.object({
+        fileIds: z.array(z.string()).min(1, "At least one file is required").max(5, "Maximum 5 files allowed"),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const { fileIds } = input;
+
+      const files = await db.file.findMany({
+        where: {
+          id: { in: fileIds },
+          userId,
+        },
+      });
+
+      if (files.length !== fileIds.length) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Invalid file access" });
+      }
+
+      const title = files.length === 1 ? files[0].name : `${files.length} Documents`;
+
+      const conversation = await db.conversation.create({
+        data: {
+          title,
+          userId,
+          conversationFiles: {
+            create: fileIds.map((fileId) => ({ fileId })),
+          },
+        },
+        include: {
+          conversationFiles: {
+            include: {
+              file: true,
+            },
+          },
+        },
+      });
+
+      revalidatePath("/dashboard");
+      return conversation;
+    }),
+
+  getConversationMessages: privateProcedure
+    .input(
+      z.object({
+        conversationId: z.string(),
+        limit: z.number().optional(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const { conversationId, limit = 100 } = input;
+
+      const conversation = await db.conversation.findFirst({
+        where: {
+          id: conversationId,
+          userId,
+        },
+        select: { id: true },
+      });
+
+      if (!conversation) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Conversation not found" });
+      }
+
+      const messages = await db.message.findMany({
+        where: { conversationId },
+        orderBy: { createdAt: "asc" },
+        take: limit,
+        include: {
+          file: true,
+        },
+      });
+
+      return messages;
+    }),
+
+  createMessage: privateProcedure
+    .input(
+      z.object({
+        conversationId: z.string(),
+        fileId: z.string().optional(),
+        text: z.string(),
+        isUserMessage: z.boolean(),
+        citations: z.any().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const { conversationId, fileId, text, isUserMessage, citations } = input;
+
+      const conversation = await db.conversation.findFirst({
+        where: {
+          id: conversationId,
+          userId,
+        },
+        select: { id: true },
+      });
+
+      if (!conversation) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Conversation not found" });
+      }
+
+      return db.message.create({
+        data: {
+          text,
+          isUserMessage,
+          userId,
+          conversationId,
+          fileId,
+          citations,
+        },
+      });
+    }),
+
+  addFileToConversation: privateProcedure
+    .input(z.object({ conversationId: z.string(), fileId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const { conversationId, fileId } = input;
+
+      const conversation = await db.conversation.findUnique({
+        where: { id: conversationId },
+        include: {
+          conversationFiles: true,
+        },
+      });
+
+      if (!conversation) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Conversation not found" });
+      }
+
+      if (conversation.userId !== userId) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Unauthorized" });
+      }
+
+      if (conversation.conversationFiles.length >= 5) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Maximum 5 files allowed" });
+      }
+
+      const alreadyAdded = conversation.conversationFiles.some((cf) => cf.fileId === fileId);
+
+      if (alreadyAdded) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "File already in conversation" });
+      }
+
+      const file = await db.file.findUnique({
+        where: { id: fileId },
+      });
+
+      if (!file || file.userId !== userId) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "File not found or unauthorized" });
+      }
+
+      await db.conversationFile.create({
+        data: {
+          conversationId,
+          fileId,
+        },
+      });
+
+      revalidatePath(`/chat/${conversationId}`);
+      return { success: true };
+    }),
+
+  removeFileFromConversation: privateProcedure
+    .input(z.object({ conversationId: z.string(), fileId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const { conversationId, fileId } = input;
+
+      const conversation = await db.conversation.findUnique({
+        where: { id: conversationId },
+        include: {
+          conversationFiles: true,
+        },
+      });
+
+      if (!conversation) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Conversation not found" });
+      }
+
+      if (conversation.userId !== userId) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Unauthorized" });
+      }
+
+      if (conversation.conversationFiles.length <= 1) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Cannot remove the last file" });
+      }
+
+      await db.conversationFile.delete({
+        where: {
+          conversationId_fileId: {
+            conversationId,
+            fileId,
+          },
+        },
+      });
+
+      revalidatePath(`/chat/${conversationId}`);
+      return { success: true };
     }),
 });
 

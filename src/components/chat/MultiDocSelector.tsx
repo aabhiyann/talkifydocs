@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { createConversation } from "@/actions/conversations";
+import { trpc } from "@/app/_trpc/client";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
@@ -23,11 +23,26 @@ interface MultiDocSelectorProps {
 export function MultiDocSelector({ files }: MultiDocSelectorProps) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
-  const [isCreating, setIsCreating] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleCreate = async () => {
+  const { mutate: createConversation, isLoading: isCreating } =
+    trpc.createConversation.useMutation({
+      onSuccess: (conversation) => {
+        router.push(`/chat/${conversation.id}`);
+        setOpen(false);
+        setSelected([]);
+      },
+      onError: (error) => {
+        toast({
+          title: "Error creating conversation",
+          description: error.message,
+          variant: "destructive",
+        });
+      },
+    });
+
+  const handleCreate = () => {
     if (selected.length < 2 || selected.length > 5) {
       toast({
         title: "Invalid selection",
@@ -37,21 +52,7 @@ export function MultiDocSelector({ files }: MultiDocSelectorProps) {
       return;
     }
 
-    setIsCreating(true);
-    try {
-      const conversation = await createConversation(selected);
-      router.push(`/chat/${conversation.id}`);
-      setOpen(false);
-      setSelected([]);
-    } catch (error) {
-      toast({
-        title: "Error creating conversation",
-        description: error instanceof Error ? error.message : "Failed to create conversation",
-        variant: "destructive",
-      });
-    } finally {
-      setIsCreating(false);
-    }
+    createConversation({ fileIds: selected });
   };
 
   const handleToggle = (fileId: string, checked: boolean) => {
