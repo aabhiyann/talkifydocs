@@ -15,6 +15,11 @@ export interface Citation {
   fileName?: string;
 }
 
+export interface DocumentEntities {
+  key_terms?: string[];
+  keyTerms?: string[];
+}
+
 export type DocumentMetadata = {
   fileId: string;
   page?: number;

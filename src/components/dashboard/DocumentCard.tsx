@@ -23,6 +23,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Badge } from "../ui/badge";
 import { ProcessingStatus } from "./ProcessingStatus";
+import { DocumentEntities } from "@/types/chat";
 
 type FileSummary = {
   id: string;
@@ -32,7 +33,7 @@ type FileSummary = {
   thumbnailUrl?: string | null;
   pageCount?: number | null;
   summary?: string | null;
-  entities?: any | null;
+  entities?: DocumentEntities | null;
   _count?: {
     messages?: number;
   };
