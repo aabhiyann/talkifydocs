@@ -1,16 +1,6 @@
 import { DocumentCard } from "./DocumentCard";
 import { memo } from "react";
-
-type FileSummary = {
-  id: string;
-  name: string;
-  createdAt: string | Date;
-  uploadStatus: "PENDING" | "PROCESSING" | "SUCCESS" | "FAILED";
-  thumbnailUrl?: string | null;
-  _count?: {
-    messages?: number;
-  };
-};
+import { FileSummary } from "@/types";
 
 type Props = {
   files: FileSummary[];

@@ -14,10 +14,10 @@ import { trpc } from "@/app/_trpc/client";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
-import type { File } from "@prisma/client";
+import { FileSummary } from "@/types";
 
 interface MultiDocSelectorProps {
-  files: File[];
+  files: FileSummary[];
 }
 
 export function MultiDocSelector({ files }: MultiDocSelectorProps) {

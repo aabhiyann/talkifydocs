@@ -23,21 +23,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Badge } from "../ui/badge";
 import { ProcessingStatus } from "./ProcessingStatus";
-import { DocumentEntities } from "@/types/chat";
-
-type FileSummary = {
-  id: string;
-  name: string;
-  createdAt: string | Date;
-  uploadStatus: "PENDING" | "PROCESSING" | "SUCCESS" | "FAILED";
-  thumbnailUrl?: string | null;
-  pageCount?: number | null;
-  summary?: string | null;
-  entities?: DocumentEntities | null;
-  _count?: {
-    messages?: number;
-  };
-};
+import { FileSummary } from "@/types";
 
 type Props = {
   file: FileSummary;
