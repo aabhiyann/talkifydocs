@@ -32,19 +32,34 @@ const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
 
   const messages = data?.pages.flatMap((page) => page.messages);
 
-  const loadingMessage = {
-    createdAt: new Date().toISOString(),
-    id: "loading-message",
-    isUserMessage: false,
-    text: (
-      <div className="flex items-center space-x-2 text-gray-500">
-        <Loader2 className="h-4 w-4 animate-spin" />
-        <span>AI is thinking...</span>
-      </div>
-    ),
-  };
+  const combinedMessages = useMemo(() => {
+    const loadingMessage = {
+      createdAt: new Date().toISOString(),
+      id: "loading-message",
+      isUserMessage: false,
+      text: (
+        <div className="flex items-center space-x-2 text-gray-500">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          <span>AI is thinking...</span>
+        </div>
+      ),
+    };
 
-  const combinedMessages = [...(isAiThinking ? [loadingMessage] : []), ...(messages ?? [])];
+    const allMessages = [...(isAiThinking ? [loadingMessage] : []), ...(messages ?? [])];
+
+    // Pre-calculate previous user message for highlights
+    // Since allMessages is [newest...oldest], we iterate backwards
+    let lastUserMsg = "";
+    const withContext = [...allMessages].reverse().map((msg) => {
+      const prevUserMsg = !msg.isUserMessage ? lastUserMsg : undefined;
+      if (msg.isUserMessage && typeof msg.text === "string") {
+        lastUserMsg = msg.text;
+      }
+      return { ...msg, previousUserMessage: prevUserMsg };
+    });
+
+    return withContext.reverse();
+  }, [messages, isAiThinking]);
 
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
@@ -138,19 +153,6 @@ const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
 
         {/* Messages */}
         {combinedMessages.map((message, index) => {
-          // Find the previous user message for assistant messages
-          const previousUserMessage = !message.isUserMessage
-            ? (() => {
-                for (let i = index - 1; i >= 0; i--) {
-                  const prevMsg = combinedMessages[i];
-                  if (prevMsg?.isUserMessage && typeof prevMsg.text === "string") {
-                    return prevMsg.text;
-                  }
-                }
-                return undefined;
-              })()
-            : undefined;
-
           return (
             <div
               key={message.id}
@@ -180,10 +182,10 @@ const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
                 {/* Message Content - Wist Style */}
                 <div className="max-w-[80%]">
                   <Message
-                    message={message}
+                    message={message as any}
                     isNextMessageSamePerson={false}
                     onCitationClick={onCitationClick}
-                    previousUserMessage={previousUserMessage}
+                    previousUserMessage={(message as any).previousUserMessage}
                     fileId={fileId}
                   />
                 </div>
@@ -197,6 +199,4 @@ const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
       </div>
     </div>
   );
-};
-
-export default Messages;
+});
