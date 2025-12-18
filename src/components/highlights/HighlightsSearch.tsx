@@ -6,12 +6,13 @@ import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { HighlightCard } from "./HighlightCard";
+import { Citation } from "@/types/chat";
 
 interface Highlight {
   id: string;
   question: string;
   answer: string;
-  citations?: any;
+  citations?: Citation[];
   createdAt: Date | string;
   file: {
     id: string;

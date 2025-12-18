@@ -9,12 +9,13 @@ import { format } from "date-fns";
 import ReactMarkdown from "react-markdown";
 import { useToast } from "@/components/ui/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { Citation } from "@/types/chat";
 
 interface Highlight {
   id: string;
   question: string;
   answer: string;
-  citations?: any;
+  citations?: Citation[];
   createdAt: Date | string;
   file: {
     id:string;
