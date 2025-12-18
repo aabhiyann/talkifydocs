@@ -9,12 +9,17 @@ import { useIntersection } from "@mantine/hooks";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { Citation } from "@/types/chat";
+import { Citation, DocumentEntities } from "@/types/chat";
+import { ExtendedMessage } from "@/types/message";
 
 interface MessagesProps {
   fileId: string;
   onCitationClick?: (payload: { fileId: string; page?: number; citation?: Citation }) => void;
 }
+
+type MessageWithContext = ExtendedMessage & {
+  previousUserMessage?: string;
+};
 
 const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
   const { isLoading: isAiThinking } = useContext(ChatContext);
@@ -32,8 +37,8 @@ const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
 
   const messages = data?.pages.flatMap((page) => page.messages);
 
-  const combinedMessages = useMemo(() => {
-    const loadingMessage = {
+  const combinedMessages = useMemo<MessageWithContext[]>(() => {
+    const loadingMessage: MessageWithContext = {
       createdAt: new Date().toISOString(),
       id: "loading-message",
       isUserMessage: false,
@@ -55,7 +60,7 @@ const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
       if (msg.isUserMessage && typeof msg.text === "string") {
         lastUserMsg = msg.text;
       }
-      return { ...msg, previousUserMessage: prevUserMsg };
+      return { ...msg, previousUserMessage: prevUserMsg } as MessageWithContext;
     });
 
     return withContext.reverse();
@@ -182,10 +187,10 @@ const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
                 {/* Message Content - Wist Style */}
                 <div className="max-w-[80%]">
                   <Message
-                    message={message as any}
+                    message={message}
                     isNextMessageSamePerson={false}
                     onCitationClick={onCitationClick}
-                    previousUserMessage={(message as any).previousUserMessage}
+                    previousUserMessage={message.previousUserMessage}
                     fileId={fileId}
                   />
                 </div>
