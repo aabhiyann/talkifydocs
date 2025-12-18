@@ -8,11 +8,12 @@ import { Button } from "../ui/button";
 import { Save } from "lucide-react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "../ui/use-toast";
+import { Citation } from "@/types/chat";
 
 interface MessageProps {
   message: ExtendedMessage;
   isNextMessageSamePerson: boolean;
-  onCitationClick?: (payload: { fileId: string; page?: number; citation?: any }) => void;
+  onCitationClick?: (payload: { fileId: string; page?: number; citation?: Citation }) => void;
   previousUserMessage?: string;
   fileId?: string;
 }
@@ -51,7 +52,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
         question: previousUserMessage,
         answer: message.text,
         fileId,
-        citations: Array.isArray((message as any).citations) ? (message as any).citations : undefined,
+        citations: message.citations,
       });
     };
 
@@ -104,7 +105,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
             )}
 
             {/* Optional citations / sources */}
-            {Array.isArray((message as any).citations) && (message as any).citations.length > 0 && (
+            {message.citations && message.citations.length > 0 && (
               <div
                 className={cn(
                   "mt-2 flex flex-wrap gap-1 text-xs",
@@ -112,10 +113,9 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                 )}
               >
                 <span className="mr-1 whitespace-nowrap font-medium">Sources:</span>
-                {(message as any).citations.map((c: any, idx: number) => {
+                {message.citations.map((c, idx: number) => {
                   if (!c) return null;
                   const page =
-                    c.pageNumber ??
                     c.page ??
                     (typeof c.pageIndex === "number" ? c.pageIndex + 1 : undefined);
                   const labelParts = [
@@ -125,10 +125,9 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                   const label = labelParts.join(" ");
 
                   const handleClick = () => {
-                    if (!onCitationClick) return;
-                    const targetFileId = c.fileId || c.file_id || (message as any).fileId;
+                    if (!onCitationClick || !c.fileId) return;
                     onCitationClick({
-                      fileId: targetFileId,
+                      fileId: c.fileId,
                       page,
                       citation: c,
                     });
@@ -136,7 +135,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
 
                   return (
                     <button
-                      key={`${(c.id as string) || idx}`}
+                      key={`${(c.fileId as string) || idx}-${page}`}
                       type="button"
                       onClick={handleClick}
                       className={cn(

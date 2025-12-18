@@ -4,6 +4,17 @@ export type IncomingChatMessage = {
   content: string;
 };
 
+export interface Citation {
+  source?: number;
+  fileId?: string;
+  page?: number;
+  pageIndex?: number;
+  snippet?: string;
+  title?: string;
+  filename?: string;
+  fileName?: string;
+}
+
 export type DocumentMetadata = {
   fileId: string;
   page?: number;
