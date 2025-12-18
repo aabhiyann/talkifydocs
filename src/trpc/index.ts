@@ -42,6 +42,13 @@ export const appRouter = router({
       where: {
         userId,
       },
+      include: {
+        _count: {
+          select: {
+            messages: true,
+          },
+        },
+      },
     });
   }),
 
@@ -804,6 +811,12 @@ ${msg.text}${citationText}`;
         .subscription(async ({ input, ctx }) => {
             const { fileId, message } = input;
             const { user } = ctx;
+
+            if (!message.trim()) {
+              return observable((emit) => {
+                emit.complete();
+              });
+            }
 
             const ee = new EventEmitter();
 

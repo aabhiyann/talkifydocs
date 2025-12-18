@@ -30,11 +30,11 @@ interface Props {
 
 export const ChatContextProvider = ({ fileId, children }: Props) => {
   const [message, setMessage] = useState<string>("");
+  const [lastSentMessage, setLastSentMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   const { toast } = useToast();
-  const backupMessage = useRef("");
 
   const { data: messagesData } = trpc.getFileMessages.useInfiniteQuery(
     {
@@ -67,30 +67,28 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
   }, []);
 
   trpc.onSendMessage.useSubscription(
-    { fileId, message },
+    { fileId, message: lastSentMessage },
     {
       onData: ({ chunk }) => {
         utils.getFileMessages.setInfiniteData({ fileId, limit: INFINITE_QUERY_LIMIT }, (old) => {
           if (!old) return { pages: [], pageParams: [] };
 
           let isAiResponseCreated = false;
-          const newPages = old.pages.map((page) => {
-            if (isAiResponseCreated) return page;
+          const newPages = old.pages.map((page, index) => {
+            if (index > 0) return page; // Only update the first page
 
             let updatedMessages = page.messages.map((message) => {
               if (message.id === "loading-message") {
                 isAiResponseCreated = true;
                 return {
                   ...message,
-                  id: crypto.randomUUID(),
                   text: (message.text as string) + chunk,
-                  isUserMessage: false,
                 };
               }
               return message;
             });
 
-            if (!isAiResponseCreated) {
+            if (!isAiResponseCreated && index === 0) {
               isAiResponseCreated = true;
               updatedMessages = [
                 {
@@ -114,6 +112,7 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
       },
       onError: (err) => {
         setIsLoading(false);
+        setLastSentMessage("");
         toast({
           title: "Error",
           description: "There was an error sending your message. Please try again.",
@@ -122,6 +121,9 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
       },
       onComplete: () => {
         setIsLoading(false);
+        setLastSentMessage("");
+        // Invalidate to get the final messages from DB (with correct IDs and citations if any)
+        utils.getFileMessages.invalidate({ fileId });
       },
     }
   );
@@ -129,24 +131,23 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
   const addMessage = useCallback(() => {
     if (!canSendMessage) return;
     
-    // Optimistically update the UI
-    const previousMessages = utils.getFileMessages.getInfiniteData();
-    utils.getFileMessages.setInfiniteData({ fileId, limit: INFINITE_QUERY_LIMIT }, (old) => {
-        if (!old) {
-            return {
-                pages: [],
-                pageParams: [],
-            };
-        }
+    const msgToSend = message.trim();
+    setLastSentMessage(msgToSend);
+    setMessage("");
+    setIsLoading(true);
 
-        let newPages = [...old.pages];
-        let latestPage = newPages[0]!;
+    // Optimistically update the UI with the user message
+    utils.getFileMessages.setInfiniteData({ fileId, limit: INFINITE_QUERY_LIMIT }, (old) => {
+        if (!old) return { pages: [], pageParams: [] };
+
+        const newPages = [...old.pages];
+        const latestPage = { ...newPages[0] };
 
         latestPage.messages = [
             {
                 createdAt: new Date().toISOString(),
                 id: crypto.randomUUID(),
-                text: message.trim(),
+                text: msgToSend,
                 isUserMessage: true,
             },
             ...latestPage.messages,
@@ -154,14 +155,8 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
 
         newPages[0] = latestPage;
 
-        return {
-            ...old,
-            pages: newPages,
-        };
+        return { ...old, pages: newPages };
     });
-
-    setMessage("");
-    setIsLoading(true);
 
   }, [canSendMessage, message, utils, fileId]);
 
