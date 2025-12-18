@@ -1,14 +1,24 @@
 // Performance monitoring utilities
 
-interface PerformanceMetric {
+interface InternalPerformanceMetric {
   name: string;
   startTime: number;
   endTime?: number;
   duration?: number;
 }
 
+// Minimal type for Web Vitals metrics to avoid adding web-vitals package dependency
+interface WebVitalMetric {
+  id: string; // Unique identifier for the metric
+  name: "FCP" | "LCP" | "CLS" | "FID" | "TTFB" | "INP"; // Metric name
+  value: number; // Metric value
+  delta: number; // Delta between the current and previous value
+  entries: PerformanceEntry[]; // Array of performance entries relevant to the metric
+  navigationType: "navigate" | "reload" | "back_forward" | "prerender"; // Navigation type
+}
+
 class PerformanceMonitor {
-  private metrics: Map<string, PerformanceMetric> = new Map();
+  private metrics: Map<string, InternalPerformanceMetric> = new Map();
 
   // Start timing a performance metric
   start(name: string): void {
@@ -44,7 +54,7 @@ class PerformanceMonitor {
   }
 
   // Get all completed metrics
-  getMetrics(): PerformanceMetric[] {
+  getMetrics(): InternalPerformanceMetric[] {
     return Array.from(this.metrics.values()).filter((m) => m.duration !== undefined);
   }
 
@@ -102,7 +112,7 @@ export function monitorComponentRender(componentName: string) {
 }
 
 // Web Vitals monitoring
-export function reportWebVitals(metric: any) {
+export function reportWebVitals(metric: WebVitalMetric) {
   if (process.env.NODE_ENV === "development") {
     console.log("Web Vitals:", metric);
   }
