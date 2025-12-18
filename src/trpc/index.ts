@@ -18,10 +18,9 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
 import { LangChainStream, StreamingTextResponse } from "ai";
 import { Document } from "@langchain/core/documents";
+import { AI } from "@/config/ai";
 
 const eventEmitter = new EventEmitter();
-
-export const appRouter = router({
 
 export const appRouter = router({
   authCallback: publicProcedure.query(async () => {
@@ -898,8 +897,11 @@ ${msg.text}${citationText}`;
                 content: msg.text,
             }));
 
+import { AI } from "@/config/ai";
+
+// ... inside onSendMessage ...
             const openaiResponse = await openai.chat.completions.create({
-                model: "gpt-3.5-turbo",
+                model: AI.OPENAI_MODEL,
                 temperature: 0,
                 stream: true,
                 messages: [
