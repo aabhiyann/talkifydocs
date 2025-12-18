@@ -8,6 +8,7 @@ import ReactMarkdown from "react-markdown";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
+import { Citation } from "@/types/chat";
 
 interface PageProps {
   params: {
@@ -105,10 +106,10 @@ export default async function SharedChatPage({ params }: PageProps) {
             </ModernCard>
           ) : (
             conversation.messages.map((message, index) => {
-              const citations = Array.isArray(message.citations)
-                ? message.citations
+              const citations: Citation[] = Array.isArray(message.citations)
+                ? (message.citations as Citation[])
                 : message.citations
-                  ? [message.citations]
+                  ? ([message.citations] as Citation[])
                   : [];
 
               return (
@@ -154,7 +155,7 @@ export default async function SharedChatPage({ params }: PageProps) {
                             <span className="text-xs font-medium text-muted-foreground">
                               Sources:
                             </span>
-                            {citations.map((c: any, idx: number) => {
+                            {citations.map((c, idx: number) => {
                               const page =
                                 c.pageNumber ??
                                 c.page ??
