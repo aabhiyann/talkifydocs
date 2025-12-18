@@ -41,14 +41,20 @@ const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
   const [rotation, setRotation] = useState<number>(0);
   const [renderedScale, setRenderedScale] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [pdfjsLib, setPdfjsLib] = useState<any>(null);
-  const [Document, setDocument] = useState<any>(null);
-  const [Page, setPage] = useState<any>(null);
+  const [pdfjsLib, setPdfjsLib] = useState<typeof Pdfjs | null>(null);
+  const [DocumentComponent, setDocumentComponent] = useState<ComponentType<DocumentProps> | null>(
+    null,
+  );
+  const [PageComponent, setPageComponent] = useState<ComponentType<PageProps> | null>(null);
   const [mounted, setMounted] = useState(false);
   const [loadTimeout, setLoadTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const isLoadingPdf =
-    isLoading || renderedScale !== scale || !pdfjsLib || !Document || !Page || !mounted;
+    renderedScale !== scale ||
+    !pdfjsLib ||
+    !DocumentComponent ||
+    !PageComponent ||
+    !mounted;
 
   // Set mounted state to prevent hydration issues
   useEffect(() => {
@@ -86,9 +92,9 @@ const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
         }
 
         // Import react-pdf components
-        const { Document: DocumentComponent, Page: PageComponent } = await import("react-pdf");
-        setDocument(() => DocumentComponent);
-        setPage(() => PageComponent);
+        const { Document, Page } = await import("react-pdf");
+        setDocumentComponent(() => Document);
+        setPageComponent(() => Page);
 
         // Note: CSS imports are handled by Next.js automatically
 
@@ -172,12 +178,12 @@ const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
     setRotation(newRotation);
   };
 
-  const onDocumentLoadSuccess = (pdf: any) => {
+  const onDocumentLoadSuccess = (pdf: PDFDocumentProxy) => {
     setNumPages(pdf.numPages);
     setRenderedScale(scale);
   };
 
-  const onDocumentLoadError = (error: any) => {
+  const onDocumentLoadError = (error: Error) => {
     console.error("PDF document load error:", error);
     console.error("PDF URL:", url);
     console.error("Error details:", {
@@ -234,7 +240,7 @@ const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
     );
   }
 
-  if (!Document || !Page) {
+  if (!DocumentComponent || !PageComponent) {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
@@ -341,7 +347,7 @@ const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
       <div className="max-h-screen w-full flex-1">
         <SimpleBar autoHide={false} className="max-h-[calc(100vh-10rem)]">
           <div ref={ref}>
-            <Document
+            <DocumentComponent
               loading={
                 <div className="flex flex-col items-center justify-center py-12">
                   <Loader2 className="mb-4 h-8 w-8 animate-spin text-primary-600" />
@@ -381,7 +387,7 @@ const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
               }
             >
               {isLoading && renderedScale ? (
-                <Page
+                <PageComponent
                   width={width ? width : 1}
                   pageNumber={currPage}
                   scale={scale}
@@ -390,7 +396,7 @@ const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
                   onLoadSuccess={onPageLoadSuccess}
                 />
               ) : null}
-            </Document>
+            </DocumentComponent>
           </div>
         </SimpleBar>
       </div>
