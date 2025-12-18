@@ -13,6 +13,7 @@ import { Index as PineconeIndex } from "@pinecone-database/pinecone";
 import { withTimeout } from "@/lib/utils";
 import { Document } from "@langchain/core/documents";
 import { JsonValue } from "@prisma/client/runtime/library";
+import { loggers } from "../logger";
 
 type ProcessPdfParams = {
   fileId: string;
@@ -64,7 +65,7 @@ export async function processPdfFile({
   }> = {};
 
   try {
-    console.log(`[upload] Starting processing for file ${fileName} (${fileId})`);
+    loggers.upload.info(`Starting processing for file ${fileName} (${fileId})`);
 
     const file = await db.file.findUnique({
       where: { id: fileId },
@@ -154,7 +155,10 @@ export async function processPdfFile({
       thumbnailUrl,
     };
 
-    console.log(`[upload] Processing finished successfully for ${fileName}`);
+    processedData.metadata = metadata as any;
+    processedData.thumbnailUrl = thumbnailUrl;
+
+    loggers.upload.info(`Processing finished successfully for ${fileName}`);
   } catch (error) {
     console.error(`[upload] Error processing file ${fileName} (${fileId}):`, error);
     throw error;
