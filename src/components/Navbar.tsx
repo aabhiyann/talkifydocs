@@ -5,7 +5,6 @@ import MaxWidthWrapper from "./MaxWidthWrapper";
 import Link from "next/link";
 import { buttonVariants, Button } from "./ui/button";
 import { trpc } from "@/app/_trpc/client";
-import { trpc } from "@/app/_trpc/client";
 import {
   ArrowRight,
   Menu,
@@ -21,6 +20,7 @@ import {
 import { ThemeToggle } from "./ThemeToggle";
 import { usePathname } from "next/navigation";
 import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
+import { useState, useEffect } from "react";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

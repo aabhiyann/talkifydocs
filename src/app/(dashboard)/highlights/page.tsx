@@ -52,7 +52,7 @@ export default async function HighlightsPage() {
             </p>
           </div>
         ) : (
-          <HighlightsSearch highlights={highlights} />
+          <HighlightsSearch highlights={highlights as any} />
         )}
       </div>
     </div>

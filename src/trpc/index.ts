@@ -16,7 +16,6 @@ import { getPineconeClient } from "@/lib/pinecone";
 import { PINECONE_INDEX_NAME } from "@/config/pinecone";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
-import { LangChainStream, StreamingTextResponse } from "ai";
 import { Document } from "@langchain/core/documents";
 import { AI } from "@/config/ai";
 
@@ -691,7 +690,7 @@ ${msg.text}${citationText}`;
       loggers.api.info(
         {
           operation: "admin_update_user_tier",
-          adminId: admin.id,
+          adminId: admin?.id || "unknown",
           targetUserId: userId,
           oldTier: user.tier,
           newTier: tier,
@@ -709,6 +708,10 @@ ${msg.text}${citationText}`;
     .mutation(async ({ ctx, input }) => {
       const { userId } = input;
       const admin = ctx.user;
+
+      if (!admin) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
 
       const user = await db.user.findUnique({
         where: { id: userId },
@@ -802,6 +805,8 @@ ${msg.text}${citationText}`;
             storageUsed: (storageUsed._sum.size || BigInt(0)).toString(),
             avgMessagesPerUser: messagesPerUser,
             activeUsers24h,
+            avgProcessingTime: undefined as number | undefined,
+            errorRate: undefined as number | undefined,
         };
     }),
 
@@ -948,9 +953,12 @@ ${msg.text}${citationText}`;
             })();
 
 
-            return observable<{ chunk: string }>((emit) => {
+            return observable<{ chunk: string; isDone?: boolean }>((emit) => {
                 const onChunk = (chunk: string) => emit.next({ chunk });
-                const onEnd = () => emit.complete();
+                const onEnd = () => {
+                    emit.next({ chunk: "", isDone: true });
+                    emit.complete();
+                };
 
                 ee.on("chunk", onChunk);
                 ee.on("end", onEnd);

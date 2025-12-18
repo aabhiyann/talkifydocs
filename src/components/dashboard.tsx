@@ -38,7 +38,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Input } from "./ui/input";
-import { File } from "@prisma/client";
+import { FileSummary } from "@/types";
 
 const Dashboard = memo(() => {
   const [currentlyDeletingFile, setCurrentlyDeletingFile] = useState<string | null>(null);
@@ -81,10 +81,10 @@ const Dashboard = memo(() => {
   );
 
   // Filter and sort files
-  const filteredAndSortedFiles = useMemo(() => {
+  const filteredAndSortedFiles = useMemo<FileSummary[]>(() => {
     if (!files) return [];
 
-    let filtered = [...files];
+    let filtered: FileSummary[] = [...(files as any)];
 
     // Apply search filter
     if (searchQuery) {

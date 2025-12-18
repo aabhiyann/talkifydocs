@@ -8,6 +8,7 @@ export interface Citation {
   source?: number;
   fileId?: string;
   page?: number;
+  pageNumber?: number;
   pageIndex?: number;
   snippet?: string;
   title?: string;

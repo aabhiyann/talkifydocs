@@ -5,7 +5,7 @@ import { useToast } from "./ui/use-toast";
 import { useResizeDetector } from "react-resize-detector";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ComponentType } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -182,7 +182,7 @@ const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
     setRotation(newRotation);
   };
 
-  const onDocumentLoadSuccess = (pdf: PDFDocumentProxy) => {
+  const onDocumentLoadSuccess = (pdf: any) => {
     setNumPages(pdf.numPages);
     setRenderedScale(scale);
   };
@@ -235,9 +235,9 @@ const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
           <p className="text-xs text-muted-foreground">
             {!mounted && "Initializing..."}
             {mounted && !pdfjsLib && "Loading PDF library..."}
-            {pdfjsLib && !Document && "Loading PDF components..."}
-            {Document && !Page && "Loading PDF renderer..."}
-            {Document && Page && "Preparing PDF..."}
+            {pdfjsLib && !DocumentComponent && "Loading PDF components..."}
+            {DocumentComponent && !PageComponent && "Loading PDF renderer..."}
+            {DocumentComponent && PageComponent && "Preparing PDF..."}
           </p>
         </div>
       </div>

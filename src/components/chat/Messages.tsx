@@ -3,7 +3,7 @@ import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
 import { Loader2, MessageSquare, Bot, User, ArrowUp } from "lucide-react";
 import Skeleton from "react-loading-skeleton";
 import Message from "./Message";
-import { useContext, useEffect, useRef, memo } from "react";
+import { useContext, useEffect, useRef, memo, useMemo } from "react";
 import { ChatContext } from "./ChatContext";
 import { useIntersection } from "@mantine/hooks";
 import { Card, CardContent } from "../ui/card";
@@ -205,3 +205,7 @@ const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
     </div>
   );
 });
+
+Messages.displayName = "Messages";
+
+export default Messages;

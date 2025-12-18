@@ -69,7 +69,17 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
   trpc.onSendMessage.useSubscription(
     { fileId, message: lastSentMessage },
     {
-      onData: ({ chunk }) => {
+      onData: (data: any) => {
+        const { chunk, isDone } = data;
+
+        if (isDone) {
+          setIsLoading(false);
+          setLastSentMessage("");
+          // Invalidate to get the final messages from DB (with correct IDs and citations if any)
+          utils.getFileMessages.invalidate({ fileId });
+          return;
+        }
+
         utils.getFileMessages.setInfiniteData({ fileId, limit: INFINITE_QUERY_LIMIT }, (old) => {
           if (!old) return { pages: [], pageParams: [] };
 
@@ -118,12 +128,6 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
           description: "There was an error sending your message. Please try again.",
           variant: "destructive",
         });
-      },
-      onComplete: () => {
-        setIsLoading(false);
-        setLastSentMessage("");
-        // Invalidate to get the final messages from DB (with correct IDs and citations if any)
-        utils.getFileMessages.invalidate({ fileId });
       },
     }
   );

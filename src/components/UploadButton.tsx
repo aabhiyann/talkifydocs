@@ -44,7 +44,7 @@ const UploadDropzone = () => {
   } = useUploadStatusStore();
 
   const handleDrop = useCallback(
-    async (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+    async (acceptedFiles: any[], rejectedFiles: any[]) => {
       if (acceptedFiles.length === 0) return;
 
       const currentActiveUploads = getAllUploads().filter(
@@ -71,6 +71,7 @@ const UploadDropzone = () => {
           const newBlob = await upload(file.name, file, {
             access: "public",
             handleUploadUrl: "/api/upload/blob",
+            clientPayload: JSON.stringify({ size: file.size }),
             onUploadProgress: (progressEvent) => {
               updateUpload(uploadId, { progress: progressEvent.percentage });
             },

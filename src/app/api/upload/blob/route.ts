@@ -1,11 +1,11 @@
-import { handleUpload, type HandleUploadBody } from '@vercel/blob/next';
-import { NextResponse } from 'next/server';
+import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { checkRateLimit, getClientIP } from "@/lib/security";
 import { loggers } from "@/lib/logger";
 
-export async function POST(request: Request): Promise<NextResponse> {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   const body = (await request.json()) as HandleUploadBody;
 
   try {
@@ -14,7 +14,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       request,
       onBeforeGenerateToken: async (
         pathname,
-        /* clientPayload */
+        clientPayload
       ) => {
         // 1. Authenticate user
         const user = await getCurrentUser();
@@ -36,18 +36,22 @@ export async function POST(request: Request): Promise<NextResponse> {
         });
 
         const isProUser = dbUser?.tier === "PRO" || dbUser?.tier === "ADMIN";
+        
+        // Parse size from clientPayload
+        const { size } = clientPayload ? JSON.parse(clientPayload) : { size: 0 };
 
         return {
           allowedContentTypes: ['application/pdf'],
           tokenPayload: JSON.stringify({
             userId: user.id,
             userPlan: isProUser ? "pro" : "free",
+            size,
           }),
         };
       },
       onUploadCompleted: async ({ blob, tokenPayload }) => {
         // 4. Save file to database
-        const { userId } = JSON.parse(tokenPayload as string);
+        const { userId, size } = JSON.parse(tokenPayload as string);
 
         try {
           const createdFile = await db.file.create({
@@ -56,7 +60,7 @@ export async function POST(request: Request): Promise<NextResponse> {
               name: blob.pathname.split('/').pop() || 'Untitled',
               userId: userId,
               url: blob.url,
-              size: BigInt(blob.size),
+              size: BigInt(size || 0),
               pageCount: null,
               uploadStatus: "PROCESSING",
             },
