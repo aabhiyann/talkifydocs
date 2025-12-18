@@ -20,10 +20,11 @@ import { memo } from "react";
 import { Card, CardContent } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Progress } from "../ui/progress";
+import { Citation } from "@/types/chat";
 
 interface ChatWrapperProps {
   fileId: string;
-  onCitationClick?: (payload: { fileId: string; page?: number; citation?: any }) => void;
+  onCitationClick?: (payload: { fileId: string; page?: number; citation?: Citation }) => void;
 }
 
 const ChatWrapper = memo(({ fileId, onCitationClick }: ChatWrapperProps) => {
