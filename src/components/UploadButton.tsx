@@ -19,16 +19,7 @@ import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { useUploadStatusStore } from "@/hooks/useUploadStatus";
 import { upload } from "@vercel/blob/client";
-
-interface DropFileError {
-  code: string;
-  message: string;
-}
-
-interface FileRejection {
-  file: File;
-  errors: DropFileError[];
-}
+import { FileRejection } from "react-dropzone";
 
 const UploadDropzone = () => {
   const router = useRouter();
@@ -44,7 +35,7 @@ const UploadDropzone = () => {
   } = useUploadStatusStore();
 
   const handleDrop = useCallback(
-    async (acceptedFiles: any[], rejectedFiles: any[]) => {
+    async (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       if (acceptedFiles.length === 0) return;
 
       const currentActiveUploads = getAllUploads().filter(

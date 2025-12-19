@@ -8,6 +8,7 @@ import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
 import { absoluteUrl } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { loggers } from "@/lib/logger";
+import { citationSchema } from "@/lib/validation";
 import { observable } from "@trpc/server/observable";
 import EventEmitter from "eventemitter3";
 import { openai } from "@/lib/openai";
@@ -18,6 +19,7 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
 import { Document } from "@langchain/core/documents";
 import { AI } from "@/config/ai";
+import { Citation } from "@/types/chat";
 
 const eventEmitter = new EventEmitter();
 
@@ -298,7 +300,7 @@ export const appRouter = router({
         fileId: z.string().optional(),
         text: z.string(),
         isUserMessage: z.boolean(),
-        citations: z.any().optional(),
+        citations: z.array(citationSchema).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -456,20 +458,17 @@ ${conversation.messages
     const role = msg.isUserMessage ? "👤 You" : "🤖 Assistant";
     const timestamp = format(new Date(msg.createdAt), "h:mm a");
     const citations = Array.isArray(msg.citations)
-      ? msg.citations
+      ? (msg.citations as unknown as Citation[])
       : msg.citations
-        ? [msg.citations]
+        ? [msg.citations as unknown as Citation]
         : [];
 
     let citationText = "";
     if (citations.length > 0) {
       const citationList = citations
-        .map((c: any) => {
-          const page =
-            c.pageNumber ??
-            c.page ??
-            (typeof c.pageIndex === "number" ? c.pageIndex + 1 : undefined);
-          const filename = c.filename || c.fileName || c.title || "Document";
+        .map((c) => {
+          const page = c.pageNumber;
+          const filename = c.fileName || "Document";
           return page ? `${filename} (p.${page})` : filename;
         })
         .join(", ");
@@ -577,7 +576,7 @@ ${msg.text}${citationText}`;
         question: z.string(),
         answer: z.string(),
         fileId: z.string(),
-        citations: z.array(z.any()).optional(),
+        citations: z.array(citationSchema).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {

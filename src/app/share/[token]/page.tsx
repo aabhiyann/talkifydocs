@@ -106,10 +106,10 @@ export default async function SharedChatPage({ params }: PageProps) {
             </ModernCard>
           ) : (
             conversation.messages.map((message, index) => {
-              const citations: Citation[] = Array.isArray(message.citations)
-                ? (message.citations as Citation[])
+              const citations = Array.isArray(message.citations)
+                ? (message.citations as unknown as Citation[])
                 : message.citations
-                  ? ([message.citations] as Citation[])
+                  ? ([message.citations] as unknown as Citation[])
                   : [];
 
               return (
@@ -156,11 +156,8 @@ export default async function SharedChatPage({ params }: PageProps) {
                               Sources:
                             </span>
                             {citations.map((c, idx: number) => {
-                              const page =
-                                c.pageNumber ??
-                                c.page ??
-                                (typeof c.pageIndex === "number" ? c.pageIndex + 1 : undefined);
-                              const filename = c.filename || c.fileName || c.title || "Document";
+                              const page = c.pageNumber;
+                              const filename = c.fileName || "Document";
                               return (
                                 <Badge key={idx} variant="outline" className="text-xs">
                                   {filename}

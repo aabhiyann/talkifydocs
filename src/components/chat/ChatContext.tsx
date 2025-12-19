@@ -28,6 +28,11 @@ interface Props {
   children: ReactNode;
 }
 
+type SubscriptionData = {
+  chunk: string;
+  isDone?: boolean;
+};
+
 export const ChatContextProvider = ({ fileId, children }: Props) => {
   const [message, setMessage] = useState<string>("");
   const [lastSentMessage, setLastSentMessage] = useState<string>("");
@@ -69,8 +74,8 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
   trpc.onSendMessage.useSubscription(
     { fileId, message: lastSentMessage },
     {
-      onData: (data: any) => {
-        const { chunk, isDone } = data;
+      onData: (data: unknown) => {
+        const { chunk, isDone } = data as SubscriptionData;
 
         if (isDone) {
           setIsLoading(false);

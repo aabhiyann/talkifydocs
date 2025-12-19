@@ -4,6 +4,7 @@ import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { checkRateLimit, getClientIP } from "@/lib/security";
 import { validateFileUpload } from "@/lib/validation";
 import { processPdfFile } from "@/lib/upload/process-pdf";
+import { loggers } from "@/lib/logger";
 
 const f = createUploadthing();
 
@@ -44,9 +45,9 @@ export const ourFileRouter = {
     })
     .onUploadComplete(async ({ metadata, file }) => {
       try {
-        console.log(`[upload] Upload completed for file: ${file.name}, key=${file.key}`);
-        console.log(`[upload] File URL: ${file.url}`);
-        console.log(`[upload] User ID: ${metadata.userId}`);
+        loggers.upload.info(`Upload completed for file: ${file.name}, key=${file.key}`);
+        loggers.upload.debug(`File URL: ${file.url}`);
+        loggers.upload.debug(`User ID: ${metadata.userId}`);
 
         const createdFile = await db.file.create({
           data: {
@@ -60,7 +61,7 @@ export const ourFileRouter = {
           },
         });
 
-        console.log(`[upload] File created in database with ID: ${createdFile.id}`);
+        loggers.upload.info(`File created in database with ID: ${createdFile.id}`);
 
         // Kick off processing (awaited so failures surface in logs, but the client
         // already has a response and will track status separately).
@@ -77,7 +78,7 @@ export const ourFileRouter = {
           status: createdFile.uploadStatus,
         };
       } catch (outerError) {
-        console.error(`[upload] Outer error in onUploadComplete for ${file.name}:`, outerError);
+        loggers.upload.error(`Outer error in onUploadComplete for ${file.name}:`, outerError);
         return {
           id: null,
           name: file.name,

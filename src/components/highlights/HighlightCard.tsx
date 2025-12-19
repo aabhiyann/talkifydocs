@@ -115,11 +115,8 @@ export function HighlightCard({ highlight }: HighlightCardProps) {
         {citations.length > 0 && (
           <div className="mb-4 flex flex-wrap gap-1 text-xs text-muted-foreground">
             <strong className="mr-1">Sources:</strong>
-            {citations.map((c: any, idx: number) => {
-              const page =
-                c.pageNumber ??
-                c.page ??
-                (typeof c.pageIndex === "number" ? c.pageIndex + 1 : undefined);
+            {citations.map((c, idx: number) => {
+              const page = c.pageNumber;
               return (
                 <Badge key={idx} variant="outline" className="text-xs">
                   {page ? `p.${page}` : `Source ${idx + 1}`}

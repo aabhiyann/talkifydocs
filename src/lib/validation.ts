@@ -45,6 +45,14 @@ export const userSchema = z.object({
   lastName: z.string().optional(),
 });
 
+export const citationSchema = z.object({
+  fileId: z.string().cuid(),
+  fileName: z.string().min(1),
+  pageNumber: z.number().positive(),
+  snippet: z.string().optional(),
+  source: z.number().optional(),
+});
+
 // Validation middleware
 export function validateRequest<T>(schema: z.ZodSchema<T>) {
   return (data: unknown): { success: true; data: T } | { success: false; error: string } => {

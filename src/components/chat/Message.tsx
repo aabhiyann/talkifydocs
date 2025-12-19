@@ -115,11 +115,9 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                 <span className="mr-1 whitespace-nowrap font-medium">Sources:</span>
                 {message.citations.map((c, idx: number) => {
                   if (!c) return null;
-                  const page =
-                    c.page ??
-                    (typeof c.pageIndex === "number" ? c.pageIndex + 1 : undefined);
+                  const page = c.pageNumber;
                   const labelParts = [
-                    c.filename || c.fileName || c.title,
+                    c.fileName,
                     page ? `p.${page}` : null,
                   ].filter(Boolean);
                   const label = labelParts.join(" ");

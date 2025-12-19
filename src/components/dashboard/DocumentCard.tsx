@@ -41,8 +41,7 @@ export const DocumentCard = ({ file, viewMode, onDelete, onRetry, isDemo = false
       ? `${file.summary.slice(0, 200).trim()}…`
       : file.summary || null;
 
-  const keyTerms: string[] =
-    (file.entities && (file.entities.key_terms || file.entities.keyTerms)) || [];
+  const keyTerms: string[] = file.entities?.keyTerms || [];
   const topKeyTerms = keyTerms.slice(0, 3);
 
   return (

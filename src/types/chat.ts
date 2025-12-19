@@ -5,26 +5,20 @@ export type IncomingChatMessage = {
 };
 
 export interface Citation {
-  source?: number;
-  fileId?: string;
-  page?: number;
-  pageNumber?: number;
-  pageIndex?: number;
+  fileId: string;
+  fileName: string;
+  pageNumber: number;
   snippet?: string;
-  title?: string;
-  filename?: string;
-  fileName?: string;
+  source?: number;
 }
 
 export interface DocumentEntities {
-  key_terms?: string[];
   keyTerms?: string[];
 }
 
 export type DocumentMetadata = {
   fileId: string;
-  page?: number;
-  pageIndex?: number;
+  fileName: string;
+  pageNumber?: number;
   title?: string;
-  fileName?: string;
 };
