@@ -1,6 +1,6 @@
 // import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/dist/types/server";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import UpgradeButton from "@/components/UpgradeButton";
+import { UpgradeButton } from "@/components/UpgradeButton";
 import { buttonVariants } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { PLANS } from "@/config/stripe";

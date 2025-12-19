@@ -1,21 +1,20 @@
-import type { Metadata, Viewport } from "next";
 import { Inter, Fraunces } from "next/font/google";
-import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
-import { cn } from "@/lib/utils";
-import Navbar from "@/components/Navbar";
+
+import { Navbar } from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
 import ClientThemeProvider from "@/components/ClientThemeProvider";
-
-import "react-loading-skeleton/dist/skeleton.css";
-
-import "simplebar-react/dist/simplebar.min.css";
-
 import { Toaster } from "@/components/ui/toaster";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { cn } from "@/lib/utils";
+
+import "./globals.css";
+import "simplebar-react/dist/simplebar.min.css";
+
+import type { Metadata, Viewport } from "next";
 
 const inter = Inter({
   subsets: ["latin"],
