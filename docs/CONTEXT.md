@@ -7,7 +7,7 @@ TalkifyDocs is an AI-powered PDF assistant built with Next.js 15, allowing users
 ## Tech Stack
 
 - **Frontend:** Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS, shadcn/ui
-- **Backend:** Next.js Route Handlers, Server Actions, Prisma ORM
+- **Backend:** Next.js Route Handlers, tRPC, Prisma ORM
 - **Database:** PostgreSQL (hosted on Neon or Supabase)
 - **Auth:** Clerk
 - **AI:** OpenAI GPT-4o or Claude 3.5 Sonnet, Pinecone vector DB, LangChain
@@ -18,7 +18,7 @@ TalkifyDocs is an AI-powered PDF assistant built with Next.js 15, allowing users
 ## Architecture Principles
 
 1. Server Components by default, Client Components only when needed
-2. Server Actions for mutations, Route Handlers for streaming/webhooks
+2. tRPC for mutations and queries, Route Handlers for streaming/webhooks
 3. Optimistic UI updates where possible
 4. Streaming responses for AI chat
 5. Type-safe APIs with Zod validation

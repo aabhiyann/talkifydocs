@@ -100,10 +100,10 @@
 
 #### Uploading & processing PDFs
 
-- Upload handled by Server Action `uploadPDF` in `src/actions/upload.ts`:
+- Upload handled by Vercel Blob client-side upload in `src/components/UploadButton.tsx`:
   - Validates file type (PDF only) and size (tier-based limits).
-  - Uploads to Vercel Blob storage.
-  - Creates a `File` row with `uploadStatus = "PROCESSING"`.
+  - Uploads directly to Vercel Blob storage.
+  - Background webhook (via `api/upload/blob`) creates a `File` row with `uploadStatus = "PROCESSING"`.
   - Triggers `processPDF` function asynchronously.
 - Processing pipeline (`src/lib/upload/process-pdf.ts`):
   - Downloads PDF from Vercel Blob.

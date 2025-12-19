@@ -42,6 +42,7 @@
 **Tasks**
 
 - ✅ Build upload interface with drag-and-drop (`react-dropzone`)
+- ✅ Implement Vercel Blob client-side upload
 - ✅ Replace polling with **SSE** for processing status
 - ✅ Generate PDF thumbnails (using `pdf-lib` and `sharp`)
 - ✅ Extract metadata (author, dates, page count, word count)

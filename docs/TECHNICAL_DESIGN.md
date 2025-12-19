@@ -14,7 +14,7 @@
                           ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                      API/SERVER LAYER                      │
-│  Next.js Route Handlers + Server Actions                   │
+│  Next.js Route Handlers + tRPC                             │
 │  - Authentication middleware (Clerk)                       │
 │  - Rate limiting (Upstash Redis)                           │
 │  - Input validation (Zod)                                  │
@@ -290,12 +290,11 @@ src/
 │   ├── useUploadStatus.ts
 │   ├── useHighlights.ts
 │   └── useSubscription.ts
-├── actions/
-│   ├── upload.ts                           # uploadPDF server action
-│   ├── conversations.ts                   # createConversation, addFileToConversation, removeFileFromConversation
-│   ├── highlights.ts                      # saveAsHighlight, getHighlights, deleteHighlight
-│   ├── export.ts                           # exportChatAsMarkdown, createShareableLink, revokeShareableLink
-│   └── admin.ts                            # updateUserTier, deleteUser, getSystemMetrics
+├── trpc/
+│   ├── index.ts                            # Main router
+│   ├── trpc.ts                             # Router + procedure factory
+│   ├── server.ts                           # Server-side caller
+│   └── __tests__/                          # Router tests
 └── types/
     ├── index.ts
     ├── api.ts

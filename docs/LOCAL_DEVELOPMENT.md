@@ -326,7 +326,7 @@ talkifydocs/
 │   ├── app/              # Next.js app router pages
 │   ├── components/       # React components
 │   ├── lib/              # Utilities and helpers
-│   ├── actions/          # Server actions
+│   ├── hooks/            # Custom React hooks
 │   └── types/            # TypeScript types
 ├── prisma/
 │   └── schema.prisma     # Database schema
