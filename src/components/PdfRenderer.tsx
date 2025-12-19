@@ -35,7 +35,7 @@ interface PdfRendererProps {
   onPageChange?: (page: number) => void;
 }
 
-const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
+export const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
   const { toast } = useToast();
   const { width, ref } = useResizeDetector();
 

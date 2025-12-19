@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import {
@@ -12,6 +13,7 @@ import {
   MessagesSquare,
   Trash,
 } from "lucide-react";
+
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import {
@@ -23,17 +25,24 @@ import {
 } from "../ui/dropdown-menu";
 import { Badge } from "../ui/badge";
 import { ProcessingStatus } from "./ProcessingStatus";
-import { FileSummary } from "@/types";
 
-type Props = {
+import type { FileSummary } from "@/types";
+
+interface DocumentCardProps {
   file: FileSummary;
   viewMode: "grid" | "list";
   onDelete: (id: string) => void;
   onRetry?: (id: string) => void;
   isDemo?: boolean;
-};
+}
 
-export const DocumentCard = ({ file, viewMode, onDelete, onRetry, isDemo = false }: Props) => {
+export const DocumentCard = ({
+  file,
+  viewMode,
+  onDelete,
+  onRetry,
+  isDemo = false,
+}: DocumentCardProps) => {
   const createdAt = file.createdAt instanceof Date ? file.createdAt : new Date(file.createdAt);
 
   const summary =

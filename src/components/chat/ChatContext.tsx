@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useRef, useState, useCallback, useMemo } from "react";
+import { ReactNode, createContext, useState, useCallback, useMemo } from "react";
 import { useToast } from "../ui/use-toast";
 import { trpc } from "@/app/_trpc/client";
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";

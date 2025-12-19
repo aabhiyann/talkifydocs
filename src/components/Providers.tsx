@@ -6,7 +6,6 @@ import { trpc } from "@/app/_trpc/client";
 import { httpBatchLink } from "@trpc/client";
 import { ThemeProvider } from "./ThemeProvider";
 import { KeyboardShortcutsProvider } from "./KeyboardShortcuts";
-import { useNotifications, NotificationContainer } from "./ui/notification";
 
 const Providers = ({ children }: PropsWithChildren) => {
   const [queryClient] = useState(() => new QueryClient());

@@ -1,34 +1,21 @@
 "use client";
 
-import { trpc } from "@/app/_trpc/client";
-import { UploadZone } from "./dashboard/UploadZone";
-import { DocumentGrid } from "./dashboard/DocumentGrid";
-import { MultiDocSelector } from "./chat/MultiDocSelector";
+import React, { useState, memo, useCallback, useMemo } from "react";
 import {
   Ghost,
-  Loader2,
-  MessagesSquare,
-  Plus,
-  Trash,
   FileText,
-  Calendar,
   Search,
   Filter,
   Grid3X3,
   List,
-  MoreVertical,
-  Eye,
-  Download,
-  Share2,
-  Star,
-  Clock,
-  MessageSquare,
 } from "lucide-react";
+
+import { trpc } from "@/app/_trpc/client";
+import { UploadZone } from "./dashboard/UploadZone";
+import { DocumentGrid } from "./dashboard/DocumentGrid";
+import { MultiDocSelector } from "./chat/MultiDocSelector";
 import { DocumentCardSkeleton } from "./ui/skeleton";
-import Link from "next/link";
-import { format } from "date-fns";
 import { Button } from "./ui/button";
-import { useState, memo, useCallback, useMemo } from "react";
 import { SearchBar, SearchFilters } from "./SearchBar";
 import {
   DropdownMenu,
@@ -38,9 +25,10 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Input } from "./ui/input";
-import { FileSummary } from "@/types";
 
-const Dashboard = memo(() => {
+import type { FileSummary } from "@/types";
+
+export const Dashboard = memo(() => {
   const [currentlyDeletingFile, setCurrentlyDeletingFile] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");

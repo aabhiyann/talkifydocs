@@ -13,7 +13,7 @@ interface BillingFormProps {
   subscriptionPlan: Awaited<ReturnType<typeof getUserSubscriptionPlan>>;
 }
 
-const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
+export const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
   const { toast } = useToast();
 
   const { mutate: createStripeSession, isLoading } = trpc.createStripeSession.useMutation({

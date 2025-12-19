@@ -1,10 +1,9 @@
 "use client";
 
-import React from "react";
-import MaxWidthWrapper from "./MaxWidthWrapper";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { buttonVariants, Button } from "./ui/button";
-import { trpc } from "@/app/_trpc/client";
+import { usePathname } from "next/navigation";
+import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import {
   ArrowRight,
   Menu,
@@ -17,12 +16,13 @@ import {
   Zap,
   Shield,
 } from "lucide-react";
-import { ThemeToggle } from "./ThemeToggle";
-import { usePathname } from "next/navigation";
-import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
-import { useState, useEffect } from "react";
 
-const Navbar = () => {
+import { trpc } from "@/app/_trpc/client";
+import MaxWidthWrapper from "./MaxWidthWrapper";
+import { ThemeToggle } from "./ThemeToggle";
+import { buttonVariants, Button } from "./ui/button";
+
+export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
@@ -246,5 +246,3 @@ const Navbar = () => {
     </nav>
   );
 };
-
-export default Navbar;

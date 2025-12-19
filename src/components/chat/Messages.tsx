@@ -1,16 +1,17 @@
+import React, { useContext, useEffect, useRef, memo, useMemo } from "react";
+import { useIntersection } from "@mantine/hooks";
+import { Loader2, MessageSquare, Bot, User, ArrowUp } from "lucide-react";
+
 import { trpc } from "@/app/_trpc/client";
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
-import { Loader2, MessageSquare, Bot, User, ArrowUp } from "lucide-react";
-import Skeleton from "react-loading-skeleton";
 import Message from "./Message";
-import { useContext, useEffect, useRef, memo, useMemo } from "react";
 import { ChatContext } from "./ChatContext";
-import { useIntersection } from "@mantine/hooks";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { Citation, DocumentEntities } from "@/types/chat";
-import { ExtendedMessage } from "@/types/message";
+
+import type { Citation } from "@/types/chat";
+import type { ExtendedMessage } from "@/types/message";
 
 interface MessagesProps {
   fileId: string;
@@ -21,7 +22,7 @@ type MessageWithContext = ExtendedMessage & {
   previousUserMessage?: string;
 };
 
-const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
+export const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
   const { isLoading: isAiThinking } = useContext(ChatContext);
 
   const { data, isLoading, fetchNextPage } = trpc.getFileMessages.useInfiniteQuery(

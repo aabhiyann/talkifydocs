@@ -1,33 +1,33 @@
 "use client";
 
-import { trpc } from "@/app/_trpc/client";
-import ChatInput from "./ChatInput";
-import Messages from "./Messages";
+import React, { memo } from "react";
+import Link from "next/link";
 import {
   ChevronLeft,
   Loader2,
   XCircle,
   FileText,
-  AlertCircle,
   CheckCircle2,
   Clock,
 } from "lucide-react";
-import Link from "next/link";
-import { buttonVariants, Button } from "../ui/button";
+
+import { trpc } from "@/app/_trpc/client";
 import { ChatContextProvider } from "./ChatContext";
-import { ChatMessageSkeleton, PdfViewerSkeleton } from "../ui/skeleton";
-import { memo } from "react";
+import ChatInput from "./ChatInput";
+import Messages from "./Messages";
+import { buttonVariants, Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Progress } from "../ui/progress";
-import { Citation } from "@/types/chat";
+
+import type { Citation } from "@/types/chat";
 
 interface ChatWrapperProps {
   fileId: string;
   onCitationClick?: (payload: { fileId: string; page?: number; citation?: Citation }) => void;
 }
 
-const ChatWrapper = memo(({ fileId, onCitationClick }: ChatWrapperProps) => {
+export const ChatWrapper = memo(({ fileId, onCitationClick }: ChatWrapperProps) => {
   const { data, isLoading, error } = trpc.getFileUploadStatus.useQuery(
     {
       fileId,

@@ -1,15 +1,15 @@
+import React, { useContext, useRef, useState } from "react";
 import { Send, Paperclip, Mic, MicOff, Loader2 } from "lucide-react";
+
+import { ChatContext } from "./ChatContext";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
-import { useContext, useRef, useState } from "react";
-import { ChatContext } from "./ChatContext";
-import { Card } from "../ui/card";
 
 interface ChatInputProps {
   isDisabled?: boolean;
 }
 
-const ChatInput = ({ isDisabled }: ChatInputProps) => {
+export const ChatInput = ({ isDisabled }: ChatInputProps) => {
   const { addMessage, handleInputChange, isLoading, message } = useContext(ChatContext);
 
   const [isRecording, setIsRecording] = useState(false);

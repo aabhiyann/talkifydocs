@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import PdfRenderer from "@/components/PdfRenderer";
-import ChatWrapper from "@/components/chat/ChatWrapper";
+import { PdfRenderer } from "@/components/PdfRenderer";
+import { ChatWrapper } from "@/components/chat/ChatWrapper";
 import { FileManagementDropdown } from "./FileManagementDropdown";
 import { ChatExportMenu } from "./ChatExportMenu";
 import { cn } from "@/lib/utils";
