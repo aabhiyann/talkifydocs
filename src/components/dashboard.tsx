@@ -25,6 +25,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Input } from "./ui/input";
+import { useToastOptions } from "@/hooks/useToastMutation";
 
 import type { FileSummary } from "@/types";
 
@@ -41,23 +42,31 @@ export const Dashboard = memo(() => {
 
   const { data: files, isLoading, error } = trpc.getUserFiles.useQuery();
 
-  const { mutate: deleteFile } = trpc.deleteFile.useMutation({
-    onSuccess: () => {
-      utils.getUserFiles.invalidate();
-    },
-    onMutate: ({ id }) => {
-      setCurrentlyDeletingFile(id);
-    },
-    onSettled: () => {
-      setCurrentlyDeletingFile(null);
-    },
-  });
+  const { mutate: deleteFile } = trpc.deleteFile.useMutation(
+    useToastOptions({
+      successTitle: "File deleted",
+      successDescription: "Your document has been removed",
+      onMutate: ({ id }: { id: string }) => {
+        setCurrentlyDeletingFile(id);
+      },
+      onSettled: () => {
+        setCurrentlyDeletingFile(null);
+      },
+      onSuccess: () => {
+        utils.getUserFiles.invalidate();
+      }
+    }) as any
+  );
 
-  const { mutate: retryProcessing } = trpc.retryUploadProcessing.useMutation({
-    onSuccess: () => {
-      utils.getUserFiles.invalidate();
-    },
-  });
+  const { mutate: retryProcessing } = trpc.retryUploadProcessing.useMutation(
+    useToastOptions({
+      successTitle: "Processing retried",
+      successDescription: "We're re-analyzing your document",
+      onSuccess: () => {
+        utils.getUserFiles.invalidate();
+      }
+    }) as any
+  );
 
   const handleDeleteFile = useCallback(
     (id: string) => {

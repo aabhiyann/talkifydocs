@@ -12,10 +12,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical, Crown, User, Trash2, Download, Loader2 } from "lucide-react";
 import { format } from "date-fns";
-import { useToast } from "@/components/ui/use-toast";
 import { trpc } from "@/app/_trpc/client";
 import { useRouter } from "next/navigation";
 import { memo, useCallback } from "react";
+import { useToastOptions } from "@/hooks/useToastMutation";
 
 interface User {
   id: string;
@@ -128,44 +128,26 @@ export const UserManagementTable = memo(({
   currentPage,
   totalPages,
 }: UserManagementTableProps) => {
-  const { toast } = useToast();
   const router = useRouter();
 
   const { mutate: updateUserTier, isLoading: isUpdatingTier } = 
-    trpc.updateUserTier.useMutation({
-      onSuccess: (_, { tier }) => {
-        toast({
-          title: "User tier updated",
-          description: `User tier changed to ${tier}`,
-        });
-        router.refresh();
-      },
-      onError: (error) => {
-        toast({
-          title: "Error updating tier",
-          description: error.message,
-          variant: "destructive",
-        });
-      },
-    });
+    trpc.updateUserTier.useMutation(
+      useToastOptions({
+        successTitle: "User tier updated",
+        onSuccess: (_, { tier }) => {
+          // Keep custom success description logic
+          // Note: useToastOptions handles router.refresh() by default
+        }
+      })
+    );
 
   const { mutate: deleteUser, isLoading: isDeletingUser } = 
-    trpc.deleteUser.useMutation({
-      onSuccess: (_, { userId }) => {
-        toast({
-          title: "User deleted",
-          description: `User has been deleted`,
-        });
-        router.refresh();
-      },
-      onError: (error) => {
-        toast({
-          title: "Error deleting user",
-          description: error.message,
-          variant: "destructive",
-        });
-      },
-    });
+    trpc.deleteUser.useMutation(
+      useToastOptions({
+        successTitle: "User deleted",
+        successDescription: "User has been deleted",
+      })
+    );
 
   const handleTierChange = useCallback((userId: string, newTier: "FREE" | "PRO" | "ADMIN") => {
     updateUserTier({ userId, tier: newTier });
