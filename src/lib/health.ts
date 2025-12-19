@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { loggers } from "./logger";
+import { captureException } from "./sentry";
 
 interface HealthCheck {
   name: string;
@@ -24,6 +25,7 @@ export async function checkDatabaseHealth(): Promise<HealthCheck> {
   } catch (error) {
     const duration = Date.now() - startTime;
     loggers.db.error("Database health check failed", { error });
+    captureException(error as Error, { operation: "checkDatabaseHealth" });
 
     return {
       name: "database",
@@ -58,6 +60,7 @@ export async function checkOpenAIHealth(): Promise<HealthCheck> {
   } catch (error) {
     const duration = Date.now() - startTime;
     loggers.api.error("OpenAI health check failed", { error });
+    captureException(error as Error, { operation: "checkOpenAIHealth" });
 
     return {
       name: "openai",
@@ -91,6 +94,7 @@ export async function checkPineconeHealth(): Promise<HealthCheck> {
   } catch (error) {
     const duration = Date.now() - startTime;
     loggers.api.error("Pinecone health check failed", { error });
+    captureException(error as Error, { operation: "checkPineconeHealth" });
 
     return {
       name: "pinecone",

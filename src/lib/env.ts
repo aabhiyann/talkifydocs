@@ -65,7 +65,7 @@ const envSchema = z.object({
 });
 
 // Only validate environment variables at runtime, not during build
-let env: any;
+let env: Env;
 try {
   env = envSchema.parse(process.env);
 } catch (error) {

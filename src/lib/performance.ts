@@ -118,10 +118,4 @@ export function reportWebVitals(metric: WebVitalMetric) {
   if (process.env.NODE_ENV === "development") {
     logger.debug("Web Vitals:", metric);
   }
-
-  // In production, you might want to send this to an analytics service
-  if (process.env.NODE_ENV === "production") {
-    // Example: Send to analytics service
-    // analytics.track('web-vitals', metric);
-  }
 }

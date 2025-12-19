@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { loggers } from "./logger";
+import { captureException } from "./sentry";
 
 // Optimized file queries
 export async function getFilesByUserId(userId: string) {
@@ -38,6 +39,7 @@ export async function getFilesByUserId(userId: string) {
       error,
       duration: Date.now() - startTime,
     });
+    captureException(error as Error, { operation: "getFilesByUserId", userId });
     throw error;
   }
 }
@@ -82,6 +84,7 @@ export async function getFileById(fileId: string, userId: string) {
       error,
       duration: Date.now() - startTime,
     });
+    captureException(error as Error, { operation: "getFileById", fileId, userId });
     throw error;
   }
 }
@@ -127,6 +130,7 @@ export async function getMessagesByFileId(fileId: string, userId: string, limit 
       error,
       duration: Date.now() - startTime,
     });
+    captureException(error as Error, { operation: "getMessagesByFileId", fileId, userId });
     throw error;
   }
 }
@@ -167,6 +171,7 @@ export async function createMessage(data: {
       error,
       duration: Date.now() - startTime,
     });
+    captureException(error as Error, { operation: "createMessage", ...data });
     throw error;
   }
 }
@@ -203,6 +208,7 @@ export async function updateFileStatus(
       error,
       duration: Date.now() - startTime,
     });
+    captureException(error as Error, { operation: "updateFileStatus", fileId, status });
     throw error;
   }
 }
@@ -238,6 +244,7 @@ export async function createMessagesBatch(
       error,
       duration: Date.now() - startTime,
     });
+    captureException(error as Error, { operation: "createMessagesBatch", count: messages.length });
     throw error;
   }
 }

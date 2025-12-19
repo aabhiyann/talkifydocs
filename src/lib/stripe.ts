@@ -1,7 +1,8 @@
+import Stripe from "stripe";
+
 import { PLANS } from "@/config/stripe";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
-import Stripe from "stripe";
 import { env } from "./env";
 
 export const stripe = env.STRIPE_SECRET_KEY

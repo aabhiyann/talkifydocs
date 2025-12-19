@@ -67,7 +67,7 @@ export interface ErrorResponse {
   error: string;
   code: string;
   message: string;
-  details?: any;
+  details?: unknown;
   timestamp: string;
   path?: string;
 }
@@ -87,14 +87,17 @@ export function createErrorResponse(error: Error | AppError, path?: string): Err
 }
 
 // Handle different error types
-export function handleError(error: unknown, context: Record<string, any> = {}): ErrorResponse {
+export async function handleError(
+  error: unknown,
+  context: Record<string, unknown> = {},
+): Promise<ErrorResponse> {
   const err = error instanceof Error ? error : new Error(String(error));
   logError(err, context);
 
   // Capture error in Sentry for production
   if (process.env.NODE_ENV === "production") {
     try {
-      const { captureException } = require("./sentry");
+      const { captureException } = await import("./sentry");
       captureException(err, { extra: context });
     } catch (sentryError) {
       // Sentry not available, continue without it

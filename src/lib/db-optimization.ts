@@ -87,7 +87,7 @@ export const batchOperations = {
   updateFiles: async (
     updates: Array<{
       id: string;
-      data: any;
+      data: Record<string, unknown>;
     }>,
   ) => {
     return db.$transaction(updates.map(({ id, data }) => db.file.update({ where: { id }, data })));

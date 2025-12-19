@@ -1,5 +1,7 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
+
 import { db } from "@/lib/db";
+import { AuthenticationError, NotFoundError } from "@/lib/errors";
 
 export type AuthenticatedUser = {
   id: string; // internal User.id (Prisma)
@@ -62,7 +64,7 @@ export async function requireUser(): Promise<AuthenticatedUser> {
   const { userId } = await auth();
   if (!userId) {
     // Middleware should have caught this, but throw error as fallback
-    throw new Error("User not authenticated");
+    throw new AuthenticationError("User not authenticated");
   }
 
   const user = await getCurrentUser();
@@ -70,7 +72,7 @@ export async function requireUser(): Promise<AuthenticatedUser> {
   if (!user) {
     // This shouldn't happen if userId exists, but could if DB sync fails
     // Throw error - middleware will handle redirect
-    throw new Error("User not found in database");
+    throw new NotFoundError("User");
   }
 
   return user;

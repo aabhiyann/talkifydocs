@@ -11,7 +11,7 @@ if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) 
   redis = new UpstashRedis({
     url: process.env.UPSTASH_REDIS_REST_URL,
     token: process.env.UPSTASH_REDIS_REST_TOKEN,
-  }) as any;
+  });
   useUpstash = true;
   loggers.api.info("Using Upstash Redis for caching");
 } else {
