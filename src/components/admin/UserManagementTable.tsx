@@ -6,13 +6,20 @@ import {
 } from "@/components/ui/modern-card";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
-import { format } from "date-fns";
 import { trpc } from "@/app/_trpc/client";
 import { useRouter } from "next/navigation";
 import { memo, useCallback } from "react";
 import { useToastOptions } from "@/hooks/useToastMutation";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { UserTable, type User } from "./UserTable";
 import { useToast } from "@/components/ui/use-toast";
+import { formatDate } from "@/lib/utils/formatters";
 
 interface UserManagementTableProps {
   users: User[];
@@ -67,7 +74,7 @@ export const UserManagementTable = memo(({
       user.tier,
       user._count.files.toString(),
       user._count.messages.toString(),
-      format(new Date(user.createdAt), "yyyy-MM-dd"),
+      formatDate(user.createdAt, "yyyy-MM-dd"),
     ]);
 
     const csv = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
