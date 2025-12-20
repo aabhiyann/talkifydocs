@@ -42,21 +42,23 @@ export const Dashboard = memo(() => {
 
   const { data: files, isLoading, error } = trpc.getUserFiles.useQuery();
 
-  const { mutate: deleteFile } = trpc.deleteFile.useMutation(
-    useToastOptions({
-      successTitle: "File deleted",
-      successDescription: "Your document has been removed",
-      onMutate: ({ id }: { id: string }) => {
-        setCurrentlyDeletingFile(id);
-      },
-      onSettled: () => {
-        setCurrentlyDeletingFile(null);
-      },
-      onSuccess: () => {
-        utils.getUserFiles.invalidate();
-      }
-    }) as any
-  );
+  const deleteFileToastOptions = useToastOptions({
+    successTitle: "File deleted",
+    successDescription: "Your document has been removed",
+    onSuccess: () => {
+      utils.getUserFiles.invalidate();
+    },
+  });
+
+  const { mutate: deleteFile } = trpc.deleteFile.useMutation({
+    ...deleteFileToastOptions,
+    onMutate: ({ id }: { id: string }) => {
+      setCurrentlyDeletingFile(id);
+    },
+    onSettled: () => {
+      setCurrentlyDeletingFile(null);
+    },
+  });
 
   const { mutate: retryProcessing } = trpc.retryUploadProcessing.useMutation(
     useToastOptions({
@@ -65,7 +67,7 @@ export const Dashboard = memo(() => {
       onSuccess: () => {
         utils.getUserFiles.invalidate();
       }
-    }) as any
+    })
   );
 
   const handleDeleteFile = useCallback(

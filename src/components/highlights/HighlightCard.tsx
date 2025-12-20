@@ -10,6 +10,7 @@ import ReactMarkdown from "react-markdown";
 import { Badge } from "@/components/ui/badge";
 import { Citation } from "@/types/chat";
 import { useToastOptions } from "@/hooks/useToastMutation";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Highlight {
   id: string;
