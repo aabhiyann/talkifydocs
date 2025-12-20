@@ -6,6 +6,7 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { RefreshCw, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { logger } from "@/lib/logger";
+import { formatBytes } from "@/lib/utils/formatters";
 
 interface PdfDebuggerProps {
   url: string;
@@ -117,7 +118,7 @@ const PdfDebugger = ({ url }: PdfDebuggerProps) => {
                 <span className="text-sm">File Size:</span>
                 <Badge variant="outline">
                   {debugInfo.fileSize > 0
-                    ? `${(debugInfo.fileSize / 1024).toFixed(1)} KB`
+                    ? formatBytes(debugInfo.fileSize)
                     : "Unknown"}
                 </Badge>
               </div>

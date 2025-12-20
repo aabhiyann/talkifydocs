@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { formatBytes } from "@/lib/utils/formatters";
 import {
   Dialog,
   DialogContent,
@@ -189,7 +190,7 @@ const UploadDropzone = () => {
                               </p>
                               <div className="flex items-center space-x-2">
                                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                                  {(upload.file.size / 1024 / 1024).toFixed(1)} MB
+                                  {formatBytes(upload.file.size)}
                                 </p>
                                 {upload.status === "error" && (
                                   <p className="text-xs text-red-600 dark:text-red-400">

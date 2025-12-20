@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { ExtendedMessage } from "@/types/message";
 import ReactMarkdown from "react-markdown";
-import { format } from "date-fns";
+import { formatDate } from "@/lib/utils/formatters";
 import { forwardRef } from "react";
 import { Icons } from "../Icons";
 import { Button } from "../ui/button";
@@ -152,7 +152,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
             {message.id !== "loading-message" ? (
               <div className="mt-2 flex items-center justify-between">
                 <div className="select-none text-xs">
-                  {format(new Date(message.createdAt), "HH:mm")}
+                  {formatDate(message.createdAt, "HH:mm")}
                 </div>
                 {!message.isUserMessage &&
                   previousUserMessage &&

@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
 import { FileSummary } from "@/types";
+import { formatBytes } from "@/lib/utils/formatters";
 
 interface MultiDocSelectorProps {
   files: FileSummary[];
@@ -105,7 +106,7 @@ export function MultiDocSelector({ files }: MultiDocSelectorProps) {
                     <p className="text-sm text-muted-foreground">
                       {file.pageCount ?? 0} pages •{" "}
                       {file.size
-                        ? `${(Number(file.size) / 1024 / 1024).toFixed(2)} MB`
+                        ? formatBytes(file.size, 2)
                         : "Unknown size"}
                     </p>
                   </div>
