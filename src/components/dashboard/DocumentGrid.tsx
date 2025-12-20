@@ -27,7 +27,7 @@ export const DocumentGrid = ({ files, viewMode, onDelete, onRetry, isDemo = fals
         <div
           key={file.id}
           className="animate-scale-in"
-          style={{ animationDelay: `${index * 100}ms` }}
+          style={{ animationDelay: `${Math.min(index * 100, 500)}ms` }}
         >
           <MemoizedDocumentCard
             file={file}

@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useRef, useState, useCallback, memo } from "react";
 import { Send, Paperclip, Mic, MicOff, Loader2 } from "lucide-react";
 
 import { ChatContext } from "./ChatContext";
@@ -9,24 +9,29 @@ interface ChatInputProps {
   isDisabled?: boolean;
 }
 
-export const ChatInput = ({ isDisabled }: ChatInputProps) => {
+export const ChatInput = memo(({ isDisabled }: ChatInputProps) => {
   const { addMessage, handleInputChange, isLoading, message } = useContext(ChatContext);
 
   const [isRecording, setIsRecording] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       addMessage();
       textareaRef.current?.focus();
     }
-  };
+  }, [addMessage]);
 
-  const handleVoiceToggle = () => {
-    setIsRecording(!isRecording);
+  const handleVoiceToggle = useCallback(() => {
+    setIsRecording((prev) => !prev);
     // Voice recording logic would go here
-  };
+  }, []);
+
+  const handleSendMessage = useCallback(() => {
+    addMessage();
+    textareaRef.current?.focus();
+  }, [addMessage]);
 
   return (
     <div className="border-t border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
@@ -71,10 +76,7 @@ export const ChatInput = ({ isDisabled }: ChatInputProps) => {
                 <Button
                   disabled={isLoading || isDisabled || !message.trim()}
                   size="sm"
-                  onClick={() => {
-                    addMessage();
-                    textareaRef.current?.focus();
-                  }}
+                  onClick={handleSendMessage}
                   className="h-8 w-8 rounded-lg bg-primary-600 p-0 text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-700 hover:shadow-lg"
                 >
                   {isLoading ? (
@@ -96,6 +98,8 @@ export const ChatInput = ({ isDisabled }: ChatInputProps) => {
       </div>
     </div>
   );
-};
+});
+
+ChatInput.displayName = "ChatInput";
 
 export default ChatInput;
