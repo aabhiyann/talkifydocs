@@ -42,13 +42,22 @@ export const appRouter = router({
       where: {
         userId,
       },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        uploadStatus: true,
+        url: true,
+        createdAt: true,
+        size: true,
         _count: {
           select: {
             messages: true,
           },
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      }
     });
   }),
 
@@ -63,6 +72,9 @@ export const appRouter = router({
       where: {
         id: userId,
       },
+      select: {
+        stripeCustomerId: true,
+      }
     });
 
     if (!dbUser) throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -127,6 +139,9 @@ export const appRouter = router({
           id: fileId,
           userId,
         },
+        select: {
+          id: true,
+        },
       });
 
       if (!file) throw new TRPCError({ code: "NOT_FOUND" });
@@ -168,6 +183,9 @@ export const appRouter = router({
           id: input.fileId,
           userId: ctx.userId,
         },
+        select: {
+          uploadStatus: true,
+        },
       });
 
       if (!file) return { status: "PENDING" as const };
@@ -201,6 +219,9 @@ export const appRouter = router({
           id: input.id,
           userId,
         },
+        select: {
+          id: true,
+        },
       });
 
       if (!file) throw new TRPCError({ code: "NOT_FOUND" });
@@ -228,6 +249,10 @@ export const appRouter = router({
         where: {
           id: { in: fileIds },
           userId,
+        },
+        select: {
+          id: true,
+          name: true,
         },
       });
 
@@ -286,7 +311,12 @@ export const appRouter = router({
         orderBy: { createdAt: "asc" },
         take: limit,
         include: {
-          file: true,
+          file: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
       });
 
@@ -339,8 +369,13 @@ export const appRouter = router({
 
       const conversation = await db.conversation.findUnique({
         where: { id: conversationId },
-        include: {
-          conversationFiles: true,
+        select: {
+          userId: true,
+          conversationFiles: {
+            select: {
+              fileId: true,
+            },
+          },
         },
       });
 
@@ -364,6 +399,10 @@ export const appRouter = router({
 
       const file = await db.file.findUnique({
         where: { id: fileId },
+        select: {
+          id: true,
+          userId: true,
+        },
       });
 
       if (!file || file.userId !== userId) {
@@ -389,8 +428,13 @@ export const appRouter = router({
 
       const conversation = await db.conversation.findUnique({
         where: { id: conversationId },
-        include: {
-          conversationFiles: true,
+        select: {
+          userId: true,
+          conversationFiles: {
+            select: {
+              fileId: true,
+            },
+          },
         },
       });
 
@@ -427,13 +471,25 @@ export const appRouter = router({
 
       const conversation = await db.conversation.findUnique({
         where: { id: conversationId },
-        include: {
+        select: {
+          title: true,
+          userId: true,
           conversationFiles: {
-            include: {
-              file: true,
+            select: {
+              file: {
+                select: {
+                  name: true,
+                },
+              },
             },
           },
           messages: {
+            select: {
+              isUserMessage: true,
+              createdAt: true,
+              text: true,
+              citations: true,
+            },
             orderBy: { createdAt: "asc" },
           },
         },
@@ -498,6 +554,9 @@ ${msg.text}${citationText}`;
 
       const conversation = await db.conversation.findUnique({
         where: { id: conversationId },
+        select: {
+          userId: true,
+        },
       });
 
       if (!conversation || conversation.userId !== userId) {
@@ -529,6 +588,9 @@ ${msg.text}${citationText}`;
 
       const conversation = await db.conversation.findUnique({
         where: { id: conversationId },
+        select: {
+          userId: true,
+        },
       });
 
       if (!conversation || conversation.userId !== userId) {
@@ -552,6 +614,11 @@ ${msg.text}${citationText}`;
 
       const conversation = await db.conversation.findUnique({
         where: { id: conversationId },
+        select: {
+          userId: true,
+          shareToken: true,
+          isPublic: true,
+        },
       });
 
       if (!conversation || conversation.userId !== userId) {
@@ -628,7 +695,11 @@ ${msg.text}${citationText}`;
           ...(fileId ? { fileId } : {}),
         },
         include: {
-          file: true,
+          file: {
+            select: {
+              name: true,
+            },
+          },
         },
         orderBy: {
           createdAt: "desc",
@@ -644,6 +715,9 @@ ${msg.text}${citationText}`;
 
       const highlight = await db.highlight.findUnique({
         where: { id },
+        select: {
+          userId: true,
+        },
       });
 
       if (!highlight) {
@@ -675,6 +749,9 @@ ${msg.text}${citationText}`;
 
       const user = await db.user.findUnique({
         where: { id: userId },
+        select: {
+          tier: true,
+        },
       });
 
       if (!user) {
@@ -714,7 +791,10 @@ ${msg.text}${citationText}`;
 
       const user = await db.user.findUnique({
         where: { id: userId },
-        include: {
+        select: {
+          id: true,
+          email: true,
+          tier: true,
           _count: {
             select: {
               files: true,
@@ -828,6 +908,10 @@ ${msg.text}${citationText}`;
                     id: fileId,
                     userId: user.id,
                 },
+                select: {
+                    id: true,
+                    name: true,
+                },
             });
 
             if (!file) {
@@ -842,6 +926,9 @@ ${msg.text}${citationText}`;
                             fileId,
                         },
                     },
+                },
+                select: {
+                    id: true,
                 },
                 orderBy: {
                     createdAt: "desc",
@@ -889,6 +976,10 @@ ${msg.text}${citationText}`;
             const prevMessages = await db.message.findMany({
                 where: {
                     conversationId: conversation.id,
+                },
+                select: {
+                    isUserMessage: true,
+                    text: true,
                 },
                 orderBy: {
                     createdAt: "asc",
