@@ -1,9 +1,11 @@
 import { DEMO_DOCUMENTS, DEMO_CONVERSATIONS } from "@/lib/demo";
-import PdfRenderer from "@/components/PdfRenderer";
+import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { AlertCircle } from "lucide-react";
+import Link from "next/link";
+import AsyncPdfRenderer from "@/components/AsyncPdfRenderer";
+import { ChatWrapper } from "@/components/chat/ChatWrapper";
 
 interface PageProps {
   params: {
@@ -36,8 +38,8 @@ export default function DemoChatPage({ params }: PageProps) {
       <div className="flex flex-1 flex-col lg:flex-row">
         {/* Left: PDF viewer */}
         <div className="flex w-full flex-col border-b border-border lg:w-1/2 lg:border-b-0 lg:border-r">
-          <div className="flex-1 px-4 py-4 lg:px-6 lg:py-6">
-            <PdfRenderer url={file.url} />
+          <div className="relative h-full w-full">
+            <AsyncPdfRenderer url={file.url} />
           </div>
         </div>
 

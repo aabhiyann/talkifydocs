@@ -14,11 +14,20 @@ import {
 import { trpc } from "@/app/_trpc/client";
 import { ChatContextProvider } from "./ChatContext";
 import ChatInput from "./ChatInput";
-import Messages from "./Messages";
 import { buttonVariants, Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Progress } from "../ui/progress";
+import dynamic from "next/dynamic";
+
+const Messages = dynamic(() => import("./Messages"), {
+  loading: () => (
+    <div className="flex flex-1 flex-col items-center justify-center gap-2">
+      <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+      <p className="text-sm text-muted-foreground">Loading chat history...</p>
+    </div>
+  ),
+});
 
 import type { Citation } from "@/types/chat";
 

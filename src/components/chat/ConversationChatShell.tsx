@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { PdfRenderer } from "@/components/PdfRenderer";
 import { ChatWrapper } from "@/components/chat/ChatWrapper";
 import { FileManagementDropdown } from "./FileManagementDropdown";
 import { ChatExportMenu } from "./ChatExportMenu";
 import { cn } from "@/lib/utils";
 import type { File } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
+import AsyncPdfRenderer from "@/components/AsyncPdfRenderer";
 
 interface ConversationFile {
   file: File;
@@ -80,7 +80,7 @@ const ConversationChatShell = ({
 
         {/* PDF viewer */}
         <div className="flex-1 p-4">
-          <PdfRenderer
+          <AsyncPdfRenderer
             url={activeFile.url}
             page={currentPage}
             onPageChange={(page) => setCurrentPage(page)}
