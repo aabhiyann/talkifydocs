@@ -9,9 +9,9 @@ import {
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
 import { trpc } from "@/app/_trpc/client";
 import { memo } from "react";
+import { formatDate } from "@/lib/utils/formatters";
 
 interface ErrorLog {
   id: string;
@@ -70,7 +70,7 @@ export const ErrorLogViewer = memo(() => {
                     {log.level}
                   </Badge>
                   <span className="text-xs text-muted-foreground">
-                    {format(new Date(log.timestamp), "MMM d, HH:mm:ss")}
+                    {formatDate(log.timestamp, "MMM d, HH:mm:ss")}
                   </span>
                 </div>
                 <p className="break-words font-mono text-sm">{log.message}</p>

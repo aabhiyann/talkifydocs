@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, memo } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ interface HighlightsSearchProps {
   highlights: Highlight[];
 }
 
-export function HighlightsSearch({ highlights }: HighlightsSearchProps) {
+export const HighlightsSearch = memo(({ highlights }: HighlightsSearchProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
@@ -172,4 +172,6 @@ export function HighlightsSearch({ highlights }: HighlightsSearchProps) {
       )}
     </div>
   );
-}
+});
+
+HighlightsSearch.displayName = "HighlightsSearch";

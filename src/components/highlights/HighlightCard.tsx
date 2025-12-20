@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Trash2, Copy, ExternalLink } from "lucide-react";
 import { trpc } from "@/app/_trpc/client";
 import { useRouter } from "next/navigation";
-import { format } from "date-fns";
+import { formatDate } from "@/lib/utils/formatters";
 import ReactMarkdown from "react-markdown";
 import { Badge } from "@/components/ui/badge";
 import { Citation } from "@/types/chat";
 import { useToastOptions } from "@/hooks/useToastMutation";
+import { useToast } from "@/components/ui/use-toast";
+import { memo } from "react";
 
 interface Highlight {
   id: string;
@@ -18,7 +20,7 @@ interface Highlight {
   citations?: Citation[];
   createdAt: Date | string;
   file: {
-    id:string;
+    id: string;
     name: string;
   };
 }
@@ -27,11 +29,11 @@ interface HighlightCardProps {
   highlight: Highlight;
 }
 
-export function HighlightCard({ highlight }: HighlightCardProps) {
+export const HighlightCard = memo(({ highlight }: HighlightCardProps) => {
   const router = useRouter();
   const { toast } = useToast();
 
-  const { mutate: deleteHighlight, isLoading: isDeleting } =
+  const { mutate: deleteHighlight, isLoading: isDeleting } = 
     trpc.deleteHighlight.useMutation(
       useToastOptions({
         successTitle: "Highlight deleted",
@@ -85,7 +87,7 @@ export function HighlightCard({ highlight }: HighlightCardProps) {
                 {highlight.file.name}
               </span>
               <span>•</span>
-              <span>{format(new Date(highlight.createdAt), "MMM d, yyyy")}</span>
+              <span>{formatDate(highlight.createdAt)}</span>
             </div>
           </div>
           <Button
@@ -130,4 +132,6 @@ export function HighlightCard({ highlight }: HighlightCardProps) {
       </ModernCardContent>
     </ModernCard>
   );
-}
+});
+
+HighlightCard.displayName = "HighlightCard";

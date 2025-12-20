@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
-import { format } from "date-fns";
+import { formatDate } from "@/lib/utils/formatters";
 import { Metadata } from "next";
 import { ModernCard, ModernCardContent } from "@/components/ui/modern-card";
 import { Badge } from "@/components/ui/badge";
@@ -91,7 +91,7 @@ export default async function SharedChatPage({ params }: PageProps) {
               <strong>Messages:</strong> {conversation.messages.length}
             </div>
             <div>
-              <strong>Created:</strong> {format(new Date(conversation.createdAt), "MMMM d, yyyy")}
+              <strong>Created:</strong> {formatDate(conversation.createdAt, "MMMM d, yyyy")}
             </div>
           </div>
         </div>
@@ -141,7 +141,7 @@ export default async function SharedChatPage({ params }: PageProps) {
                             {message.isUserMessage ? "You" : "AI Assistant"}
                           </span>
                           <span className="text-xs text-muted-foreground">
-                            {format(new Date(message.createdAt), "h:mm a")}
+                            {formatDate(message.createdAt, "h:mm a")}
                           </span>
                         </div>
 

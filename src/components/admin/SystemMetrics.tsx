@@ -9,6 +9,7 @@ import {
 import { Activity, Server, Database, AlertCircle } from "lucide-react";
 import { trpc } from "@/app/_trpc/client";
 import { memo } from "react";
+import { formatBytes } from "@/lib/utils/formatters";
 
 interface SystemMetricsProps {
   initialMetrics?: {
@@ -26,17 +27,6 @@ export const SystemMetrics = memo(({ initialMetrics }: SystemMetricsProps) => {
     initialData: initialMetrics as any,
     refetchInterval: 30000,
   });
-
-  const formatBytes = (bytes: bigint | number | string | undefined) => {
-    if (bytes === undefined || bytes === null) return "0 B";
-    const numBytes = typeof bytes === "bigint" ? Number(bytes) : Number(bytes);
-    if (isNaN(numBytes)) return "0 B";
-    
-    const sizes = ["B", "KB", "MB", "GB", "TB"];
-    if (numBytes === 0) return "0 B";
-    const i = Math.floor(Math.log(numBytes) / Math.log(1024));
-    return `${(numBytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
-  };
 
   return (
     <ModernCard>
