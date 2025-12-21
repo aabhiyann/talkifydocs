@@ -18,6 +18,7 @@ import { MultiDocSelector } from "./chat/MultiDocSelector";
 import { DocumentCardSkeleton } from "./ui/skeleton";
 import { Button } from "./ui/button";
 import { SearchBar, SearchFilters } from "./SearchBar";
+import { EmptyState } from "./shared/EmptyState";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -255,26 +256,29 @@ export const Dashboard = memo(() => {
             onRetry={(fileId) => retryProcessing({ fileId })}
           />
         ) : (
-          <div className="animate-fade-in py-16 text-center">
-            <div className="animate-bounce-in mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
-              <Ghost className="h-12 w-12 text-gray-400" />
-            </div>
-            <h3 className="text-heading-lg mb-2 font-semibold text-foreground">
-              {searchQuery ? "No documents found" : "No documents yet"}
-            </h3>
-            <p className="mx-auto mb-8 max-w-md text-gray-600 dark:text-gray-400">
-              {searchQuery
-                ? `No documents match &quot;${searchQuery}&quot;. Try adjusting your search.`
-                : "Upload your first PDF document to get started with AI-powered analysis and intelligent conversations."}
-            </p>
-            <div className="space-y-4">
-              <UploadZone />
-              {searchQuery && (
-                <Button variant="outline" onClick={() => setSearchQuery("")}>
-                  Clear Search
-                </Button>
-              )}
-            </div>
+          <div className="py-16">
+            <EmptyState
+              icon={searchQuery ? Search : Ghost}
+              title={searchQuery ? "No documents found" : "No documents yet"}
+              description={
+                searchQuery
+                  ? `No documents match "${searchQuery}". Try adjusting your search.`
+                  : "Upload your first PDF document to get started with AI-powered analysis."
+              }
+              action={
+                searchQuery
+                  ? {
+                      label: "Clear Search",
+                      onClick: () => setSearchQuery(""),
+                    }
+                  : undefined
+              }
+            />
+            {!searchQuery && (
+              <div className="mt-4 flex justify-center">
+                <UploadZone />
+              </div>
+            )}
           </div>
         )}
       </div>
