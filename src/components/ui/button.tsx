@@ -3,9 +3,27 @@ import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/utils";
 import { componentStyles } from "@/styles/design-system.config";
 
+// Re-implementing buttonVariants logic to avoid breaking existing imports
+const buttonVariants = ({
+  variant = "default",
+  size = "default",
+  className = "",
+}: {
+  variant?: keyof typeof componentStyles.button.variants;
+  size?: keyof typeof componentStyles.button.sizes;
+  className?: string;
+} = {}) => {
+  return cn(
+    componentStyles.button.base,
+    componentStyles.button.variants[variant],
+    componentStyles.button.sizes[size],
+    className,
+  );
+};
+
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "ghost" | "danger" | "success" | "outline" | "destructive" | "default" | "link";
-  size?: "sm" | "md" | "lg" | "xl" | "default" | "icon";
+  variant?: keyof typeof componentStyles.button.variants;
+  size?: keyof typeof componentStyles.button.sizes;
   asChild?: boolean;
 }
 
@@ -14,12 +32,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : "button";
     return (
       <Comp
-        className={cn(
-          componentStyles.button.base,
-          componentStyles.button.variants[variant as keyof typeof componentStyles.button.variants],
-          componentStyles.button.sizes[size as keyof typeof componentStyles.button.sizes],
-          className,
-        )}
+        className={buttonVariants({ variant, size, className })}
         ref={ref}
         {...props}
       />
@@ -28,4 +41,4 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = "Button";
 
-export { Button };
+export { Button, buttonVariants };
