@@ -18,13 +18,13 @@ import type { Metadata, Viewport } from "next";
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-inter",
   display: "swap",
 });
 
 const fraunces = Fraunces({
   subsets: ["latin"],
-  variable: "--font-serif",
+  variable: "--font-fraunces",
   weight: ["600", "700"],
   display: "swap",
 });
