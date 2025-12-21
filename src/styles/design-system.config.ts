@@ -267,5 +267,8 @@ export const componentStyles = {
     user: "relative rounded-2xl rounded-tr-none bg-primary-600 px-4 py-3 text-white shadow-sm",
     assistant: "relative rounded-2xl rounded-tl-none bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 px-4 py-3 text-gray-900 dark:text-gray-100 shadow-sm",
   },
+  skeleton: {
+    base: "animate-pulse rounded bg-gray-200 dark:bg-gray-800",
+  },
 }
 

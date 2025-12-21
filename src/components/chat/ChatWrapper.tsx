@@ -18,13 +18,15 @@ import { buttonVariants, Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Progress } from "../ui/progress";
+import { MessageSkeleton } from "../ui/skeleton";
 import dynamic from "next/dynamic";
 
 const Messages = dynamic(() => import("./Messages"), {
   loading: () => (
-    <div className="flex flex-1 flex-col items-center justify-center gap-2">
-      <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-      <p className="text-sm text-muted-foreground">Loading chat history...</p>
+    <div className="flex flex-1 flex-col gap-4 p-4">
+      <MessageSkeleton />
+      <MessageSkeleton />
+      <MessageSkeleton />
     </div>
   ),
 });
@@ -50,20 +52,11 @@ export const ChatWrapper = memo(({ fileId, onCitationClick }: ChatWrapperProps) 
   if (isLoading)
     return (
       <div className="relative flex min-h-screen flex-col bg-gradient-to-br from-background via-background to-background">
-        <div className="flex flex-1 flex-col items-center justify-center">
-          <Card className="mx-4 w-full max-w-md">
-            <CardContent className="p-8 text-center">
-              <div className="dark:bg-primary-900/20 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
-                <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
-              </div>
-              <h3 className="text-heading-md mb-2 font-semibold text-foreground">
-                Loading your document
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                We&apos;re preparing your PDF for analysis...
-              </p>
-            </CardContent>
-          </Card>
+        <div className="flex flex-1 flex-col gap-4 p-4">
+          <MessageSkeleton />
+          <MessageSkeleton />
+          <MessageSkeleton />
+          <MessageSkeleton />
         </div>
         <div className="p-4">
           <ChatInput isDisabled />
