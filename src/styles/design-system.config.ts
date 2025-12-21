@@ -240,5 +240,20 @@ export const componentStyles = {
     error: "border-error-500 focus-visible:ring-error-500",
     disabled: "disabled:cursor-not-allowed disabled:opacity-50",
   },
+  badge: {
+    base: "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+    variants: {
+      success: "border-transparent bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-400",
+      error: "border-transparent bg-error-50 text-error-700 dark:bg-error-900/30 dark:text-error-400",
+      warning: "border-transparent bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400",
+      info: "border-transparent bg-info-50 text-info-700 dark:bg-info-900/30 dark:text-info-400",
+      neutral: "border-transparent bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
+      accent: "border-transparent bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400",
+      outline: "text-foreground",
+      secondary: "border-transparent bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
+      destructive: "border-transparent bg-error-50 text-error-700 dark:bg-error-900/30 dark:text-error-400",
+      default: "border-transparent bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400",
+    },
+  },
 }
 
