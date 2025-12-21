@@ -1,3 +1,5 @@
+"use client";
+
 import { DocumentCard } from "./DocumentCard";
 import { memo } from "react";
 import { FileSummary } from "@/types";

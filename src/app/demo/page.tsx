@@ -1,13 +1,11 @@
+"use client";
+
 import { DEMO_DOCUMENTS } from "@/lib/demo";
 import { DocumentGrid } from "@/components/dashboard/DocumentGrid";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-export const metadata = {
-  title: "Demo - TalkifyDocs",
-  description: "Try TalkifyDocs with example documents",
-};
-
+// Metadata cannot be exported from client components
 // Adapt demo documents to the FileSummary shape expected by DocumentGrid
 const demoFiles = DEMO_DOCUMENTS.map((doc) => ({
   id: doc.id,

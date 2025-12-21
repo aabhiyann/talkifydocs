@@ -255,5 +255,13 @@ export const componentStyles = {
       default: "border-transparent bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400",
     },
   },
+  documentCard: {
+    container: "group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary-300 hover:shadow-xl dark:border-gray-800 dark:bg-gray-900 dark:hover:border-primary-700 cursor-pointer",
+    thumbnail: "relative aspect-[16/10] w-full overflow-hidden bg-gray-100 dark:bg-gray-800",
+    thumbnailImage: "h-full w-full object-cover transition-transform duration-500 group-hover:scale-110",
+    content: "flex flex-1 flex-col p-4",
+    title: "text-heading-sm line-clamp-1 font-serif font-semibold text-gray-900 transition-colors duration-200 group-hover:text-primary-600 dark:text-gray-100 dark:group-hover:text-primary-400",
+    meta: "mt-2 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400",
+  },
 }
 
