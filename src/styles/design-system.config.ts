@@ -224,5 +224,15 @@ export const componentStyles = {
       icon: "h-10 w-10",
     },
   },
+  card: {
+    base: "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm transition-all duration-200",
+    rounded: "rounded-xl",
+    padding: {
+      sm: "p-4",
+      md: "p-6",
+      lg: "p-8",
+    },
+    hover: "hover:shadow-lg hover:-translate-y-1 hover:border-primary-200 dark:hover:border-primary-800",
+  },
 }
 
