@@ -2,97 +2,56 @@
 
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import Link from "next/link";
-import { ArrowRight, Sparkles, Zap, Shield } from "lucide-react";
-import { marketing } from "@/content/marketing";
-import { buttonVariants } from "./ui/button";
+import { ArrowRight, Sparkles, Play } from "lucide-react";
+import { Button } from "./ui/button";
 
 const HeroSection = () => {
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-20">
-      <div className="absolute inset-0 -z-10 bg-background" />
-
+      {/* Background grid pattern */}
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+      
       <MaxWidthWrapper className="relative z-10 max-w-6xl">
-        <div className="space-y-8 text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-2">
-            <Sparkles className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium text-primary">Now with Groq & Gemini</span>
+        <div className="text-center">
+          {/* Badge */}
+          <div className="mb-8 inline-flex animate-in fade-in-50 slide-in-from-top-3 duration-500 items-center gap-2 rounded-full border border-primary-200 bg-primary-50 px-4 py-2 dark:border-primary-800 dark:bg-primary-900/20">
+            <Sparkles className="h-4 w-4 text-primary-600" />
+            <span className="text-sm font-medium text-primary-600 dark:text-primary-400">
+              Now with GPT-4o and Claude 3.5 Sonnet
+            </span>
           </div>
 
-          <div className="space-y-6">
-            <h1 className="mb-6 font-serif text-6xl font-bold tracking-tight text-foreground md:text-7xl">
-              AI Chat With a Brain.
-            </h1>
+          {/* Main headline - Large serif font */}
+          <h1 className="mb-6 animate-in fade-in-50 slide-in-from-bottom-4 duration-700 font-serif text-6xl font-bold text-gray-900 dark:text-white md:text-7xl lg:text-8xl text-balance">
+            AI Chat With a Brain.
+          </h1>
 
-            <p className="mx-auto mb-8 max-w-2xl text-xl leading-relaxed text-muted-foreground">
-              Upload your PDFs and chat with them using advanced AI. Get instant answers with
-              citations.
-            </p>
+          {/* Subheadline */}
+          <p className="mx-auto mb-10 max-w-3xl animate-in fade-in-50 slide-in-from-bottom-5 delay-100 duration-700 text-xl text-gray-600 dark:text-gray-400 md:text-2xl">
+            Upload your PDFs and have intelligent conversations with them. 
+            Get instant answers with accurate citations.
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="mb-16 flex flex-col justify-center gap-4 animate-in fade-in-50 slide-in-from-bottom-6 delay-200 duration-700 sm:flex-row">
+            <Button size="xl" variant="primary" asChild>
+              <Link href="/sign-up">
+                Try it Free
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
+            <Button size="xl" variant="secondary" asChild>
+              <Link href="/demo">
+                Watch Demo
+                <Play className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
           </div>
 
-          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link
-              href="/dashboard"
-              className={buttonVariants({
-                size: "lg",
-                className: "bg-primary text-primary-foreground",
-              })}
-            >
-              {marketing.hero.ctas.primary}
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-
-            <Link
-              href="/demo"
-              className={buttonVariants({
-                variant: "outline",
-                size: "lg",
-              })}
-            >
-              Try Demo
-            </Link>
-
-            <Link
-              href="/pricing"
-              className={buttonVariants({
-                variant: "secondary",
-                size: "lg",
-              })}
-            >
-              {marketing.hero.ctas.secondary}
-            </Link>
-          </div>
-
-          <div className="mt-20 grid grid-cols-1 gap-8 md:grid-cols-3">
-            <div className="rounded-xl border border-border bg-card p-8">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-secondary">
-                <Zap className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="mb-3 font-serif text-xl font-semibold">Lightning Fast</h3>
-              <p className="text-muted-foreground">
-                Get instant answers from your documents with our advanced AI processing
-              </p>
-            </div>
-
-            <div className="rounded-xl border border-border bg-card p-8">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-secondary">
-                <Shield className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="mb-3 font-serif text-xl font-semibold">Secure & Private</h3>
-              <p className="text-muted-foreground">
-                Your documents are encrypted and processed securely with enterprise-grade security
-              </p>
-            </div>
-
-            <div className="rounded-xl border border-border bg-card p-8">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-secondary">
-                <Sparkles className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="mb-3 font-serif text-xl font-semibold">Smart Analysis</h3>
-              <p className="text-muted-foreground">
-                Advanced AI understands context and provides intelligent, accurate responses
-              </p>
-            </div>
-          </div>
+          {/* Social proof */}
+          <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+            Trusted by researchers, students, and professionals
+          </p>
         </div>
       </MaxWidthWrapper>
     </section>
