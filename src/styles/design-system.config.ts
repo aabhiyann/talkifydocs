@@ -263,5 +263,9 @@ export const componentStyles = {
     title: "text-heading-sm line-clamp-1 font-serif font-semibold text-gray-900 transition-colors duration-200 group-hover:text-primary-600 dark:text-gray-100 dark:group-hover:text-primary-400",
     meta: "mt-2 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400",
   },
+  chatBubble: {
+    user: "relative rounded-2xl rounded-tr-none bg-primary-600 px-4 py-3 text-white shadow-sm",
+    assistant: "relative rounded-2xl rounded-tl-none bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 px-4 py-3 text-gray-900 dark:text-gray-100 shadow-sm",
+  },
 }
 

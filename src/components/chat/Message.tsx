@@ -3,12 +3,12 @@ import { ExtendedMessage } from "@/types/message";
 import ReactMarkdown from "react-markdown";
 import { formatDate } from "@/lib/utils/formatters";
 import { forwardRef, memo } from "react";
-import { Icons } from "../Icons";
-import { Button } from "../ui/button";
-import { Save } from "lucide-react";
+import { User, Sparkles, Copy, Save } from "lucide-react";
+import { componentStyles } from "@/styles/design-system.config";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "../ui/use-toast";
 import { Citation } from "@/types/chat";
+import { Button } from "../ui/button";
 
 interface MessageProps {
   message: ExtendedMessage;
@@ -57,132 +57,139 @@ const Message = memo(
         });
       };
 
+      const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text);
+        toast({
+          title: "Copied to clipboard",
+          description: "Message content has been copied",
+        });
+      };
+
+      const isUser = message.isUserMessage;
+
       return (
         <div
           ref={ref}
-          className={cn("flex items-end", {
-            "justify-end": message.isUserMessage,
-          })}
+          className={cn(
+            "group flex gap-3 animate-in fade-in-50 slide-in-from-bottom-2 duration-300",
+            isUser && "flex-row-reverse"
+          )}
         >
+          {/* Avatar */}
           <div
-            className={cn("relative flex aspect-square h-6 w-6 items-center justify-center", {
-              "order-2 rounded-sm bg-primary-600": message.isUserMessage,
-              "order-1 rounded-sm bg-gray-800": !message.isUserMessage,
-              invisible: isNextMessageSamePerson,
-            })}
+            className={cn(
+              "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full",
+              isUser 
+                ? "bg-primary-600" 
+                : "bg-gradient-to-br from-purple-500 to-blue-500",
+              isNextMessageSamePerson && "invisible"
+            )}
           >
-            {message.isUserMessage ? (
-              <Icons.user className="h-3/4 w-3/4 fill-secondary-50 text-secondary-50" />
+            {isUser ? (
+              <User className="h-5 w-5 text-white" />
             ) : (
-              <Icons.logo className="h-3/4 w-3/4 fill-gray-300" />
+              <Sparkles className="h-5 w-5 text-white" />
             )}
           </div>
 
+          {/* Message content */}
           <div
-            className={cn("mx-2 flex max-w-md flex-col space-y-2 text-base", {
-              "order-1 items-end": message.isUserMessage,
-              "order-2 items-start": !message.isUserMessage,
-            })}
+            className={cn(
+              "flex max-w-[80%] flex-col",
+              isUser ? "items-end" : "items-start"
+            )}
           >
             <div
-              className={cn("inline-block rounded-2xl px-4 py-3 shadow-sm", {
-                "ml-auto bg-primary-600 text-white": message.isUserMessage,
-                "mr-auto bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100":
-                  !message.isUserMessage,
-                "rounded-tr-sm": message.isUserMessage,
-                "rounded-tl-sm": !message.isUserMessage,
-              })}
+              className={cn(
+                isUser 
+                  ? componentStyles.chatBubble.user 
+                  : componentStyles.chatBubble.assistant
+              )}
             >
-              {typeof message.text === "string" ? (
-                <ReactMarkdown
-                  className={cn("prose", {
-                    "text-secondary-50": message.isUserMessage,
-                  })}
-                >
-                  {message.text}
-                </ReactMarkdown>
-              ) : (
-                message.text
-              )}
+              <div className="prose prose-sm dark:prose-invert max-w-none">
+                {typeof message.text === "string" ? (
+                  <ReactMarkdown
+                    className={cn({
+                      "text-white": isUser,
+                    })}
+                  >
+                    {message.text}
+                  </ReactMarkdown>
+                ) : (
+                  message.text
+                )}
+              </div>
 
-              {/* Optional citations / sources */}
+              {/* Citations */}
               {message.citations && message.citations.length > 0 && (
-                <div
-                  className={cn(
-                    "mt-2 flex flex-wrap gap-1 text-xs",
-                    message.isUserMessage
-                      ? "text-primary-100"
-                      : "text-gray-600 dark:text-gray-300",
-                  )}
-                >
-                  <span className="mr-1 whitespace-nowrap font-medium">Sources:</span>
-                  {message.citations.map((c, idx: number) => {
-                    if (!c) return null;
-                    const page = c.pageNumber;
-                    const labelParts = [
-                      c.fileName,
-                      page ? `p.${page}` : null,
-                    ].filter(Boolean);
-                    const label = labelParts.join(" ");
+                <div className="mt-3 border-t border-white/10 pt-3 text-xs opacity-70 dark:border-gray-700">
+                  <span className="font-medium">Sources:</span>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {message.citations.map((c, idx: number) => {
+                      if (!c) return null;
+                      const page = c.pageNumber;
+                      const label = [c.fileName, page ? `p.${page}` : null]
+                        .filter(Boolean)
+                        .join(" ");
 
-                    const handleClick = () => {
-                      if (!onCitationClick || !c.fileId) return;
-                      onCitationClick({
-                        fileId: c.fileId,
-                        page,
-                        citation: c,
-                      });
-                    };
-
-                    return (
-                      <button
-                        key={`${(c.fileId as string) || idx}-${page}`}
-                        type="button"
-                        onClick={handleClick}
-                        className={cn(
-                          "rounded px-1 py-0.5 underline-offset-2 hover:underline",
-                          !message.isUserMessage && "hover:bg-gray-100 dark:hover:bg-gray-800",
-                          message.isUserMessage && "hover:bg-primary-700/60 text-primary-50",
-                        )}
-                      >
-                        {label || `Source ${idx + 1}`}
-                      </button>
-                    );
-                  })}
+                      return (
+                        <button
+                          key={`${(c.fileId as string) || idx}-${page}`}
+                          type="button"
+                          onClick={() =>
+                            onCitationClick?.({
+                              fileId: c.fileId!,
+                              page,
+                              citation: c,
+                            })
+                          }
+                          className="rounded px-1 py-0.5 underline-offset-2 hover:underline hover:bg-black/10 dark:hover:bg-white/10"
+                        >
+                          {label || `Source ${idx + 1}`}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
 
-              {message.id !== "loading-message" ? (
-                <div className="mt-2 flex items-center justify-between">
-                  <div className="select-none text-xs">
+              {/* Actions */}
+              {!isUser && message.id !== "loading-message" && (
+                <div className="mt-2 flex items-center gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+                  <button
+                    onClick={() => copyToClipboard(message.text as string)}
+                    className="rounded p-1 transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+                    title="Copy to clipboard"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </button>
+                  {previousUserMessage && fileId && typeof message.text === "string" && (
+                    <button
+                      onClick={handleSaveHighlight}
+                      disabled={isSaving}
+                      className="rounded p-1 transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+                      title="Save as highlight"
+                    >
+                      <Save className={cn("h-4 w-4", isSaving && "animate-pulse")} />
+                    </button>
+                  )}
+                  <span className="ml-auto select-none text-[10px] opacity-50">
                     {formatDate(message.createdAt, "HH:mm")}
-                  </div>
-                  {!message.isUserMessage &&
-                    previousUserMessage &&
-                    fileId &&
-                    typeof message.text === "string" && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleSaveHighlight}
-                        disabled={isSaving}
-                        className={cn(
-                          "h-7 px-2 text-xs",
-                          "text-muted-foreground hover:text-foreground",
-                        )}
-                      >
-                        <Save className="mr-1 h-3 w-3" />
-                        {isSaving ? "Saving..." : "Save"}
-                      </Button>
-                    )}
+                  </span>
                 </div>
-              ) : null}
+              )}
+              
+              {isUser && (
+                <div className="mt-1 select-none text-[10px] opacity-50 text-right">
+                  {formatDate(message.createdAt, "HH:mm")}
+                </div>
+              )}
             </div>
           </div>
         </div>
       );
-    },
-  ),
+    }
+  )
 );
 
 Message.displayName = "Message";
