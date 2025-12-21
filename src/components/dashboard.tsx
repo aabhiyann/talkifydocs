@@ -12,6 +12,7 @@ import {
 
 import { trpc } from "@/app/_trpc/client";
 import { UploadZone } from "./dashboard/UploadZone";
+import UploadButton from "./UploadButton";
 import { DocumentGrid } from "./dashboard/DocumentGrid";
 import { MultiDocSelector } from "./chat/MultiDocSelector";
 import { DocumentCardSkeleton } from "./ui/skeleton";
@@ -151,7 +152,7 @@ export const Dashboard = memo(() => {
               {files && files.length >= 2 && (
                 <MultiDocSelector files={filteredAndSortedFiles.filter((f) => f.uploadStatus === "SUCCESS")} />
               )}
-              <UploadZone />
+              <UploadButton />
             </div>
           </div>
 
