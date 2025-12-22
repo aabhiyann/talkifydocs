@@ -203,25 +203,25 @@ export const designSystem = {
 
 export const componentStyles = {
   button: {
-    base: "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+    base: "inline-flex items-center justify-center whitespace-nowrap font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:hover:translate-y-0",
     variants: {
-      primary: "bg-primary-600 text-white hover:bg-primary-700 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0",
-      secondary: "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700",
-      ghost: "bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800",
+      primary: "bg-primary-600 text-white hover:bg-primary-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 shadow-sm",
+      secondary: "bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow active:translate-y-0",
+      ghost: "bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200",
       danger: "bg-error-500 text-white hover:bg-error-600 hover:shadow-lg hover:-translate-y-0.5",
       success: "bg-success-600 text-white hover:bg-success-700 hover:shadow-lg hover:-translate-y-0.5",
       outline: "border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-700",
       destructive: "bg-error-500 text-white hover:bg-error-600 hover:shadow-lg hover:-translate-y-0.5",
-      default: "bg-primary-600 text-white hover:bg-primary-700 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0",
+      default: "bg-primary-600 text-white hover:bg-primary-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 shadow-sm",
       link: "text-primary-600 underline-offset-4 hover:underline",
     },
     sizes: {
-      sm: "h-9 rounded-lg px-4",
-      md: "h-10 px-6 py-3",
+      sm: "h-9 rounded-lg px-4 text-sm",
+      md: "h-10 px-6 py-3 rounded-xl text-sm",
       lg: "h-12 rounded-xl px-8 text-base",
       xl: "h-14 rounded-2xl px-10 text-lg",
-      default: "h-10 px-6 py-3",
-      icon: "h-10 w-10",
+      default: "h-10 px-6 py-3 rounded-xl text-sm",
+      icon: "h-10 w-10 rounded-lg",
     },
   },
   card: {
