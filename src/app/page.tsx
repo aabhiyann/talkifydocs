@@ -128,7 +128,7 @@ export default function Home() {
                   </Link>{" "}
                   for advanced features.
                 </p>
-              </div>
+              </Card>
             </div>
 
             <div className="group relative">
@@ -149,7 +149,7 @@ export default function Home() {
                   Simply drag and drop your PDF document. Our advanced AI will instantly process and
                   understand your content for intelligent analysis.
                 </p>
-              </div>
+              </Card>
             </div>
 
             <div className="group relative">
@@ -171,7 +171,7 @@ export default function Home() {
                   understands context and provides intelligent, relevant responses from your
                   documents.
                 </p>
-              </div>
+              </Card>
             </div>
           </div>
 

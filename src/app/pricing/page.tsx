@@ -196,7 +196,7 @@ const Page = async () => {
                       </Link>
                     )}
                   </div>
-                </div>
+                </Card>
               );
             })}
           </TooltipProvider>

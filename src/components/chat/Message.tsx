@@ -167,10 +167,6 @@ const Message = memo(
     }
   )
 );
-      );
-    }
-  )
-);
 
 Message.displayName = "Message";
 
