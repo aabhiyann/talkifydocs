@@ -264,8 +264,8 @@ export const componentStyles = {
     meta: "mt-2 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400",
   },
   chatBubble: {
-    user: "relative rounded-2xl rounded-tr-none bg-primary-600 px-4 py-3 text-white shadow-sm",
-    assistant: "relative rounded-2xl rounded-tl-none bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 px-4 py-3 text-gray-900 dark:text-gray-100 shadow-sm",
+    user: "relative rounded-2xl rounded-tr-md bg-primary-600 px-4 py-3 text-white shadow-sm animate-in slide-in-from-right-2 duration-300",
+    assistant: "relative rounded-2xl rounded-tl-md bg-gray-100 dark:bg-gray-800 px-4 py-3 text-gray-900 dark:text-gray-100 shadow-sm animate-in slide-in-from-left-2 duration-300",
   },
   skeleton: {
     base: "animate-pulse rounded bg-gray-200 dark:bg-gray-800",
