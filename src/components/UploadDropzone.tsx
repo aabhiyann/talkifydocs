@@ -7,6 +7,8 @@ import Dropzone, { FileRejection } from "react-dropzone";
 import { Cloud, File, Files, Loader2, X, CheckCircle2, AlertCircle } from "lucide-react";
 import { Progress } from "./ui/progress";
 import { useToast } from "./ui/use-toast";
+import Image from "next/image";
+import { TurtleAvatar } from "./chat/TurtleAvatar";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -47,10 +49,10 @@ const UploadDropzone = () => {
 
       for (const file of acceptedFiles) {
         const uploadId = addUpload(file);
-        
+
         try {
           updateUpload(uploadId, { status: "uploading" });
-          
+
           const newBlob = await upload(file.name, file, {
             access: "public",
             handleUploadUrl: "/api/upload/blob",
@@ -61,12 +63,12 @@ const UploadDropzone = () => {
           });
 
           updateUpload(uploadId, { status: "processing", progress: 100 });
-          
+
           // Since we can't easily get the DB ID back from Vercel Blob's client upload 
           // (it's created in a background webhook), we'll just mark it as success 
           // after a short delay or let the user see it in the dashboard.
           // For single file uploads, we might want to redirect eventually.
-          
+
           setTimeout(() => {
             updateUpload(uploadId, { status: "success" });
             if (acceptedFiles.length === 1) {
@@ -84,7 +86,7 @@ const UploadDropzone = () => {
           });
         }
       }
-      
+
       setIsUploading(false);
     },
     [addUpload, updateUpload, getAllUploads, toast],
@@ -105,19 +107,23 @@ const UploadDropzone = () => {
         {({ getRootProps, getInputProps, isDragActive }) => (
           <div
             {...getRootProps()}
-            className={`relative cursor-pointer rounded-xl border-2 border-dashed transition-all duration-300 ${
-              isDragActive
+            className={`relative cursor-pointer rounded-xl border-2 border-dashed transition-all duration-300 ${isDragActive
                 ? "dark:bg-primary-900/10 border-primary-400 bg-primary-50"
                 : hasUploads
                   ? "border-primary-300 bg-slate-50 dark:bg-slate-900/10"
                   : "dark:hover:bg-gray-800/50 border-gray-300 hover:border-primary-400 hover:bg-gray-50 dark:border-gray-600 dark:hover:border-primary-500"
-            }`}
+              }`}
           >
             <div className="p-8">
               {!hasUploads ? (
                 <div className="flex flex-col items-center justify-center space-y-4">
-                  <div className="dark:bg-primary-900/20 flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
-                    <Cloud className="h-8 w-8 text-primary-600 dark:text-primary-400" />
+                  <div className="relative h-24 w-24">
+                    <Image
+                      src="/brand/illustrations/upload-docs.png"
+                      alt="Upload Documents"
+                      fill
+                      className="object-contain"
+                    />
                   </div>
                   <div className="space-y-2 text-center">
                     <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
@@ -155,24 +161,20 @@ const UploadDropzone = () => {
                         <CardContent className="p-3">
                           <div className="flex items-center space-x-3">
                             <div
-                              className={`flex h-10 w-10 items-center justify-center rounded-lg ${
-                                upload.status === "success"
-                                  ? "bg-green-100 dark:bg-green-900/20"
-                                  : upload.status === "error"
-                                    ? "bg-red-100 dark:bg-red-900/20"
-                                    : "dark:bg-primary-900/20 bg-primary-100"
-                              }`}
+                              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg"
                             >
-                              {upload.status === "success" ? (
-                                <CheckCircle2 className="h-5 w-5 text-green-600" />
-                              ) : upload.status === "error" ? (
-                                <AlertCircle className="h-5 w-5 text-red-600" />
-                              ) : upload.status === "uploading" ||
-                                upload.status === "processing" ? (
-                                <Loader2 className="h-5 w-5 animate-spin text-primary-600" />
-                              ) : (
-                                <File className="h-5 w-5 text-primary-600" />
-                              )}
+                              <TurtleAvatar
+                                size="sm"
+                                state={
+                                  upload.status === "success"
+                                    ? "happy"
+                                    : upload.status === "error"
+                                      ? "neutral"
+                                      : upload.status === "processing"
+                                        ? "thinking"
+                                        : "neutral"
+                                }
+                              />
                             </div>
 
                             <div className="min-w-0 flex-1">

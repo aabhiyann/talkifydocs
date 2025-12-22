@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useRef, memo, useMemo } from "react";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 import { useIntersection } from "@mantine/hooks";
-import { Loader2, MessageSquare, Bot, User, ArrowUp } from "lucide-react";
+import { Loader2, MessageSquare, User, ArrowUp } from "lucide-react";
 
 import { trpc } from "@/app/_trpc/client";
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
 import Message from "./Message";
+import { TurtleAvatar } from "./TurtleAvatar";
 import { ChatContext } from "./ChatContext";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
@@ -184,15 +186,20 @@ export const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
               >
                 {/* Avatar */}
                 <div
-                  className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full ${message.isUserMessage
-                    ? "bg-primary-600 text-white"
-                    : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
-                    }`}
+                  className={cn(
+                    "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full",
+                    message.isUserMessage
+                      ? "bg-primary-600 text-white"
+                      : "bg-transparent"
+                  )}
                 >
                   {message.isUserMessage ? (
                     <User className="h-4 w-4" />
                   ) : (
-                    <Bot className="h-4 w-4" />
+                    <TurtleAvatar
+                      size="sm"
+                      state={message.id === "loading-message" ? "thinking" : "neutral"}
+                    />
                   )}
                 </div>
 
