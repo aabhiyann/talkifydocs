@@ -53,12 +53,20 @@ export default function Home() {
           {/* Steps */}
           <div className="mb-16 grid grid-cols-1 gap-8 md:grid-cols-3">
             <div className="group relative">
-              <div className="rounded-xl border border-border bg-card p-8 text-center">
+              <div className="rounded-xl border border-border bg-card p-8 text-center transition-all duration-300 hover:shadow-lg">
                 <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <span className="text-2xl font-bold">1</span>
                 </div>
+                <div className="relative mx-auto mb-6 h-32 w-32">
+                  <Image
+                    src="/brand/icons/icon-512.png"
+                    alt="Create Account"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
                 <h3 className="mb-4 text-xl font-semibold text-foreground">Create Account</h3>
-                <p className="mb-4 text-muted-foreground">
+                <p className="mb-4 text-muted-foreground leading-relaxed">
                   Sign up for a free account and start analyzing documents immediately. Upgrade to
                   our{" "}
                   <Link href="/pricing" className="text-primary hover:underline">
@@ -70,12 +78,20 @@ export default function Home() {
             </div>
 
             <div className="group relative">
-              <div className="rounded-xl border border-border bg-card p-8 text-center">
+              <div className="rounded-xl border border-border bg-card p-8 text-center transition-all duration-300 hover:shadow-lg">
                 <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <span className="text-2xl font-bold">2</span>
                 </div>
+                <div className="relative mx-auto mb-6 h-32 w-32">
+                  <Image
+                    src="/brand/illustrations/upload-docs.png"
+                    alt="Upload Document"
+                    fill
+                    className="object-contain transition-transform duration-300 group-hover:scale-110"
+                  />
+                </div>
                 <h3 className="mb-4 text-xl font-semibold text-foreground">Upload Document</h3>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground leading-relaxed">
                   Simply drag and drop your PDF document. Our advanced AI will instantly process and
                   understand your content for intelligent analysis.
                 </p>
@@ -83,12 +99,20 @@ export default function Home() {
             </div>
 
             <div className="group relative">
-              <div className="rounded-xl border border-border bg-card p-8 text-center">
+              <div className="rounded-xl border border-border bg-card p-8 text-center transition-all duration-300 hover:shadow-lg">
                 <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <span className="text-2xl font-bold">3</span>
                 </div>
+                <div className="relative mx-auto mb-6 h-32 w-32">
+                  <Image
+                    src="/brand/illustrations/learning.png"
+                    alt="Ask & Get Answers"
+                    fill
+                    className="object-contain transition-transform duration-300 group-hover:scale-110"
+                  />
+                </div>
                 <h3 className="mb-4 text-xl font-semibold text-foreground">Ask & Get Answers</h3>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground leading-relaxed">
                   Ask questions in natural language and get instant, accurate answers. Our AI
                   understands context and provides intelligent, relevant responses from your
                   documents.
