@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
@@ -53,8 +54,13 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
         <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
           <div className="w-full max-w-lg rounded-xl bg-white p-8 text-center shadow-xl">
             <div className="flex flex-col items-center space-y-6">
-              <div className="flex h-20 w-20 animate-pulse items-center justify-center rounded-full bg-red-100">
-                <AlertTriangle className="h-10 w-10 text-red-600" />
+              <div className="relative h-32 w-32">
+                <Image
+                  src="/brand/states/error.png"
+                  alt="Something went wrong"
+                  fill
+                  className="object-contain"
+                />
               </div>
 
               <div className="space-y-3">

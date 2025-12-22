@@ -37,9 +37,9 @@ export const metadata: Metadata = {
   authors: [{ name: "TalkifyDocs Team" }],
   metadataBase: new URL("https://talkifydocs.com"),
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/favicon.ico",
+    icon: "/brand/icons/favicon.ico",
+    shortcut: "/brand/icons/favicon.ico",
+    apple: "/brand/icons/apple-touch-icon.png",
   },
   openGraph: {
     title: "TalkifyDocs - AI-Powered Document Analysis",
@@ -48,13 +48,13 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://talkifydocs.com",
     siteName: "TalkifyDocs",
-    images: [{ url: "/thumbnail.png", width: 1200, height: 630, alt: "TalkifyDocs" }],
+    images: [{ url: "/brand/social/og-image.png", width: 1200, height: 630, alt: "TalkifyDocs" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "TalkifyDocs - AI-Powered Document Analysis",
     description: "Upload, analyze, and chat with your PDF documents using advanced AI technology.",
-    images: ["/thumbnail.png"],
+    images: ["/brand/social/og-image.png"],
   },
 };
 

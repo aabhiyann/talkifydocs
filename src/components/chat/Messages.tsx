@@ -1,10 +1,13 @@
 import React, { useContext, useEffect, useRef, memo, useMemo } from "react";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
 import { useIntersection } from "@mantine/hooks";
-import { Loader2, MessageSquare, Bot, User, ArrowUp } from "lucide-react";
+import { Loader2, MessageSquare, User, ArrowUp } from "lucide-react";
 
 import { trpc } from "@/app/_trpc/client";
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
 import Message from "./Message";
+import { TurtleAvatar } from "./TurtleAvatar";
 import { ChatContext } from "./ChatContext";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
@@ -44,9 +47,16 @@ export const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
       id: "loading-message",
       isUserMessage: false,
       text: (
-        <div className="flex items-center space-x-2 text-gray-500">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          <span>AI is thinking...</span>
+        <div className="flex flex-col items-center space-y-3 py-4">
+          <div className="relative h-24 w-24 animate-pulse">
+            <Image
+              src="/brand/states/processing.png"
+              alt="AI is thinking"
+              fill
+              className="object-contain"
+            />
+          </div>
+          <span className="text-sm text-gray-500">AI is thinking...</span>
         </div>
       ),
     };
@@ -111,8 +121,13 @@ export const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
     return (
       <div className="flex flex-1 items-center justify-center p-4">
         <div className="mx-auto max-w-md text-center">
-          <div className="dark:bg-primary-900/20 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
-            <MessageSquare className="h-8 w-8 text-primary-600" />
+          <div className="relative mx-auto mb-6 h-32 w-32">
+            <Image
+              src="/brand/states/empty-relaxing.png"
+              alt="Start a conversation"
+              fill
+              className="object-contain"
+            />
           </div>
           <h3 className="text-heading-md mb-2 font-semibold text-foreground">
             Start a conversation
@@ -166,22 +181,25 @@ export const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
               className={`flex ${message.isUserMessage ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`flex max-w-[80%] items-start space-x-3 ${
-                  message.isUserMessage ? "flex-row-reverse space-x-reverse" : ""
-                }`}
+                className={`flex max-w-[80%] items-start space-x-3 ${message.isUserMessage ? "flex-row-reverse space-x-reverse" : ""
+                  }`}
               >
                 {/* Avatar */}
                 <div
-                  className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full ${
+                  className={cn(
+                    "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full",
                     message.isUserMessage
                       ? "bg-primary-600 text-white"
-                      : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
-                  }`}
+                      : "bg-transparent"
+                  )}
                 >
                   {message.isUserMessage ? (
                     <User className="h-4 w-4" />
                   ) : (
-                    <Bot className="h-4 w-4" />
+                    <TurtleAvatar
+                      size="sm"
+                      state={message.id === "loading-message" ? "thinking" : "neutral"}
+                    />
                   )}
                 </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, memo, useCallback, useMemo } from "react";
+import Image from "next/image";
 import {
   Ghost,
   FileText,
@@ -119,8 +120,13 @@ export const Dashboard = memo(() => {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
           <div className="text-center">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
-              <FileText className="h-10 w-10 text-red-600 dark:text-red-400" />
+            <div className="relative mx-auto mb-6 h-32 w-32">
+              <Image
+                src="/brand/states/error.png"
+                alt="Error loading documents"
+                fill
+                className="object-contain"
+              />
             </div>
             <h3 className="text-heading-md mb-2 font-semibold text-foreground">
               Something went wrong
@@ -268,9 +274,9 @@ export const Dashboard = memo(() => {
               action={
                 searchQuery
                   ? {
-                      label: "Clear Search",
-                      onClick: () => setSearchQuery(""),
-                    }
+                    label: "Clear Search",
+                    onClick: () => setSearchQuery(""),
+                  }
                   : undefined
               }
             />
