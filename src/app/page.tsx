@@ -4,6 +4,7 @@ import Image from "next/image";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import HeroSection from "@/components/HeroSection";
 import { marketing } from "@/content/marketing";
+import { Card } from "@/components/ui/card";
 
 export default function Home() {
   return (
@@ -53,7 +54,7 @@ export default function Home() {
           {/* Steps */}
           <div className="mb-16 grid grid-cols-1 gap-8 md:grid-cols-3">
             <div className="group relative">
-              <div className="rounded-xl border border-border bg-card p-8 text-center transition-all duration-300 hover:shadow-lg">
+              <Card className="bg-card p-8 text-center" hover={true}>
                 <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <span className="text-2xl font-bold">1</span>
                 </div>
@@ -78,7 +79,7 @@ export default function Home() {
             </div>
 
             <div className="group relative">
-              <div className="rounded-xl border border-border bg-card p-8 text-center transition-all duration-300 hover:shadow-lg">
+              <Card className="bg-card p-8 text-center" hover={true}>
                 <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <span className="text-2xl font-bold">2</span>
                 </div>
@@ -99,7 +100,7 @@ export default function Home() {
             </div>
 
             <div className="group relative">
-              <div className="rounded-xl border border-border bg-card p-8 text-center transition-all duration-300 hover:shadow-lg">
+              <Card className="bg-card p-8 text-center" hover={true}>
                 <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <span className="text-2xl font-bold">3</span>
                 </div>

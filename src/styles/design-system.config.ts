@@ -225,14 +225,14 @@ export const componentStyles = {
     },
   },
   card: {
-    base: "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm transition-all duration-200",
+    base: "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm transition-all duration-300",
     rounded: "rounded-xl",
     padding: {
       sm: "p-4",
       md: "p-6",
       lg: "p-8",
     },
-    hover: "hover:shadow-lg hover:-translate-y-1 hover:border-primary-200 dark:hover:border-primary-800",
+    hover: "hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-700 hover:-translate-y-1",
   },
   input: {
     base: "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground transition-all duration-200",
@@ -256,7 +256,7 @@ export const componentStyles = {
     },
   },
   documentCard: {
-    container: "group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary-300 hover:shadow-xl dark:border-gray-800 dark:bg-gray-900 dark:hover:border-primary-700 cursor-pointer",
+    container: "group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-gray-700 cursor-pointer",
     thumbnail: "relative aspect-[16/10] w-full overflow-hidden bg-gray-100 dark:bg-gray-800",
     thumbnailImage: "h-full w-full object-cover transition-transform duration-500 group-hover:scale-110",
     content: "flex flex-1 flex-col p-4",

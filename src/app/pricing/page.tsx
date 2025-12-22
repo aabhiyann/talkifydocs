@@ -1,6 +1,7 @@
 // import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/dist/types/server";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { UpgradeButton } from "@/components/UpgradeButton";
+import { Card } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { PLANS } from "@/config/stripe";
@@ -86,13 +87,14 @@ const Page = async () => {
               const price = PLANS.find((p) => p.slug === plan.toLowerCase())?.price.amount || 0;
 
               return (
-                <div
+                <Card
                   key={plan}
+                  hover={true}
                   className={cn(
-                    "glass shadow-medium hover:shadow-strong relative rounded-2xl transition-all duration-300",
+                    "relative",
                     {
                       "shadow-primary-200/50 border-2 border-primary-600": plan === "Pro",
-                      "border border-secondary-200 dark:border-secondary-700": plan !== "Pro",
+                      // "border border-secondary-200 dark:border-secondary-700": plan !== "Pro", // Handled by Card default
                     },
                   )}
                 >
