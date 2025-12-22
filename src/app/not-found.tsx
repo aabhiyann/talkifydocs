@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Button } from "@/components/ui/button";
 import { Home, ArrowLeft, Search, HelpCircle } from "lucide-react";
@@ -10,14 +11,18 @@ export default function NotFound() {
     <div className="to-primary-50/30 dark:to-primary-950/30 flex min-h-screen items-center justify-center bg-gradient-to-b from-white dark:from-secondary-900">
       <MaxWidthWrapper>
         <div className="text-center">
-          {/* 404 Animation */}
+          {/* 404 Illustration */}
           <div className="mb-8">
-            <div className="relative">
-              <div className="text-display-2xl mb-4 font-bold text-primary-600 dark:text-primary-400">
-                404
-              </div>
-              <div className="animate-bounce-in absolute -right-4 -top-4 h-16 w-16 rotate-12 rounded-2xl bg-gradient-to-br from-accent-500 to-primary-500 opacity-80" />
-              <div className="animate-bounce-in absolute -bottom-4 -left-4 h-12 w-12 -rotate-12 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 opacity-80 delay-500" />
+            <div className="relative mx-auto mb-4 h-48 w-48">
+              <Image
+                src="/brand/states/error.png"
+                alt="Page not found"
+                fill
+                className="object-contain"
+              />
+            </div>
+            <div className="text-display-2xl mb-4 font-bold text-primary-600 dark:text-primary-400">
+              404
             </div>
           </div>
 
@@ -27,8 +32,8 @@ export default function NotFound() {
               Page Not Found
             </h1>
             <p className="text-body-lg mx-auto max-w-2xl leading-relaxed text-secondary-600 dark:text-secondary-300">
-              Oops! The page you&apos;re looking for seems to have wandered off into the digital
-              void. Don&apos;t worry, even the best AI can&apos;t find everything!
+              Even our turtle guide couldn&apos;t find this page! It might be taking a break or the
+              page doesn&apos;t exist.
             </p>
           </div>
 
