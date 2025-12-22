@@ -235,10 +235,10 @@ export const componentStyles = {
     hover: "hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-700 hover:-translate-y-1",
   },
   input: {
-    base: "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground transition-all duration-200",
-    focus: "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-    error: "border-error-500 focus-visible:ring-error-500",
-    disabled: "disabled:cursor-not-allowed disabled:opacity-50",
+    base: "flex w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-2.5 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 text-gray-900 dark:text-gray-100 transition-colors duration-200",
+    focus: "focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:border-transparent",
+    error: "border-error-500 focus:ring-error-500 focus-visible:ring-error-500",
+    disabled: "disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:opacity-50",
   },
   badge: {
     base: "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
