@@ -53,8 +53,8 @@ export const Navbar = () => {
   return (
     <nav
       className={`sticky top-0 z-50 w-full transition-all duration-200 ${isScrolled
-        ? "bg-background/95 border-b border-border shadow-sm backdrop-blur-md"
-        : "bg-background/80 backdrop-blur-sm"
+        ? "bg-background/80 border-b border-border/50 shadow-sm backdrop-blur-lg"
+        : "bg-background/60 backdrop-blur-md"
         }`}
     >
       <MaxWidthWrapper>

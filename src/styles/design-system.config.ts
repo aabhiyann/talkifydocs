@@ -1,18 +1,43 @@
 export const designSystem = {
   colors: {
     primary: {
-      50: 'var(--primary-50)',
-      100: 'var(--primary-100)',
-      200: 'var(--primary-200)',
-      300: 'var(--primary-300)',
-      400: 'var(--primary-400)',
-      500: 'var(--primary-500)',
-      600: 'var(--primary-600)',
-      700: 'var(--primary-700)',
-      800: 'var(--primary-800)',
-      900: 'var(--primary-900)',
+      50: '#eff6ff',
+      100: '#dbeafe',
+      200: '#bfdbfe',
+      300: '#93c5fd',
+      400: '#60a5fa',
+      500: '#3b82f6',
+      600: '#2563eb',
+      700: '#1d4ed8',
+      800: '#1e40af',
+      900: '#1e3a8a',
       DEFAULT: 'rgb(var(--primary))',
       foreground: 'rgb(var(--primary-foreground))',
+    },
+    success: {
+      50: '#f0fdf4',
+      100: '#dcfce7',
+      200: '#bbf7d0',
+      300: '#86efac',
+      400: '#4ade80',
+      500: '#22c55e',
+      600: '#16a34a',
+      700: '#15803d',
+      DEFAULT: '#22c55e',
+    },
+    accent: {
+      50: '#fffbeb',
+      100: '#fef3c7',
+      200: '#fde68a',
+      300: '#fcd34d',
+      400: '#fbbf24',
+      500: '#f59e0b',
+      600: '#d97706',
+      700: '#b45309',
+      800: '#92400e',
+      900: '#78350f',
+      DEFAULT: 'rgb(var(--accent))',
+      foreground: 'rgb(var(--accent-foreground))',
     },
     secondary: {
       50: 'var(--secondary-50)',
@@ -28,20 +53,6 @@ export const designSystem = {
       DEFAULT: 'rgb(var(--secondary))',
       foreground: 'rgb(var(--secondary-foreground))',
     },
-    accent: {
-      50: 'var(--accent-50)',
-      100: 'var(--accent-100)',
-      200: 'var(--accent-200)',
-      300: 'var(--accent-300)',
-      400: 'var(--accent-400)',
-      500: 'var(--accent-500)',
-      600: 'var(--accent-600)',
-      700: 'var(--accent-700)',
-      800: 'var(--accent-800)',
-      900: 'var(--accent-900)',
-      DEFAULT: 'rgb(var(--accent))',
-      foreground: 'rgb(var(--accent-foreground))',
-    },
     gray: {
       50: 'var(--gray-50)',
       100: 'var(--gray-100)',
@@ -53,13 +64,6 @@ export const designSystem = {
       700: 'var(--gray-700)',
       800: 'var(--gray-800)',
       900: 'var(--gray-900)',
-    },
-    success: {
-      50: 'var(--success-50)',
-      500: 'var(--success-500)',
-      600: 'var(--success-600)',
-      700: 'var(--success-700)',
-      DEFAULT: 'var(--success-500)',
     },
     warning: {
       50: 'var(--warning-50)',
@@ -203,7 +207,7 @@ export const designSystem = {
 
 export const componentStyles = {
   button: {
-    base: "inline-flex items-center justify-center whitespace-nowrap font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:hover:translate-y-0",
+    base: "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 button-press",
     variants: {
       primary: "bg-primary-600 text-white hover:bg-primary-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 shadow-sm",
       secondary: "bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow active:translate-y-0",
@@ -225,7 +229,7 @@ export const componentStyles = {
     },
   },
   card: {
-    base: "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm transition-all duration-300",
+    base: "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm transition-all duration-300 card-hover",
     rounded: "rounded-xl",
     padding: {
       sm: "p-4",
@@ -256,7 +260,7 @@ export const componentStyles = {
     },
   },
   documentCard: {
-    container: "group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-gray-700 cursor-pointer",
+    container: "group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-gray-700 cursor-pointer card-hover",
     thumbnail: "relative aspect-[16/10] w-full overflow-hidden bg-gray-100 dark:bg-gray-800",
     thumbnailImage: "h-full w-full object-cover transition-transform duration-500 group-hover:scale-110",
     content: "flex flex-1 flex-col p-4",
@@ -271,4 +275,3 @@ export const componentStyles = {
     base: "animate-pulse rounded bg-gray-200 dark:bg-gray-800",
   },
 }
-
