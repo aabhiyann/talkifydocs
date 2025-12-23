@@ -1,14 +1,68 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Sparkles } from "lucide-react";
 
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import HeroSection from "@/components/HeroSection";
 import { marketing } from "@/content/marketing";
+import { Card } from "@/components/ui/card";
 
 export default function Home() {
   return (
     <>
-      <HeroSection />
+      <section className="relative min-h-screen flex items-center justify-center py-20 px-6">
+        {/* Background pattern */}
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+        
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left: Text */}
+            <div className="text-center lg:text-left">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-full mb-6">
+                <Sparkles className="w-4 h-4 text-primary-600" />
+                <span className="text-sm font-medium text-primary-600">
+                  Powered by GPT-4o & Claude 3.5
+                </span>
+              </div>
+
+              {/* Headline - Large Serif! */}
+              <h1 className="font-serif text-6xl md:text-7xl lg:text-8xl font-bold text-gray-900 dark:text-white mb-6 tracking-tight">
+                Chat With Your Documents.
+              </h1>
+
+              {/* Subheadline */}
+              <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
+                Upload PDFs and have intelligent conversations. 
+                Get instant answers with accurate citations.
+              </p>
+
+              {/* CTAs */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <Link href="/dashboard" className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 rounded-xl font-medium shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-center">
+                  Try Free →
+                </Link>
+                <Link href="/demo" className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 px-8 py-4 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 text-center">
+                  Watch Demo
+                </Link>
+              </div>
+            </div>
+
+            {/* Right: Turtle Illustration (already exists!) */}
+            <div className="relative">
+              <div className="relative animate-float">
+                <Image
+                  src="/brand/illustrations/learning.png"
+                  alt="AI assistant learning your documents"
+                  width={600}
+                  height={600}
+                  priority
+                  className="w-full h-auto"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Product Preview Section */}
       <section className="relative overflow-hidden py-24">
@@ -53,7 +107,7 @@ export default function Home() {
           {/* Steps */}
           <div className="mb-16 grid grid-cols-1 gap-8 md:grid-cols-3">
             <div className="group relative">
-              <div className="rounded-xl border border-border bg-card p-8 text-center transition-all duration-300 hover:shadow-lg">
+              <Card className="bg-card p-8 text-center" hover={true}>
                 <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <span className="text-2xl font-bold">1</span>
                 </div>
@@ -74,11 +128,11 @@ export default function Home() {
                   </Link>{" "}
                   for advanced features.
                 </p>
-              </div>
+              </Card>
             </div>
 
             <div className="group relative">
-              <div className="rounded-xl border border-border bg-card p-8 text-center transition-all duration-300 hover:shadow-lg">
+              <Card className="bg-card p-8 text-center" hover={true}>
                 <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <span className="text-2xl font-bold">2</span>
                 </div>
@@ -95,11 +149,11 @@ export default function Home() {
                   Simply drag and drop your PDF document. Our advanced AI will instantly process and
                   understand your content for intelligent analysis.
                 </p>
-              </div>
+              </Card>
             </div>
 
             <div className="group relative">
-              <div className="rounded-xl border border-border bg-card p-8 text-center transition-all duration-300 hover:shadow-lg">
+              <Card className="bg-card p-8 text-center" hover={true}>
                 <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <span className="text-2xl font-bold">3</span>
                 </div>
@@ -117,7 +171,7 @@ export default function Home() {
                   understands context and provides intelligent, relevant responses from your
                   documents.
                 </p>
-              </div>
+              </Card>
             </div>
           </div>
 

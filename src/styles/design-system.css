@@ -2,40 +2,41 @@
 
 /* CSS Custom Properties for Design System */
 :root {
-  /* Color Palette - Blue Theme (Wist-Inspired) */
-  --primary-50: #eff6ff;
-  --primary-100: #dbeafe;
-  --primary-200: #bfdbfe;
-  --primary-300: #93c5fd;
-  --primary-400: #60a5fa;
-  --primary-500: #3b82f6;
-  --primary-600: #2563eb; /* Main CTA Blue */
-  --primary-700: #1d4ed8;
-  --primary-800: #1e40af;
-  --primary-900: #1e3a8a;
+  /* Color Palette - Turtle Green Theme */
+  --primary-50: #f0fdf4;
+  --primary-100: #dcfce7;
+  --primary-200: #bbf7d0;
+  --primary-300: #86efac;
+  --primary-400: #4ade80;
+  --primary-500: #22c55e;
+  --primary-600: #16a34a; /* Main CTA Green */
+  --primary-700: #15803d;
+  --primary-800: #166534;
+  --primary-900: #14532d;
 
-  /* Secondary Colors - Soft Grays */
-  --secondary-50: #fafafa; /* Soft White Background */
-  --secondary-100: #f5f5f5;
-  --secondary-200: #e5e5e5;
-  --secondary-300: #d4d4d4;
-  --secondary-400: #a3a3a3;
-  --secondary-500: #737373;
-  --secondary-600: #525252;
-  --secondary-700: #404040;
-  --secondary-800: #262626;
-  --secondary-900: #171717;
+  /* Secondary Colors - Headphone Blue */
+  --secondary-50: #eff6ff;
+  --secondary-100: #dbeafe;
+  --secondary-200: #bfdbfe;
+  --secondary-300: #93c5fd;
+  --secondary-400: #60a5fa;
+  --secondary-500: #3b82f6;
+  --secondary-600: #2563eb;
+  --secondary-700: #1d4ed8;
+  --secondary-800: #1e40af;
+  --secondary-900: #1e3a8a;
 
-  --accent-50: #f0fdfa;
-  --accent-100: #ccfbf1;
-  --accent-200: #99f6e4;
-  --accent-300: #5eead4;
-  --accent-400: #2dd4bf;
-  --accent-500: #14b8a6;
-  --accent-600: #0d9488;
-  --accent-700: #0f766e;
-  --accent-800: #115e59;
-  --accent-900: #134e4a;
+  /* Accent Colors - Folder Yellow */
+  --accent-50: #fffbeb;
+  --accent-100: #fef3c7;
+  --accent-200: #fde68a;
+  --accent-300: #fcd34d;
+  --accent-400: #fbbf24;
+  --accent-500: #f59e0b;
+  --accent-600: #d97706;
+  --accent-700: #b45309;
+  --accent-800: #92400e;
+  --accent-900: #78350f;
 
   /* Neutral Colors - Wist Palette */
   --gray-50: #fafafa; /* Soft White */
@@ -363,21 +364,21 @@
   }
 }
 
-/* Dark Mode Variables - Wist-Inspired */
+/* Dark Mode Variables - Turtle Green Theme */
 .dark {
-  /* Primary Blue - Maintained in dark mode */
-  --primary-50: #1e3a8a;
-  --primary-100: #1e40af;
-  --primary-200: #1d4ed8;
-  --primary-300: #2563eb;
-  --primary-400: #3b82f6;
-  --primary-500: #60a5fa;
-  --primary-600: #93c5fd;
-  --primary-700: #bfdbfe;
-  --primary-800: #dbeafe;
-  --primary-900: #eff6ff;
+  /* Primary Green - Reversed for dark mode */
+  --primary-50: #14532d;
+  --primary-100: #166534;
+  --primary-200: #15803d;
+  --primary-300: #16a34a;
+  --primary-400: #22c55e;
+  --primary-500: #4ade80;
+  --primary-600: #86efac;
+  --primary-700: #bbf7d0;
+  --primary-800: #dcfce7;
+  --primary-900: #f0fdf4;
 
-  /* Dark Backgrounds - Wist Palette */
+  /* Dark Backgrounds */
   --secondary-50: #0a0a0a; /* Deep Navy/Black Background */
   --secondary-100: #1a1a1a; /* Card Background */
   --secondary-200: #2a2a2a; /* Border */
@@ -389,28 +390,17 @@
   --secondary-800: #e5e5e5;
   --secondary-900: #fafafa; /* Light Text */
 
-  --accent-50: #134e4a;
-  --accent-100: #115e59;
-  --accent-200: #0f766e;
-  --accent-300: #0d9488;
-  --accent-400: #14b8a6;
-  --accent-500: #2dd4bf;
-  --accent-600: #5eead4;
-  --accent-700: #99f6e4;
-  --accent-800: #ccfbf1;
-  --accent-900: #f0fdfa;
-
-  /* Dark Mode Grays */
-  --gray-50: #0a0a0a; /* Deep Navy/Black */
-  --gray-100: #1a1a1a; /* Card Background */
-  --gray-200: #2a2a2a; /* Border */
-  --gray-300: #404040;
-  --gray-400: #525252;
-  --gray-500: #737373;
-  --gray-600: #a0a0a0; /* Secondary Text */
-  --gray-700: #d4d4d4;
-  --gray-800: #e5e5e5;
-  --gray-900: #fafafa; /* Light Text */
+  /* Accent Yellow in Dark Mode */
+  --accent-50: #78350f;
+  --accent-100: #92400e;
+  --accent-200: #b45309;
+  --accent-300: #d97706;
+  --accent-400: #f59e0b;
+  --accent-500: #fbbf24;
+  --accent-600: #fcd34d;
+  --accent-700: #fde68a;
+  --accent-800: #fef3c7;
+  --accent-900: #fffbeb;
 }
 
 /* Modern Typography Classes - Wist-Inspired */

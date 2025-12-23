@@ -203,42 +203,42 @@ export const designSystem = {
 
 export const componentStyles = {
   button: {
-    base: "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+    base: "inline-flex items-center justify-center whitespace-nowrap font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:hover:translate-y-0",
     variants: {
-      primary: "bg-primary-600 text-white hover:bg-primary-700 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0",
-      secondary: "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700",
-      ghost: "bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800",
+      primary: "bg-primary-600 text-white hover:bg-primary-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 shadow-sm",
+      secondary: "bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow active:translate-y-0",
+      ghost: "bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200",
       danger: "bg-error-500 text-white hover:bg-error-600 hover:shadow-lg hover:-translate-y-0.5",
       success: "bg-success-600 text-white hover:bg-success-700 hover:shadow-lg hover:-translate-y-0.5",
       outline: "border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-700",
       destructive: "bg-error-500 text-white hover:bg-error-600 hover:shadow-lg hover:-translate-y-0.5",
-      default: "bg-primary-600 text-white hover:bg-primary-700 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0",
+      default: "bg-primary-600 text-white hover:bg-primary-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 shadow-sm",
       link: "text-primary-600 underline-offset-4 hover:underline",
     },
     sizes: {
-      sm: "h-9 rounded-lg px-4",
-      md: "h-10 px-6 py-3",
+      sm: "h-9 rounded-lg px-4 text-sm",
+      md: "h-10 px-6 py-3 rounded-xl text-sm",
       lg: "h-12 rounded-xl px-8 text-base",
       xl: "h-14 rounded-2xl px-10 text-lg",
-      default: "h-10 px-6 py-3",
-      icon: "h-10 w-10",
+      default: "h-10 px-6 py-3 rounded-xl text-sm",
+      icon: "h-10 w-10 rounded-lg",
     },
   },
   card: {
-    base: "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm transition-all duration-200",
+    base: "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm transition-all duration-300",
     rounded: "rounded-xl",
     padding: {
       sm: "p-4",
       md: "p-6",
       lg: "p-8",
     },
-    hover: "hover:shadow-lg hover:-translate-y-1 hover:border-primary-200 dark:hover:border-primary-800",
+    hover: "hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-700 hover:-translate-y-1",
   },
   input: {
-    base: "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground transition-all duration-200",
-    focus: "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-    error: "border-error-500 focus-visible:ring-error-500",
-    disabled: "disabled:cursor-not-allowed disabled:opacity-50",
+    base: "flex w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-2.5 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 text-gray-900 dark:text-gray-100 transition-colors duration-200",
+    focus: "focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:border-transparent",
+    error: "border-error-500 focus:ring-error-500 focus-visible:ring-error-500",
+    disabled: "disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:opacity-50",
   },
   badge: {
     base: "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
@@ -256,7 +256,7 @@ export const componentStyles = {
     },
   },
   documentCard: {
-    container: "group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary-300 hover:shadow-xl dark:border-gray-800 dark:bg-gray-900 dark:hover:border-primary-700 cursor-pointer",
+    container: "group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-gray-700 cursor-pointer",
     thumbnail: "relative aspect-[16/10] w-full overflow-hidden bg-gray-100 dark:bg-gray-800",
     thumbnailImage: "h-full w-full object-cover transition-transform duration-500 group-hover:scale-110",
     content: "flex flex-1 flex-col p-4",
@@ -264,8 +264,8 @@ export const componentStyles = {
     meta: "mt-2 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400",
   },
   chatBubble: {
-    user: "relative rounded-2xl rounded-tr-none bg-primary-600 px-4 py-3 text-white shadow-sm",
-    assistant: "relative rounded-2xl rounded-tl-none bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 px-4 py-3 text-gray-900 dark:text-gray-100 shadow-sm",
+    user: "relative rounded-2xl rounded-tr-md bg-primary-600 px-4 py-3 text-white shadow-sm animate-in slide-in-from-right-2 duration-300",
+    assistant: "relative rounded-2xl rounded-tl-md bg-gray-100 dark:bg-gray-800 px-4 py-3 text-gray-900 dark:text-gray-100 shadow-sm animate-in slide-in-from-left-2 duration-300",
   },
   skeleton: {
     base: "animate-pulse rounded bg-gray-200 dark:bg-gray-800",

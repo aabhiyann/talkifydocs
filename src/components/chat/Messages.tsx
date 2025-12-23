@@ -181,7 +181,7 @@ export const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
               className={`flex ${message.isUserMessage ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`flex max-w-[80%] items-start space-x-3 ${message.isUserMessage ? "flex-row-reverse space-x-reverse" : ""
+                className={`flex max-w-[85%] items-start space-x-3 ${message.isUserMessage ? "flex-row-reverse space-x-reverse" : ""
                   }`}
               >
                 {/* Avatar */}
@@ -204,7 +204,7 @@ export const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
                 </div>
 
                 {/* Message Content - Wist Style */}
-                <div className="max-w-[80%]">
+                <div className="max-w-[85%]">
                   <Message
                     message={message}
                     isNextMessageSamePerson={false}

@@ -79,7 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         },
       }}
     >
-      <html lang="en">
+      <html lang="en" className={cn(inter.variable, fraunces.variable)}>
         <head>
           <GoogleAnalytics />
         </head>
@@ -87,8 +87,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <body
             className={cn(
               "grainy min-h-screen font-sans antialiased",
-              inter.variable,
-              fraunces.variable,
               inter.className,
             )}
             suppressHydrationWarning={true}
