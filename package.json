@@ -23,6 +23,9 @@
     "test:performance": "bash scripts/performance-check.sh",
     "db:pinecone-init": "ts-node scripts/pinecone-init.ts"
   },
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "dependencies": {
     "@clerk/nextjs": "^6.36.3",
     "@clerk/themes": "^2.4.44",

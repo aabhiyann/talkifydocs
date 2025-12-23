@@ -67,6 +67,7 @@ model File {
   thumbnailUrl String?
 
   summary  String? @db.Text
+  rawText  String? @db.Text
   entities Json?
   metadata Json?
 
