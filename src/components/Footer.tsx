@@ -49,7 +49,7 @@ const Footer = () => {
   }
 
   return (
-    <footer className="dark:to-secondary-950 border-t border-secondary-200 bg-gradient-to-b from-white to-secondary-50 dark:border-secondary-800 dark:from-secondary-900">
+    <footer className="border-t border-secondary-200 bg-gradient-to-b from-white to-secondary-50 dark:border-secondary-800 dark:from-secondary-900 dark:to-secondary-950">
       <MaxWidthWrapper>
         {/* Main Footer Content */}
         <div className="py-16">

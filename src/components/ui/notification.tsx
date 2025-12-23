@@ -95,7 +95,7 @@ export function NotificationItem({ notification, onDismiss }: NotificationProps)
           <div className="ml-4 flex flex-shrink-0">
             <button
               onClick={handleDismiss}
-              className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              className="inline-flex rounded-md bg-white dark:bg-gray-800 text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >
               <span className="sr-only">Close</span>
               <X className="h-5 w-5" />
