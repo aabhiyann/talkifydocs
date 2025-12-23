@@ -198,6 +198,31 @@ export default function Home() {
           </div>
         </MaxWidthWrapper>
       </section>
+
+      {/* Final CTA Section */}
+      <section className="relative overflow-hidden py-24">
+        <div className="absolute inset-0 -z-10">
+          <div className="from-primary-400/20 to-accent-400/20 absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r blur-3xl" />
+        </div>
+        <MaxWidthWrapper>
+          <div className="text-center">
+            <h2 className="mb-6 font-serif text-4xl font-bold text-foreground md:text-5xl">
+              Ready to Get Started?
+            </h2>
+            <p className="mx-auto mb-8 max-w-2xl text-xl text-muted-foreground">
+              Join users who are already transforming how they interact with documents. Start your free account today.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/sign-up" className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 rounded-xl font-medium shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-center">
+                Get Started Free →
+              </Link>
+              <Link href="/pricing" className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 px-8 py-4 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 text-center">
+                View Pricing
+              </Link>
+            </div>
+          </div>
+        </MaxWidthWrapper>
+      </section>
     </>
   );
 }

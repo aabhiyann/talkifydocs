@@ -182,48 +182,71 @@ export default function ContactPage() {
               </p>
 
               <ModernCard variant="glass" className="p-8">
-                <form className="space-y-6">
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div>
-                      <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
-                        First Name
-                      </label>
-                      <Input placeholder="Enter your first name" />
+                {companyConfig.contact.email ? (
+                  <>
+                    <div className="mb-6 rounded-lg border border-primary-200 bg-primary-50/50 p-4 dark:border-primary-800 dark:bg-primary-900/20">
+                      <p className="text-body-sm text-secondary-600 dark:text-secondary-400">
+                        <strong className="text-secondary-900 dark:text-secondary-100">Note:</strong> This is a portfolio project. For inquiries, please email directly at{" "}
+                        <a href={`mailto:${companyConfig.contact.email}`} className="text-primary-600 dark:text-primary-400 hover:underline">
+                          {companyConfig.contact.email}
+                        </a>
+                      </p>
                     </div>
-                    <div>
-                      <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
-                        Last Name
-                      </label>
-                      <Input placeholder="Enter your last name" />
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <div>
+                          <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
+                            First Name
+                          </label>
+                          <Input placeholder="Enter your first name" disabled />
+                        </div>
+                        <div>
+                          <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
+                            Last Name
+                          </label>
+                          <Input placeholder="Enter your last name" disabled />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
+                          Email Address
+                        </label>
+                        <Input type="email" placeholder="Enter your email address" disabled />
+                      </div>
+
+                      <div>
+                        <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
+                          Subject
+                        </label>
+                        <Input placeholder="What's this about?" disabled />
+                      </div>
+
+                      <div>
+                        <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
+                          Message
+                        </label>
+                        <Textarea placeholder="Tell us how we can help you..." rows={6} disabled />
+                      </div>
+
+                      <Button 
+                        className="w-full bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700"
+                        asChild
+                      >
+                        <a href={`mailto:${companyConfig.contact.email}?subject=TalkifyDocs Inquiry`}>
+                          <Mail className="mr-2 h-4 w-4" />
+                          Send Email Instead
+                        </a>
+                      </Button>
                     </div>
+                  </>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-body-md text-secondary-600 dark:text-secondary-400">
+                      Contact information is not configured. Please check the company config.
+                    </p>
                   </div>
-
-                  <div>
-                    <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
-                      Email Address
-                    </label>
-                    <Input type="email" placeholder="Enter your email address" />
-                  </div>
-
-                  <div>
-                    <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
-                      Subject
-                    </label>
-                    <Input placeholder="What's this about?" />
-                  </div>
-
-                  <div>
-                    <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
-                      Message
-                    </label>
-                    <Textarea placeholder="Tell us how we can help you..." rows={6} />
-                  </div>
-
-                  <Button className="w-full bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700">
-                    <Send className="mr-2 h-4 w-4" />
-                    Send Message
-                  </Button>
-                </form>
+                )}
               </ModernCard>
             </div>
 

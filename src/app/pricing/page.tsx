@@ -70,16 +70,25 @@ const Page = async () => {
 
   return (
     <>
-      <MaxWidthWrapper className="mb-8 mt-24 max-w-5xl text-center">
-        <div className="mx-auto mb-12 text-center sm:max-w-2xl">
-          <h1 className="text-display-lg font-extrabold text-secondary-900 dark:text-secondary-100">
-            Simple, transparent pricing
+      {/* Hero Section */}
+      <section className="relative overflow-hidden py-24">
+        <div className="absolute inset-0 -z-10">
+          <div className="from-primary-400/20 to-accent-400/20 absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r blur-3xl" />
+        </div>
+        <MaxWidthWrapper className="text-center">
+          <h1 className="text-display-lg mb-6 bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+            Simple, Transparent Pricing
           </h1>
-          <p className="text-body-lg mt-6 leading-relaxed text-secondary-600 dark:text-secondary-300">
+          <p className="text-body-lg mx-auto max-w-3xl leading-relaxed text-secondary-600 dark:text-secondary-300">
             Choose the perfect plan for your document analysis needs. Start with our free tier or
             upgrade for advanced features and higher limits.
           </p>
-        </div>
+        </MaxWidthWrapper>
+      </section>
+
+      {/* Pricing Cards */}
+      <section className="py-16">
+        <MaxWidthWrapper className="max-w-5xl">
 
         <div className="grid grid-cols-1 gap-10 pt-12 lg:grid-cols-2">
           <TooltipProvider>
@@ -202,6 +211,47 @@ const Page = async () => {
           </TooltipProvider>
         </div>
       </MaxWidthWrapper>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="bg-secondary/50 py-16 dark:bg-secondary-900/50">
+        <MaxWidthWrapper className="max-w-3xl">
+          <div className="mb-12 text-center">
+            <h2 className="text-display-md mb-4 text-secondary-900 dark:text-secondary-100">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-body-md text-secondary-600 dark:text-secondary-400">
+              Everything you need to know about our pricing
+            </p>
+          </div>
+          <div className="space-y-6">
+            <div className="glass rounded-xl p-6">
+              <h3 className="text-heading-md mb-2 text-secondary-900 dark:text-secondary-100">
+                Can I change plans later?
+              </h3>
+              <p className="text-body-sm text-secondary-600 dark:text-secondary-400">
+                Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately.
+              </p>
+            </div>
+            <div className="glass rounded-xl p-6">
+              <h3 className="text-heading-md mb-2 text-secondary-900 dark:text-secondary-100">
+                What happens if I exceed my plan limits?
+              </h3>
+              <p className="text-body-sm text-secondary-600 dark:text-secondary-400">
+                You&apos;ll be notified when approaching your limits. Upgrade to Pro for higher limits and additional features.
+              </p>
+            </div>
+            <div className="glass rounded-xl p-6">
+              <h3 className="text-heading-md mb-2 text-secondary-900 dark:text-secondary-100">
+                Is there a free trial for Pro?
+              </h3>
+              <p className="text-body-sm text-secondary-600 dark:text-secondary-400">
+                The Free plan is available indefinitely. Pro plans start immediately after subscription with full access to all features.
+              </p>
+            </div>
+          </div>
+        </MaxWidthWrapper>
+      </section>
     </>
   );
 };
