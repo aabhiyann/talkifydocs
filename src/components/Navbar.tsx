@@ -85,7 +85,7 @@ export const Navbar = () => {
                   href={item.href}
                   className={`text-body-sm flex items-center space-x-1 rounded-lg px-3 py-2 font-medium transition-all duration-200 ${isActive(item.href)
                     ? "dark:bg-primary-900/20 bg-primary-50 text-primary-700 dark:text-primary-300"
-                    : "dark:hover:bg-secondary-800/50 text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 dark:text-secondary-300 dark:hover:text-secondary-100"
+                    : "dark:hover:bg-secondary-800/50 text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 dark:text-gray-400 dark:hover:text-white"
                     }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -172,7 +172,7 @@ export const Navbar = () => {
                     href={item.href}
                     className={`flex items-center space-x-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${isActive(item.href)
                       ? "dark:bg-primary-900/20 bg-primary-50 text-primary-700 dark:text-primary-300"
-                      : "dark:hover:bg-secondary-800/50 text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 dark:text-secondary-300 dark:hover:text-secondary-100"
+                      : "dark:hover:bg-secondary-800/50 text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 dark:text-gray-400 dark:hover:text-white"
                       }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >

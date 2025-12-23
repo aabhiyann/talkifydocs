@@ -49,7 +49,7 @@ const Footer = () => {
   }
 
   return (
-    <footer className="border-t border-secondary-200 bg-gradient-to-b from-white to-secondary-50 dark:border-secondary-800 dark:from-secondary-900 dark:to-secondary-950">
+    <footer className="border-t border-secondary-200 bg-gradient-to-b from-white to-secondary-50 dark:border-secondary-800 dark:from-secondary-50 dark:to-black">
       <MaxWidthWrapper>
         {/* Main Footer Content */}
         <div className="py-16">
@@ -60,11 +60,11 @@ const Footer = () => {
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary-500 to-accent-500">
                   <span className="text-sm font-bold text-white">T</span>
                 </div>
-                <span className="text-xl font-bold text-secondary-900 dark:text-secondary-100">
+                <span className="text-xl font-bold text-secondary-900">
                   TalkifyDocs
                 </span>
               </Link>
-              <p className="text-body-md mb-6 max-w-sm text-secondary-600 dark:text-secondary-400">
+              <p className="text-body-md mb-6 max-w-sm text-secondary-600">
                 Transform your documents into intelligent conversations with AI-powered analysis and
                 insights.
               </p>
@@ -73,23 +73,23 @@ const Footer = () => {
               {(companyConfig.contact.email || companyConfig.contact.phone || companyConfig.contact.location) && (
                 <div className="space-y-3">
                   {companyConfig.contact.email && (
-                    <div className="text-body-sm flex items-center gap-3 text-secondary-600 dark:text-secondary-400">
+                    <div className="text-body-sm flex items-center gap-3 text-secondary-600">
                       <Mail className="h-4 w-4" />
-                      <a href={`mailto:${companyConfig.contact.email}`} className="hover:text-primary-600 dark:hover:text-primary-400">
+                      <a href={`mailto:${companyConfig.contact.email}`} className="hover:text-primary-600">
                         {companyConfig.contact.email}
                       </a>
                     </div>
                   )}
                   {companyConfig.contact.phone && (
-                    <div className="text-body-sm flex items-center gap-3 text-secondary-600 dark:text-secondary-400">
+                    <div className="text-body-sm flex items-center gap-3 text-secondary-600">
                       <Phone className="h-4 w-4" />
-                      <a href={`tel:${companyConfig.contact.phone.replace(/\s/g, "")}`} className="hover:text-primary-600 dark:hover:text-primary-400">
+                      <a href={`tel:${companyConfig.contact.phone.replace(/\s/g, "")}`} className="hover:text-primary-600">
                         {companyConfig.contact.phone}
                       </a>
                     </div>
                   )}
                   {companyConfig.contact.location && (
-                    <div className="text-body-sm flex items-center gap-3 text-secondary-600 dark:text-secondary-400">
+                    <div className="text-body-sm flex items-center gap-3 text-secondary-600">
                       <MapPin className="h-4 w-4" />
                       <span>{companyConfig.contact.location}</span>
                     </div>
@@ -100,7 +100,7 @@ const Footer = () => {
 
             {/* Product Links */}
             <div>
-              <h3 className="text-heading-md mb-4 text-secondary-900 dark:text-secondary-100">
+              <h3 className="text-heading-md mb-4 text-secondary-900">
                 Product
               </h3>
               <ul className="space-y-3">
@@ -108,7 +108,7 @@ const Footer = () => {
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="text-body-sm text-secondary-600 transition-colors duration-200 hover:text-primary-600 dark:text-secondary-400 dark:hover:text-primary-400"
+                      className="text-body-sm text-secondary-600 transition-colors duration-200 hover:text-primary-600"
                     >
                       {link.name}
                     </Link>
@@ -119,7 +119,7 @@ const Footer = () => {
 
             {/* Company Links */}
             <div>
-              <h3 className="text-heading-md mb-4 text-secondary-900 dark:text-secondary-100">
+              <h3 className="text-heading-md mb-4 text-secondary-900">
                 Company
               </h3>
               <ul className="space-y-3">
@@ -127,7 +127,7 @@ const Footer = () => {
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="text-body-sm text-secondary-600 transition-colors duration-200 hover:text-primary-600 dark:text-secondary-400 dark:hover:text-primary-400"
+                      className="text-body-sm text-secondary-600 transition-colors duration-200 hover:text-primary-600"
                     >
                       {link.name}
                     </Link>
@@ -138,7 +138,7 @@ const Footer = () => {
 
             {/* Resources Links */}
             <div>
-              <h3 className="text-heading-md mb-4 text-secondary-900 dark:text-secondary-100">
+              <h3 className="text-heading-md mb-4 text-secondary-900">
                 Resources
               </h3>
               <ul className="space-y-3">
@@ -146,7 +146,7 @@ const Footer = () => {
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="text-body-sm text-secondary-600 transition-colors duration-200 hover:text-primary-600 dark:text-secondary-400 dark:hover:text-primary-400"
+                      className="text-body-sm text-secondary-600 transition-colors duration-200 hover:text-primary-600"
                     >
                       {link.name}
                     </Link>
@@ -157,7 +157,7 @@ const Footer = () => {
 
             {/* Legal Links */}
             <div>
-              <h3 className="text-heading-md mb-4 text-secondary-900 dark:text-secondary-100">
+              <h3 className="text-heading-md mb-4 text-secondary-900">
                 Legal
               </h3>
               <ul className="space-y-3">
@@ -165,7 +165,7 @@ const Footer = () => {
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="text-body-sm text-secondary-600 transition-colors duration-200 hover:text-primary-600 dark:text-secondary-400 dark:hover:text-primary-400"
+                      className="text-body-sm text-secondary-600 transition-colors duration-200 hover:text-primary-600"
                     >
                       {link.name}
                     </Link>
@@ -180,10 +180,10 @@ const Footer = () => {
             <div className="glass rounded-2xl p-8">
               <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
                 <div>
-                  <h3 className="text-heading-lg mb-2 text-secondary-900 dark:text-secondary-100">
+                  <h3 className="text-heading-lg mb-2 text-secondary-900">
                     Stay Updated
                   </h3>
-                  <p className="text-body-md text-secondary-600 dark:text-secondary-400">
+                  <p className="text-body-md text-secondary-600">
                     Get the latest updates, features, and tips delivered to your inbox.
                   </p>
                 </div>
@@ -206,16 +206,11 @@ const Footer = () => {
         {/* Bottom Footer */}
         <div className="border-t border-secondary-200 py-6 dark:border-secondary-800">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            <div className="text-body-sm flex items-center gap-2 text-secondary-600 dark:text-secondary-400">
-              <span>© {currentYear} TalkifyDocs. {companyConfig.footer.showLocation && companyConfig.footer.location ? (
-                <>
-                  Made with <Heart className="h-4 w-4 text-red-500" /> in {companyConfig.footer.location}.
-                </>
-              ) : (
-                <>
-                  Made with <Heart className="h-4 w-4 text-red-500" />
-                </>
-              )}</span>
+            <div className="text-body-sm flex items-center gap-2 text-secondary-600">
+              <span className="flex items-center gap-1">
+                © {currentYear} TalkifyDocs. Made with <Heart className="h-4 w-4 text-red-500 fill-current" />
+                {companyConfig.footer.showLocation && companyConfig.footer.location && ` in ${companyConfig.footer.location}.`}
+              </span>
             </div>
 
             <div className="flex items-center gap-6">
@@ -231,7 +226,7 @@ const Footer = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <social.icon className="h-4 w-4 text-secondary-600 dark:text-secondary-400" />
+                      <social.icon className="h-4 w-4 text-secondary-600" />
                     </Link>
                   ))}
                 </div>

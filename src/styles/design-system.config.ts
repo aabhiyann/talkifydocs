@@ -11,6 +11,7 @@ export const designSystem = {
       700: '#1d4ed8',
       800: '#1e40af',
       900: '#1e3a8a',
+      950: '#172554',
       DEFAULT: 'rgb(var(--primary))',
       foreground: 'rgb(var(--primary-foreground))',
     },
@@ -50,6 +51,7 @@ export const designSystem = {
       700: 'var(--secondary-700)',
       800: 'var(--secondary-800)',
       900: 'var(--secondary-900)',
+      950: 'var(--secondary-950)',
       DEFAULT: 'rgb(var(--secondary))',
       foreground: 'rgb(var(--secondary-foreground))',
     },
@@ -64,6 +66,7 @@ export const designSystem = {
       700: 'var(--gray-700)',
       800: 'var(--gray-800)',
       900: 'var(--gray-900)',
+      950: 'var(--gray-950)',
     },
     warning: {
       50: 'var(--warning-50)',

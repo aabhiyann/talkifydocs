@@ -11,13 +11,13 @@ interface ModernCardProps {
 }
 
 const variants = {
-  default: "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800",
+  default: "bg-white dark:bg-zinc-950 border border-secondary-200 dark:border-zinc-800",
   elevated:
-    "bg-white dark:bg-gray-900 shadow-sm border border-gray-200 dark:border-gray-800",
+    "bg-white dark:bg-zinc-950 shadow-sm border border-secondary-200 dark:border-zinc-800",
   glass:
-    "glass bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-800/50",
+    "glass bg-white/60 dark:bg-zinc-900/40 backdrop-blur-sm border border-secondary-200/50 dark:border-zinc-800/50",
   gradient:
-    "bg-gradient-to-br from-white to-primary-50 dark:from-gray-900 dark:to-primary-900/20 border border-primary-200/50 dark:border-primary-700/50",
+    "bg-gradient-to-br from-white to-primary-50 dark:from-zinc-950 dark:to-primary-900/10 border border-primary-200/50 dark:border-zinc-800/50",
 };
 
 const paddings = {
@@ -52,7 +52,7 @@ export function ModernCard({
         variants[variant],
         paddings[padding],
         rounded[roundedVariant],
-        hover && "hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-700 hover:-translate-y-1",
+        hover && "hover:shadow-lg hover:border-secondary-300 dark:hover:border-zinc-700 hover:-translate-y-1",
         className,
       )}
     >
@@ -87,7 +87,7 @@ export function ModernCardTitle({ children, className, size = "md" }: ModernCard
   return (
     <h3
       className={cn(
-        "font-semibold text-secondary-900 dark:text-secondary-100",
+        "font-semibold text-secondary-900 dark:text-white",
         sizeClasses[size],
         className,
       )}
@@ -104,7 +104,7 @@ interface ModernCardDescriptionProps {
 
 export function ModernCardDescription({ children, className }: ModernCardDescriptionProps) {
   return (
-    <p className={cn("text-body-sm text-secondary-600 dark:text-secondary-400", className)}>
+    <p className={cn("text-body-sm text-secondary-600 dark:text-gray-300", className)}>
       {children}
     </p>
   );

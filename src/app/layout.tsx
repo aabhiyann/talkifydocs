@@ -37,8 +37,8 @@ export const metadata: Metadata = {
   authors: [{ name: "TalkifyDocs Team" }],
   metadataBase: new URL("https://talkifydocs.com"),
   icons: {
-    icon: "/brand/icons/favicon.ico",
-    shortcut: "/brand/icons/favicon.ico",
+    icon: "/brand/icons/icon-192.png",
+    shortcut: "/brand/icons/icon-192.png",
     apple: "/brand/icons/apple-touch-icon.png",
   },
   openGraph: {
