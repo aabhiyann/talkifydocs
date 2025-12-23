@@ -26,17 +26,17 @@
   --secondary-800: #262626;
   --secondary-900: #171717;
 
-  /* Accent Colors - Yellow */
-  --accent-50: #fffbeb;
-  --accent-100: #fef3c7;
-  --accent-200: #fde68a;
-  --accent-300: #fcd34d;
-  --accent-400: #fbbf24;
-  --accent-500: #f59e0b;
-  --accent-600: #d97706;
-  --accent-700: #b45309;
-  --accent-800: #92400e;
-  --accent-900: #78350f;
+  /* Accent Colors - Sky Blue / Cyan (Replacing Yellow) */
+  --accent-50: #f0f9ff;
+  --accent-100: #e0f2fe;
+  --accent-200: #bae6fd;
+  --accent-300: #7dd3fc;
+  --accent-400: #38bdf8;
+  --accent-500: #0ea5e9;
+  --accent-600: #0284c7;
+  --accent-700: #0369a1;
+  --accent-800: #075985;
+  --accent-900: #0c4a6e;
 
   /* Neutral Colors - Wist Palette */
   --gray-50: #fafafa; /* Soft White */
@@ -166,11 +166,11 @@
   --danger-600: #dc2626;
   --danger-700: #b91c1c;
 
-  /* Gradients - Green Theme */
+  /* Gradients - Updated Blue Theme */
   --gradient-primary: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
   --gradient-secondary: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-700) 100%);
   --gradient-accent: linear-gradient(135deg, var(--accent-500) 0%, var(--accent-700) 100%);
-  --gradient-hero: linear-gradient(135deg, var(--primary-600) 0%, var(--accent-600) 100%);
+  --gradient-hero: linear-gradient(135deg, var(--primary-600) 0%, var(--accent-500) 100%);
   --gradient-success: linear-gradient(135deg, var(--success-500) 0%, var(--primary-600) 100%);
   --gradient-warning: linear-gradient(135deg, var(--warning-500) 0%, var(--warning-700) 100%);
   --gradient-danger: linear-gradient(135deg, var(--danger-500) 0%, var(--danger-700) 100%);
@@ -394,17 +394,17 @@
   --secondary-800: #e5e5e5;
   --secondary-900: #fafafa; /* Light Text */
 
-  /* Accent Yellow in Dark Mode */
-  --accent-50: #78350f;
-  --accent-100: #92400e;
-  --accent-200: #b45309;
-  --accent-300: #d97706;
-  --accent-400: #f59e0b;
-  --accent-500: #fbbf24;
-  --accent-600: #fcd34d;
-  --accent-700: #fde68a;
-  --accent-800: #fef3c7;
-  --accent-900: #fffbeb;
+  /* Accent Sky Blue in Dark Mode */
+  --accent-50: #082f49;
+  --accent-100: #0c4a6e;
+  --accent-200: #0369a1;
+  --accent-300: #0284c7;
+  --accent-400: #0ea5e9;
+  --accent-500: #38bdf8;
+  --accent-600: #7dd3fc;
+  --accent-700: #bae6fd;
+  --accent-800: #e0f2fe;
+  --accent-900: #f0f9ff;
 }
 
 /* Modern Typography Classes - Wist-Inspired */
