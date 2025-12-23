@@ -6,23 +6,32 @@ const path = require("path");
 console.log("🔍 Checking your environment setup...\n");
 
 // Check if .env.local exists
-const envPath = path.join(process.cwd(), ".env.local");
-if (!fs.existsSync(envPath)) {
-  console.log("❌ .env.local file not found");
-  console.log("   Run: ./scripts/setup-free.sh");
-  process.exit(1);
+const envLocalPath = path.join(process.cwd(), ".env.local");
+const envPath = path.join(process.cwd(), ".env");
+
+let envVars = {};
+
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, "utf8");
+  envContent.split("\n").forEach((line) => {
+    const [key, value] = line.split("=");
+    if (key && value) {
+      envVars[key.trim()] = value.trim().replace(/"/g, "");
+    }
+  });
 }
 
-// Read and parse .env.local
-const envContent = fs.readFileSync(envPath, "utf8");
-const envVars = {};
-
-envContent.split("\n").forEach((line) => {
-  const [key, value] = line.split("=");
-  if (key && value) {
-    envVars[key.trim()] = value.trim().replace(/"/g, "");
-  }
-});
+if (fs.existsSync(envLocalPath)) {
+  const envContent = fs.readFileSync(envLocalPath, "utf8");
+  envContent.split("\n").forEach((line) => {
+    const [key, value] = line.split("=");
+    if (key && value) {
+      envVars[key.trim()] = value.trim().replace(/"/g, ""); // Overwrite with local
+    }
+  });
+} else {
+  console.log("⚠️  .env.local file not found (using .env if available)");
+}
 
 // Check required variables
 const requiredVars = [
