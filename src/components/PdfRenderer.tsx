@@ -86,17 +86,28 @@ export const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
         setLoadTimeout(timeout);
 
         // Import PDF.js library
+        console.log("PdfRenderer: Importing pdfjs-dist");
         const pdfjs = await import("pdfjs-dist");
+        
+        // Configure worker - using standard version for compatibility
+        if (typeof window !== "undefined") {
+          // Version 5 specific worker path
+          const workerUrl = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+          pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
+          console.log("PdfRenderer: Worker configured with URL", workerUrl);
+        }
+        
         setPdfjsLib(pdfjs);
 
-        // Configure worker with multiple fallback options
-        if (typeof window !== "undefined") {
-          // Use the worker from the installed package
-          pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`;
-        }
-
         // Import react-pdf components
-        const { Document, Page } = await import("react-pdf");
+        console.log("PdfRenderer: Importing react-pdf");
+        const { Document, Page, pdfjs: reactPdfJs } = await import("react-pdf");
+        
+        // Essential: Sync the worker to the react-pdf instance
+        if (typeof window !== "undefined") {
+          reactPdfJs.GlobalWorkerOptions.workerSrc = pdfjs.GlobalWorkerOptions.workerSrc;
+        }
+        
         setDocumentComponent(() => Document);
         setPageComponent(() => Page);
 
@@ -129,7 +140,7 @@ export const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
         clearTimeout(loadTimeout);
       }
     };
-  }, [mounted, toast, loadTimeout]);
+  }, [mounted, toast]);
 
   const CustomPageValidator = z.object({
     page: z.string().refine((num) => Number(num) > 0 && Number(num) <= numPages!),
@@ -276,7 +287,7 @@ export const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
   }
 
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex w-full flex-col" suppressHydrationWarning>
       {/* PDF Controls */}
       <div className="flex items-center justify-between border-b border-border bg-background px-2 py-2">
         <div className="flex items-center gap-2">
