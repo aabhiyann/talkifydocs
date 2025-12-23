@@ -22,7 +22,7 @@ export default function Home() {
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-full">
                   <Sparkles className="w-4 h-4 text-primary-600" />
                   <span className="text-sm font-medium text-primary-600 dark:text-primary-400">
-                    Powered by GPT-4o & Claude 3.5
+                    Powered by Gemini 3.0 & Llama 3.3
                   </span>
                 </div>
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-full">

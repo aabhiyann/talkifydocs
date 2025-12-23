@@ -60,7 +60,7 @@ export default function AboutPage() {
               About TalkifyDocs
             </h1>
             <p className="text-body-lg mx-auto max-w-3xl leading-relaxed text-secondary-600 dark:text-gray-300">
-              A portfolio project demonstrating full-stack development with AI integration. Built with Next.js, OpenAI GPT-4, LangChain, and Pinecone to showcase modern web development practices and RAG (Retrieval-Augmented Generation) implementation.
+              A portfolio project demonstrating full-stack development with modern AI integration. Built with Next.js, Google Gemini 3.0, Llama 3.3, LangChain, and Pinecone to showcase cutting-edge RAG (Retrieval-Augmented Generation) implementation.
             </p>
           </div>
         </MaxWidthWrapper>
@@ -95,7 +95,7 @@ export default function AboutPage() {
                       AI & ML
                     </h4>
                     <p className="text-body-sm text-secondary-600 dark:text-gray-200">
-                      OpenAI GPT-4, LangChain, Pinecone Vector DB
+                      Gemini 3.0, Llama 3.3, LangChain, Pinecone DB
                     </p>
                   </div>
                 </div>

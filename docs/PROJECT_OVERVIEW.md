@@ -65,7 +65,8 @@
     - Schema in `prisma/schema.prisma` (`User`, `File`, `Message`).
     - `src/db/index.ts` exports a singleton `db` client.
   - External services:
-    - **OpenAI** (`src/lib/openai.ts`) for chat completions and embeddings.
+    - **Gemini 3.0** (`src/lib/gemini.ts`) for primary chat and summarization.
+    - **Groq (Llama 3.3)** (`src/lib/groq.ts`) for high-speed fallback.
     - **Pinecone** (`src/lib/pinecone.ts`) + **LangChain** for vector search.
     - **Stripe** (`src/lib/stripe.ts`, `src/config/stripe.ts`) for subscriptions.
     - **Vercel Blob** (`@vercel/blob`) for file storage and thumbnails.
@@ -130,8 +131,9 @@
     - BM25-style keyword re-ranking for better precision.
   - Fetches recent conversation history for context.
   - Builds system prompt with context and conversation history.
-  - Calls OpenAI `gpt-4o` with streaming enabled.
-  - Streams the answer back (`OpenAIStream` + `StreamingTextResponse`).
+  - Calls **Gemini 3.0 Flash** with streaming enabled.
+  - Falls back to **Groq (Llama 3.3)** if primary provider is unavailable.
+  - Streams the answer back.
   - Saves assistant reply with citations (fileId, page, snippet) to DB.
   - Citations are clickable and jump to the correct page in PDF viewer.
 

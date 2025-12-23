@@ -10,7 +10,7 @@ TalkifyDocs is an AI-powered PDF assistant built with Next.js 15, allowing users
 - **Backend:** Next.js Route Handlers, tRPC, Prisma ORM
 - **Database:** PostgreSQL (hosted on Neon or Supabase)
 - **Auth:** Clerk
-- **AI:** OpenAI GPT-4o or Claude 3.5 Sonnet, Pinecone vector DB, LangChain
+- **AI:** Gemini 3.0 or Llama 3.3, Pinecone vector DB, LangChain
 - **Storage:** Vercel Blob
 - **Payments:** Stripe
 - **Hosting:** Vercel
