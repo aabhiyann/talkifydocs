@@ -51,12 +51,16 @@ export default function AboutPage() {
 
         <MaxWidthWrapper>
           <div className="text-center">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary-200 bg-primary-50 px-4 py-2 dark:border-primary-800 dark:bg-primary-900/20">
+              <span className="text-sm font-medium text-primary-600 dark:text-primary-400">
+                Portfolio Project
+              </span>
+            </div>
             <h1 className="text-display-lg mb-6 bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
               About TalkifyDocs
             </h1>
             <p className="text-body-lg mx-auto max-w-3xl leading-relaxed text-secondary-600 dark:text-secondary-300">
-              We&apos;re on a mission to transform how people interact with documents through the
-              power of artificial intelligence, making information more accessible and actionable.
+              A portfolio project demonstrating full-stack development with AI integration. Built with Next.js, OpenAI GPT-4, LangChain, and Pinecone to showcase modern web development practices and RAG (Retrieval-Augmented Generation) implementation.
             </p>
           </div>
         </MaxWidthWrapper>
@@ -68,59 +72,56 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
             <div>
               <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
-                Our Mission
+                Why I Built This
               </h2>
               <p className="text-body-lg mb-6 text-secondary-600 dark:text-secondary-300">
-                At TalkifyDocs, we believe that every document contains valuable insights waiting to
-                be discovered. Our mission is to make these insights instantly accessible through
-                conversational AI, empowering individuals and organizations to make better decisions
-                faster.
+                TalkifyDocs started as a learning project to explore RAG (Retrieval-Augmented Generation) systems and modern full-stack development. The goal was to build a production-ready application that demonstrates AI integration, vector databases, and scalable architecture patterns.
               </p>
               <p className="text-body-md text-secondary-600 dark:text-secondary-300">
-                Founded in 2024, we&apos;ve built TalkifyDocs from the ground up with a focus on
-                accuracy, security, and user experience. Our team combines deep expertise in AI,
-                machine learning, and user interface design to create tools that truly understand
-                your content.
+                Built in 2024, this project showcases end-to-end development: from document processing and embedding generation to real-time chat interfaces and subscription management. It&apos;s a demonstration of building AI-powered applications that are both functional and user-friendly.
               </p>
             </div>
             <div className="glass rounded-3xl p-8">
-              <div className="space-y-6">
+              <h3 className="text-heading-lg mb-6 text-secondary-900 dark:text-secondary-100">
+                Tech Stack
+              </h3>
+              <div className="space-y-4">
                 <div className="flex items-center gap-4">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600">
                     <Brain className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-heading-md text-secondary-900 dark:text-secondary-100">
-                      AI-Powered
-                    </h3>
+                    <h4 className="text-heading-md text-secondary-900 dark:text-secondary-100">
+                      AI & ML
+                    </h4>
                     <p className="text-body-sm text-secondary-600 dark:text-secondary-400">
-                      Advanced language models
+                      OpenAI GPT-4, LangChain, Pinecone Vector DB
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-accent-500 to-accent-600">
-                    <Shield className="h-6 w-6 text-white" />
+                    <Zap className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-heading-md text-secondary-900 dark:text-secondary-100">
-                      Secure
-                    </h3>
+                    <h4 className="text-heading-md text-secondary-900 dark:text-secondary-100">
+                      Frontend
+                    </h4>
                     <p className="text-body-sm text-secondary-600 dark:text-secondary-400">
-                      Enterprise-grade security
+                      Next.js 16, React, TypeScript, Tailwind CSS
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-secondary-500 to-secondary-600">
-                    <Zap className="h-6 w-6 text-white" />
+                    <Shield className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-heading-md text-secondary-900 dark:text-secondary-100">
-                      Fast
-                    </h3>
+                    <h4 className="text-heading-md text-secondary-900 dark:text-secondary-100">
+                      Backend & Infrastructure
+                    </h4>
                     <p className="text-body-sm text-secondary-600 dark:text-secondary-400">
-                      Real-time processing
+                      tRPC, Prisma, PostgreSQL, Stripe, Clerk Auth
                     </p>
                   </div>
                 </div>
@@ -135,10 +136,10 @@ export default function AboutPage() {
         <MaxWidthWrapper>
           <div className="mb-16 text-center">
             <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
-              Our Values
+              Key Features
             </h2>
             <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-secondary-300">
-              These core values guide everything we do at TalkifyDocs
+              What makes TalkifyDocs a comprehensive full-stack project
             </p>
           </div>
 
