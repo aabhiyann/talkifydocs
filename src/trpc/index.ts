@@ -38,7 +38,7 @@ export const appRouter = router({
   getUserFiles: privateProcedure.query(async ({ ctx }) => {
     const { userId } = ctx;
 
-    return await db.file.findMany({
+    const files = await db.file.findMany({
       where: {
         userId,
       },
@@ -59,6 +59,11 @@ export const appRouter = router({
         createdAt: "desc",
       }
     });
+
+    return files.map(file => ({
+      ...file,
+      size: file.size.toString(),
+    }));
   }),
 
   createStripeSession: privateProcedure.mutation(async ({ ctx }) => {
@@ -207,7 +212,10 @@ export const appRouter = router({
 
       if (!file) throw new TRPCError({ code: "NOT_FOUND" });
 
-      return file;
+      return {
+        ...file,
+        size: file.size.toString(),
+      };
     }),
 
   deleteFile: privateProcedure
@@ -221,6 +229,7 @@ export const appRouter = router({
         },
         select: {
           id: true,
+          size: true,
         },
       });
 
@@ -232,7 +241,10 @@ export const appRouter = router({
         },
       });
 
-      return file;
+      return {
+        ...file,
+        size: file.size.toString(),
+      };
     }),
 
   createConversation: privateProcedure
@@ -992,18 +1004,14 @@ ${msg.text}${citationText}`;
                 content: msg.text,
             }));
 
-            const openaiResponse = await openai.chat.completions.create({
-                model: AI.OPENAI_MODEL,
-                temperature: 0,
-                stream: true,
-                messages: [
-                    {
-                        role: "system",
-                        content: "Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format.",
-                    },
-                    {
-                        role: "user",
-                        content: `Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format. \nIf you don't know the answer, just say that you don't know, don't try to make up an answer.
+            const formattedMessages = [
+                {
+                    role: "system" as const,
+                    content: "Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format.",
+                },
+                {
+                    role: "user" as const,
+                    content: `Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format. \nIf you don't know the answer, just say that you don't know, don't try to make up an answer.
               
         \n----------------\n
         
@@ -1011,23 +1019,74 @@ ${msg.text}${citationText}`;
         ${formattedPrevMessages.map((message) => {
             if (message.role === "user") return `User: ${message.content}\n`;
             return `Assistant: ${message.content}\n`;
-        })}
+        }).join("")}
         
         \n----------------\n
         CONTEXT:
         ${results.map((r) => r.pageContent).join("\n\n")}
         
         USER INPUT: ${message}`,
-                    },
-                ],
-            });
+                },
+            ];
+
+            let responseStream;
+            let providerUsed: "openai" | "groq" | "gemini" = AI.DEFAULT_PROVIDER;
+
+            try {
+                if (providerUsed === "gemini") {
+                    const { geminiModel } = await import("@/lib/gemini");
+                    const chat = geminiModel.startChat({
+                        history: formattedPrevMessages.map(m => ({
+                            role: m.role === "user" ? "user" : "model",
+                            parts: [{ text: m.content }],
+                        })),
+                    });
+                    const result = await chat.sendMessageStream(
+                        `Context: ${results.map((r) => r.pageContent).join("\n\n")}\n\nUser Input: ${message}`
+                    );
+                    responseStream = result.stream;
+                } else if (providerUsed === "groq") {
+                    const { groq } = await import("@/lib/groq");
+                    responseStream = await groq.chat.completions.create({
+                        model: AI.GROQ_MODEL,
+                        temperature: 0,
+                        stream: true,
+                        messages: formattedMessages as any,
+                    });
+                } else {
+                    responseStream = await openai.chat.completions.create({
+                        model: AI.OPENAI_MODEL,
+                        temperature: 0,
+                        stream: true,
+                        messages: formattedMessages,
+                    });
+                }
+            } catch (err: any) {
+                console.warn(`[TRPC Chat] ${providerUsed} failed, falling back to Groq:`, err.message);
+                providerUsed = "groq";
+                const { groq } = await import("@/lib/groq");
+                responseStream = await groq.chat.completions.create({
+                    model: AI.GROQ_MODEL,
+                    temperature: 0,
+                    stream: true,
+                    messages: formattedMessages as any,
+                });
+            }
 
             let fullResponse = "";
             (async () => {
-                for await (const chunk of openaiResponse) {
-                    const token = chunk.choices[0]?.delta?.content || "";
-                    fullResponse += token;
-                    ee.emit("chunk", token);
+                if (providerUsed === "gemini") {
+                    for await (const chunk of responseStream as any) {
+                        const token = chunk.text() || "";
+                        fullResponse += token;
+                        ee.emit("chunk", token);
+                    }
+                } else {
+                    for await (const chunk of responseStream as any) {
+                        const token = chunk.choices[0]?.delta?.content || "";
+                        fullResponse += token;
+                        ee.emit("chunk", token);
+                    }
                 }
                 ee.emit("end");
 
@@ -1037,7 +1096,7 @@ ${msg.text}${citationText}`;
                         isUserMessage: false,
                         fileId,
                         userId: user.id,
-                        conversationId: conversation.id,
+                        conversationId: conversation!.id,
                     },
                 });
             })();
@@ -1140,7 +1199,7 @@ ${msg.text}${citationText}`;
 
     getConversations: privateProcedure.query(async ({ ctx }) => {
         const { userId } = ctx;
-        return db.conversation.findMany({
+        const conversations = await db.conversation.findMany({
             where: { userId },
             orderBy: { updatedAt: "desc" },
             include: {
@@ -1151,6 +1210,17 @@ ${msg.text}${citationText}`;
                 },
             },
         });
+
+        return conversations.map(conv => ({
+            ...conv,
+            conversationFiles: conv.conversationFiles.map(cf => ({
+                ...cf,
+                file: {
+                    ...cf.file,
+                    size: cf.file.size.toString()
+                }
+            }))
+        }));
     }),
 
     demoChat: publicProcedure

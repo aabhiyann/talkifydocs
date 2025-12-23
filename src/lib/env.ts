@@ -10,6 +10,9 @@ const envSchema = z.object({
   // Groq
   GROQ_API_KEY: z.string().min(1, "Groq API key is required"),
 
+  // Google Gemini
+  GOOGLE_API_KEY: z.string().min(1, "Google API key is required"),
+
   // Pinecone
   PINECONE_API_KEY: z.string().min(1, "Pinecone API key is required"),
   PINECONE_ENVIRONMENT: z.string().min(1, "Pinecone environment is required"),
@@ -83,6 +86,7 @@ try {
     BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN || "",
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY || "",
     CLERK_WEBHOOK_SECRET: process.env.CLERK_WEBHOOK_SECRET || "",
+    GOOGLE_API_KEY: process.env.GOOGLE_API_KEY || "",
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "",
     NEXT_PUBLIC_CLERK_SIGN_IN_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL || "/sign-in",
     NEXT_PUBLIC_CLERK_SIGN_UP_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL || "/sign-up",
@@ -90,7 +94,7 @@ try {
       process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL || "/dashboard",
     NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL:
       process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL || "/dashboard",
-    NODE_ENV: process.env.NODE_ENV || "development",
+    NODE_ENV: (process.env.NODE_ENV as "development" | "production" | "test") || "development",
     PORT: process.env.PORT || "3000",
     VERCEL_URL: process.env.VERCEL_URL,
   };

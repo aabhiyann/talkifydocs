@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 // Rate limiting configuration
 const RATE_LIMITS = {
   API: { requests: 100, windowMs: 15 * 60 * 1000 }, // 100 requests per 15 minutes
-  UPLOAD: { requests: 10, windowMs: 60 * 60 * 1000 }, // 10 uploads per hour
+  UPLOAD: { requests: 50, windowMs: 60 * 60 * 1000 }, // 50 uploads per hour
   MESSAGE: { requests: 50, windowMs: 60 * 1000 }, // 50 messages per minute
 };
 
