@@ -21,38 +21,51 @@ import {
   ModernCardTitle,
   ModernCardDescription,
 } from "@/components/ui/modern-card";
+import { companyConfig } from "@/config/company";
 
 export default function ContactPage() {
-  const contactMethods = [
-    {
+  // Build contact methods array based on configured contact info
+  const contactMethods = [];
+  
+  if (companyConfig.contact.email) {
+    contactMethods.push({
       icon: Mail,
       title: "Email Support",
       description: "Get help via email within 24 hours",
-      contact: "support@talkifydocs.com",
+      contact: companyConfig.contact.email,
       action: "Send Email",
-    },
-    {
-      icon: MessageSquare,
-      title: "Live Chat",
-      description: "Chat with our support team in real-time",
-      contact: "Available 9 AM - 6 PM EST",
-      action: "Start Chat",
-    },
-    {
+      href: `mailto:${companyConfig.contact.email}`,
+    });
+  }
+  
+  // Live Chat - optional, can be removed if not needed
+  // contactMethods.push({
+  //   icon: MessageSquare,
+  //   title: "Live Chat",
+  //   description: "Chat with our support team in real-time",
+  //   contact: "Available 9 AM - 6 PM EST",
+  //   action: "Start Chat",
+  // });
+  
+  if (companyConfig.contact.phone) {
+    contactMethods.push({
       icon: Phone,
       title: "Phone Support",
       description: "Speak directly with our team",
-      contact: "+1 (555) 123-4567",
+      contact: companyConfig.contact.phone,
       action: "Call Now",
-    },
-    {
-      icon: HelpCircle,
-      title: "Help Center",
-      description: "Browse our comprehensive help articles",
-      contact: "Self-service support",
-      action: "Visit Help Center",
-    },
-  ];
+      href: `tel:${companyConfig.contact.phone.replace(/\s/g, "")}`,
+    });
+  }
+  
+  contactMethods.push({
+    icon: HelpCircle,
+    title: "Help Center",
+    description: "Browse our comprehensive help articles",
+    contact: "Self-service support",
+    action: "Visit Help Center",
+    href: "/help",
+  });
 
   const faqs = [
     {
@@ -88,7 +101,7 @@ export default function ContactPage() {
   ];
 
   return (
-    <div className="to-primary-50/30 dark:to-primary-950/30 min-h-screen bg-gradient-to-b from-white dark:from-secondary-900">
+    <div className="min-h-screen bg-gradient-to-b from-white to-primary-50/30 dark:from-secondary-900 dark:to-primary-950/30">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-24">
         <div className="absolute inset-0 -z-10">
@@ -137,9 +150,15 @@ export default function ContactPage() {
                     <p className="text-body-sm mb-4 font-medium text-primary-600 dark:text-primary-400">
                       {method.contact}
                     </p>
-                    <Button variant="outline" size="sm" className="w-full">
-                      {method.action}
-                    </Button>
+                    {method.href ? (
+                      <Button variant="outline" size="sm" className="w-full" asChild>
+                        <a href={method.href}>{method.action}</a>
+                      </Button>
+                    ) : (
+                      <Button variant="outline" size="sm" className="w-full">
+                        {method.action}
+                      </Button>
+                    )}
                   </div>
                 </ModernCardContent>
               </ModernCard>
@@ -149,7 +168,7 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Form & Info */}
-      <section className="from-primary-50/30 dark:from-primary-950/30 bg-gradient-to-b to-white py-16 dark:to-secondary-900">
+      <section className="bg-gradient-to-b from-primary-50/30 to-white py-16 dark:from-primary-950/30 dark:to-secondary-900">
         <MaxWidthWrapper>
           <div className="grid grid-cols-1 gap-16 lg:grid-cols-2">
             {/* Contact Form */}
@@ -209,76 +228,72 @@ export default function ContactPage() {
             </div>
 
             {/* Contact Info */}
-            <div>
-              <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
-                Office Information
-              </h2>
-              <p className="text-body-lg mb-8 text-secondary-600 dark:text-secondary-300">
-                Visit us at our headquarters or reach out through any of these channels.
-              </p>
+            {(companyConfig.contact.address.street || companyConfig.contact.businessHours.enabled) && (
+              <div>
+                <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
+                  Office Information
+                </h2>
+                <p className="text-body-lg mb-8 text-secondary-600 dark:text-secondary-300">
+                  Visit us at our headquarters or reach out through any of these channels.
+                </p>
 
-              <div className="space-y-6">
-                <ModernCard variant="glass" className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-600">
-                      <MapPin className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-heading-md mb-1 text-secondary-900 dark:text-secondary-100">
-                        Address
-                      </h3>
-                      <p className="text-body-md text-secondary-600 dark:text-secondary-400">
-                        123 Innovation Drive
-                        <br />
-                        San Francisco, CA 94105
-                        <br />
-                        United States
-                      </p>
-                    </div>
-                  </div>
-                </ModernCard>
+                <div className="space-y-6">
+                  {companyConfig.contact.address.street && (
+                    <ModernCard variant="glass" className="p-6">
+                      <div className="flex items-start gap-4">
+                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-600">
+                          <MapPin className="h-5 w-5 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="text-heading-md mb-1 text-secondary-900 dark:text-secondary-100">
+                            Address
+                          </h3>
+                          <p className="text-body-md text-secondary-600 dark:text-secondary-400">
+                            {companyConfig.contact.address.street}
+                            {companyConfig.contact.address.city && (
+                              <>
+                                <br />
+                                {companyConfig.contact.address.city}
+                                {companyConfig.contact.address.state && `, ${companyConfig.contact.address.state}`}
+                                {companyConfig.contact.address.zip && ` ${companyConfig.contact.address.zip}`}
+                              </>
+                            )}
+                            {companyConfig.contact.address.country && (
+                              <>
+                                <br />
+                                {companyConfig.contact.address.country}
+                              </>
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                    </ModernCard>
+                  )}
 
-                <ModernCard variant="glass" className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-accent-500 to-accent-600">
-                      <Clock className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-heading-md mb-1 text-secondary-900 dark:text-secondary-100">
-                        Business Hours
-                      </h3>
-                      <p className="text-body-md text-secondary-600 dark:text-secondary-400">
-                        Monday - Friday: 9:00 AM - 6:00 PM EST
-                        <br />
-                        Saturday: 10:00 AM - 4:00 PM EST
-                        <br />
-                        Sunday: Closed
-                      </p>
-                    </div>
-                  </div>
-                </ModernCard>
-
-                <ModernCard variant="glass" className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-secondary-500 to-secondary-600">
-                      <CheckCircle className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-heading-md mb-1 text-secondary-900 dark:text-secondary-100">
-                        Response Time
-                      </h3>
-                      <p className="text-body-md text-secondary-600 dark:text-secondary-400">
-                        Email: Within 24 hours
-                        <br />
-                        Live Chat: Immediate
-                        <br />
-                        Phone: Immediate during business hours
-                      </p>
-                    </div>
-                  </div>
-                </ModernCard>
+                  {companyConfig.contact.businessHours.enabled && (
+                    <ModernCard variant="glass" className="p-6">
+                      <div className="flex items-start gap-4">
+                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-accent-500 to-accent-600">
+                          <Clock className="h-5 w-5 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="text-heading-md mb-1 text-secondary-900 dark:text-secondary-100">
+                            Business Hours
+                          </h3>
+                          <p className="text-body-md text-secondary-600 dark:text-secondary-400">
+                            {companyConfig.contact.businessHours.weekdays}
+                            <br />
+                            {companyConfig.contact.businessHours.saturday}
+                            <br />
+                            {companyConfig.contact.businessHours.sunday}
+                          </p>
+                        </div>
+                      </div>
+                    </ModernCard>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </MaxWidthWrapper>
       </section>

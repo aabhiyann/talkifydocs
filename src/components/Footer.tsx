@@ -4,6 +4,7 @@ import Link from "next/link";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { Mail, Phone, MapPin, Twitter, Linkedin, Github, ArrowRight, Heart } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
+import { companyConfig } from "@/config/company";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -35,14 +36,20 @@ const Footer = () => {
     ],
   };
 
-  const socialLinks = [
-    { name: "Twitter", href: "https://twitter.com/talkifydocs", icon: Twitter },
-    { name: "LinkedIn", href: "https://linkedin.com/company/talkifydocs", icon: Linkedin },
-    { name: "GitHub", href: "https://github.com/talkifydocs", icon: Github },
-  ];
+  // Build social links array only for configured social media
+  const socialLinks = [];
+  if (companyConfig.social.twitter) {
+    socialLinks.push({ name: "Twitter", href: companyConfig.social.twitter, icon: Twitter });
+  }
+  if (companyConfig.social.linkedin) {
+    socialLinks.push({ name: "LinkedIn", href: companyConfig.social.linkedin, icon: Linkedin });
+  }
+  if (companyConfig.social.github) {
+    socialLinks.push({ name: "GitHub", href: companyConfig.social.github, icon: Github });
+  }
 
   return (
-    <footer className="dark:to-secondary-950 border-t border-secondary-200 bg-gradient-to-b from-white to-secondary-50 dark:border-secondary-800 dark:from-secondary-900">
+    <footer className="border-t border-secondary-200 bg-gradient-to-b from-white to-secondary-50 dark:border-secondary-800 dark:from-secondary-900 dark:to-secondary-950">
       <MaxWidthWrapper>
         {/* Main Footer Content */}
         <div className="py-16">
@@ -63,20 +70,32 @@ const Footer = () => {
               </p>
 
               {/* Contact Info */}
-              <div className="space-y-3">
-                <div className="text-body-sm flex items-center gap-3 text-secondary-600 dark:text-secondary-400">
-                  <Mail className="h-4 w-4" />
-                  <span>support@talkifydocs.com</span>
+              {(companyConfig.contact.email || companyConfig.contact.phone || companyConfig.contact.location) && (
+                <div className="space-y-3">
+                  {companyConfig.contact.email && (
+                    <div className="text-body-sm flex items-center gap-3 text-secondary-600 dark:text-secondary-400">
+                      <Mail className="h-4 w-4" />
+                      <a href={`mailto:${companyConfig.contact.email}`} className="hover:text-primary-600 dark:hover:text-primary-400">
+                        {companyConfig.contact.email}
+                      </a>
+                    </div>
+                  )}
+                  {companyConfig.contact.phone && (
+                    <div className="text-body-sm flex items-center gap-3 text-secondary-600 dark:text-secondary-400">
+                      <Phone className="h-4 w-4" />
+                      <a href={`tel:${companyConfig.contact.phone.replace(/\s/g, "")}`} className="hover:text-primary-600 dark:hover:text-primary-400">
+                        {companyConfig.contact.phone}
+                      </a>
+                    </div>
+                  )}
+                  {companyConfig.contact.location && (
+                    <div className="text-body-sm flex items-center gap-3 text-secondary-600 dark:text-secondary-400">
+                      <MapPin className="h-4 w-4" />
+                      <span>{companyConfig.contact.location}</span>
+                    </div>
+                  )}
                 </div>
-                <div className="text-body-sm flex items-center gap-3 text-secondary-600 dark:text-secondary-400">
-                  <Phone className="h-4 w-4" />
-                  <span>+1 (555) 123-4567</span>
-                </div>
-                <div className="text-body-sm flex items-center gap-3 text-secondary-600 dark:text-secondary-400">
-                  <MapPin className="h-4 w-4" />
-                  <span>San Francisco, CA</span>
-                </div>
-              </div>
+              )}
             </div>
 
             {/* Product Links */}
@@ -188,25 +207,35 @@ const Footer = () => {
         <div className="border-t border-secondary-200 py-6 dark:border-secondary-800">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <div className="text-body-sm flex items-center gap-2 text-secondary-600 dark:text-secondary-400">
-              <span>© {currentYear} TalkifyDocs. Made with</span>
-              <Heart className="h-4 w-4 text-red-500" />
-              <span>in San Francisco.</span>
+              <span>© {currentYear} TalkifyDocs. {companyConfig.footer.showLocation && companyConfig.footer.location ? (
+                <>
+                  Made with <Heart className="h-4 w-4 text-red-500" /> in {companyConfig.footer.location}.
+                </>
+              ) : (
+                <>
+                  Made with <Heart className="h-4 w-4 text-red-500" />
+                </>
+              )}</span>
             </div>
 
             <div className="flex items-center gap-6">
               {/* Social Links */}
-              <div className="flex items-center gap-4">
-                {socialLinks.map((social) => (
-                  <Link
-                    key={social.name}
-                    href={social.href}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary-100 transition-colors duration-200 hover:bg-primary-100 dark:bg-secondary-800 dark:hover:bg-primary-900"
-                    aria-label={social.name}
-                  >
-                    <social.icon className="h-4 w-4 text-secondary-600 dark:text-secondary-400" />
-                  </Link>
-                ))}
-              </div>
+              {socialLinks.length > 0 && (
+                <div className="flex items-center gap-4">
+                  {socialLinks.map((social) => (
+                    <Link
+                      key={social.name}
+                      href={social.href}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary-100 transition-colors duration-200 hover:bg-primary-100 dark:bg-secondary-800 dark:hover:bg-primary-900"
+                      aria-label={social.name}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <social.icon className="h-4 w-4 text-secondary-600 dark:text-secondary-400" />
+                    </Link>
+                  ))}
+                </div>
+              )}
 
               {/* Theme Toggle */}
               <ThemeToggle />

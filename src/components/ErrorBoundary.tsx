@@ -51,8 +51,8 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
       }
 
       return (
-        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-          <div className="w-full max-w-lg rounded-xl bg-white p-8 text-center shadow-xl">
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900">
+          <div className="w-full max-w-lg rounded-xl bg-white dark:bg-gray-900 p-8 text-center shadow-xl">
             <div className="flex flex-col items-center space-y-6">
               <div className="relative h-32 w-32">
                 <Image

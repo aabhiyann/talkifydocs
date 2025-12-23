@@ -145,7 +145,7 @@
   --shadow-xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
   --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
 
-  /* Glassmorphism */
+  /* Glassmorphism - Light Mode */
   --glass-bg: rgba(255, 255, 255, 0.1);
   --glass-border: rgba(255, 255, 255, 0.2);
   --glass-backdrop: blur(10px);
@@ -370,6 +370,11 @@
 
 /* Dark Mode Variables - Blue Theme */
 .dark {
+  /* Glassmorphism - Dark Mode */
+  --glass-bg: rgba(0, 0, 0, 0.3);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-backdrop: blur(10px);
+
   /* Primary Blue - Maintained in dark mode */
   --primary-50: #1e3a8a;
   --primary-100: #1e40af;

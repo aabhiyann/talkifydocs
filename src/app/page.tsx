@@ -17,12 +17,19 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left: Text */}
             <div className="text-center lg:text-left">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-full mb-6">
-                <Sparkles className="w-4 h-4 text-primary-600" />
-                <span className="text-sm font-medium text-primary-600">
-                  Powered by GPT-4o & Claude 3.5
-                </span>
+              {/* Badges */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-6">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-full">
+                  <Sparkles className="w-4 h-4 text-primary-600" />
+                  <span className="text-sm font-medium text-primary-600 dark:text-primary-400">
+                    Powered by GPT-4o & Claude 3.5
+                  </span>
+                </div>
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-full">
+                  <span className="text-sm font-medium text-accent-600 dark:text-accent-400">
+                    Portfolio Project
+                  </span>
+                </div>
               </div>
 
               {/* Headline - Large Serif! */}
