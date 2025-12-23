@@ -64,7 +64,7 @@ export default async function SharedChatPage({ params }: PageProps) {
   const fileNames = conversation.conversationFiles.map((cf) => cf.file.name).join(", ");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:bg-black">
       <div className="mx-auto max-w-4xl px-4 py-8 md:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -125,11 +125,10 @@ export default async function SharedChatPage({ params }: PageProps) {
                     <div className="flex items-start gap-4">
                       {/* Avatar */}
                       <div
-                        className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${
-                          message.isUserMessage
+                        className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${message.isUserMessage
                             ? "bg-primary-600 text-white"
                             : "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
-                        }`}
+                          }`}
                       >
                         {message.isUserMessage ? "👤" : "🤖"}
                       </div>
