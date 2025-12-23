@@ -207,7 +207,7 @@ export const designSystem = {
 
 export const componentStyles = {
   button: {
-    base: "inline-flex items-center justify-center whitespace-nowrap font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:hover:translate-y-0",
+    base: "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 button-press",
     variants: {
       primary: "bg-primary-600 text-white hover:bg-primary-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 shadow-sm",
       secondary: "bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow active:translate-y-0",
@@ -229,7 +229,7 @@ export const componentStyles = {
     },
   },
   card: {
-    base: "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm transition-all duration-300",
+    base: "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm transition-all duration-300 card-hover",
     rounded: "rounded-xl",
     padding: {
       sm: "p-4",
@@ -260,7 +260,7 @@ export const componentStyles = {
     },
   },
   documentCard: {
-    container: "group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-gray-700 cursor-pointer",
+    container: "group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-gray-700 cursor-pointer card-hover",
     thumbnail: "relative aspect-[16/10] w-full overflow-hidden bg-gray-100 dark:bg-gray-800",
     thumbnailImage: "h-full w-full object-cover transition-transform duration-500 group-hover:scale-110",
     content: "flex flex-1 flex-col p-4",
@@ -275,4 +275,3 @@ export const componentStyles = {
     base: "animate-pulse rounded bg-gray-200 dark:bg-gray-800",
   },
 }
-
