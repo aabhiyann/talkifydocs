@@ -1,5 +1,6 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Brain, Shield, Zap, Users, Target, Award } from "lucide-react";
+import { companyConfig } from "@/config/company";
 
 export default function AboutPage() {
   const values = [
@@ -37,32 +38,8 @@ export default function AboutPage() {
     },
   ];
 
-  const team = [
-    {
-      name: "Sarah Chen",
-      role: "CEO & Co-Founder",
-      image: "/api/placeholder/300/300",
-      bio: "Former AI researcher at Google with 10+ years in machine learning and document processing.",
-    },
-    {
-      name: "Marcus Rodriguez",
-      role: "CTO & Co-Founder",
-      image: "/api/placeholder/300/300",
-      bio: "Ex-Microsoft engineer specializing in scalable AI systems and natural language processing.",
-    },
-    {
-      name: "Dr. Emily Watson",
-      role: "Head of AI Research",
-      image: "/api/placeholder/300/300",
-      bio: "PhD in Computer Science from Stanford, leading our AI model development and optimization.",
-    },
-    {
-      name: "David Kim",
-      role: "Head of Product",
-      image: "/api/placeholder/300/300",
-      bio: "Former product manager at Adobe, focused on creating intuitive user experiences.",
-    },
-  ];
+  // Use team from config if enabled, otherwise empty array
+  const team = companyConfig.about.showTeam ? companyConfig.about.team : [];
 
   return (
     <div className="to-primary-50/30 dark:to-primary-950/30 min-h-screen bg-gradient-to-b from-white dark:from-secondary-900">
@@ -187,90 +164,105 @@ export default function AboutPage() {
       </section>
 
       {/* Team Section */}
-      <section className="py-16">
-        <MaxWidthWrapper>
-          <div className="mb-16 text-center">
-            <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
-              Meet Our Team
-            </h2>
-            <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-secondary-300">
-              The passionate people behind TalkifyDocs
-            </p>
-          </div>
+      {team.length > 0 && (
+        <section className="py-16">
+          <MaxWidthWrapper>
+            <div className="mb-16 text-center">
+              <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
+                Meet Our Team
+              </h2>
+              <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-secondary-300">
+                The passionate people behind TalkifyDocs
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {team.map((member, index) => (
-              <div
-                key={index}
-                className="glass rounded-2xl p-6 text-center transition-all duration-300 hover:scale-105"
-              >
-                <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500">
-                  <span className="text-2xl font-bold text-white">
-                    {member.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </span>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+              {team.map((member, index) => (
+                <div
+                  key={index}
+                  className="glass rounded-2xl p-6 text-center transition-all duration-300 hover:scale-105"
+                >
+                  <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500">
+                    <span className="text-2xl font-bold text-white">
+                      {member.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </span>
+                  </div>
+                  <h3 className="text-heading-md mb-2 text-secondary-900 dark:text-secondary-100">
+                    {member.name}
+                  </h3>
+                  <p className="text-body-sm mb-3 font-medium text-primary-600 dark:text-primary-400">
+                    {member.role}
+                  </p>
+                  <p className="text-body-sm text-secondary-600 dark:text-secondary-400">
+                    {member.bio}
+                  </p>
                 </div>
-                <h3 className="text-heading-md mb-2 text-secondary-900 dark:text-secondary-100">
-                  {member.name}
-                </h3>
-                <p className="text-body-sm mb-3 font-medium text-primary-600 dark:text-primary-400">
-                  {member.role}
-                </p>
-                <p className="text-body-sm text-secondary-600 dark:text-secondary-400">
-                  {member.bio}
-                </p>
-              </div>
-            ))}
-          </div>
-        </MaxWidthWrapper>
-      </section>
+              ))}
+            </div>
+          </MaxWidthWrapper>
+        </section>
+      )}
 
       {/* Stats Section */}
-      <section className="to-primary-50/30 dark:to-primary-950/30 bg-gradient-to-b from-white py-16 dark:from-secondary-900">
-        <MaxWidthWrapper>
-          <div className="mb-16 text-center">
-            <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
-              By the Numbers
-            </h2>
-            <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-secondary-300">
-              Our impact in numbers
-            </p>
-          </div>
+      {(companyConfig.stats.documentsProcessed || 
+        companyConfig.stats.activeUsers || 
+        companyConfig.stats.uptime || 
+        companyConfig.stats.support) && (
+        <section className="to-primary-50/30 dark:to-primary-950/30 bg-gradient-to-b from-white py-16 dark:from-secondary-900">
+          <MaxWidthWrapper>
+            <div className="mb-16 text-center">
+              <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
+                By the Numbers
+              </h2>
+              <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-secondary-300">
+                Our impact in numbers
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-            <div className="text-center">
-              <div className="text-display-lg mb-2 font-bold text-primary-600 dark:text-primary-400">
-                10K+
-              </div>
-              <div className="text-body-md text-secondary-600 dark:text-secondary-400">
-                Documents Processed
-              </div>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
+              {companyConfig.stats.documentsProcessed && (
+                <div className="text-center">
+                  <div className="text-display-lg mb-2 font-bold text-primary-600 dark:text-primary-400">
+                    {companyConfig.stats.documentsProcessed}
+                  </div>
+                  <div className="text-body-md text-secondary-600 dark:text-secondary-400">
+                    Documents Processed
+                  </div>
+                </div>
+              )}
+              {companyConfig.stats.activeUsers && (
+                <div className="text-center">
+                  <div className="text-display-lg mb-2 font-bold text-accent-600 dark:text-accent-400">
+                    {companyConfig.stats.activeUsers}
+                  </div>
+                  <div className="text-body-md text-secondary-600 dark:text-secondary-400">
+                    Active Users
+                  </div>
+                </div>
+              )}
+              {companyConfig.stats.uptime && (
+                <div className="text-center">
+                  <div className="text-display-lg mb-2 font-bold text-secondary-600 dark:text-secondary-400">
+                    {companyConfig.stats.uptime}
+                  </div>
+                  <div className="text-body-md text-secondary-600 dark:text-secondary-400">Uptime</div>
+                </div>
+              )}
+              {companyConfig.stats.support && (
+                <div className="text-center">
+                  <div className="text-display-lg mb-2 font-bold text-primary-600 dark:text-primary-400">
+                    {companyConfig.stats.support}
+                  </div>
+                  <div className="text-body-md text-secondary-600 dark:text-secondary-400">Support</div>
+                </div>
+              )}
             </div>
-            <div className="text-center">
-              <div className="text-display-lg mb-2 font-bold text-accent-600 dark:text-accent-400">
-                5K+
-              </div>
-              <div className="text-body-md text-secondary-600 dark:text-secondary-400">
-                Active Users
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="text-display-lg mb-2 font-bold text-secondary-600 dark:text-secondary-400">
-                99.9%
-              </div>
-              <div className="text-body-md text-secondary-600 dark:text-secondary-400">Uptime</div>
-            </div>
-            <div className="text-center">
-              <div className="text-display-lg mb-2 font-bold text-primary-600 dark:text-primary-400">
-                24/7
-              </div>
-              <div className="text-body-md text-secondary-600 dark:text-secondary-400">Support</div>
-            </div>
-          </div>
-        </MaxWidthWrapper>
-      </section>
+          </MaxWidthWrapper>
+        </section>
+      )}
     </div>
   );
 }
