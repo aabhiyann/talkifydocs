@@ -13,7 +13,18 @@ ${text.slice(0, 15000)}
 
 Summary:`;
 
-  const response = await model.invoke(prompt);
-
-  return (response.content as string) ?? "";
+  try {
+    const { geminiModel } = await import("@/lib/gemini");
+    const result = await geminiModel.generateContent(prompt);
+    return result.response.text() ?? "";
+  } catch (geminiErr: any) {
+    console.warn("Gemini summarization failed, falling back to Groq:", geminiErr.message);
+    const { groq } = await import("@/lib/groq");
+    const fallbackRes = await groq.chat.completions.create({
+        model: "llama-3.3-70b-versatile",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.3,
+    });
+    return fallbackRes.choices[0]?.message?.content || "Summary generation failed.";
+  }
 }

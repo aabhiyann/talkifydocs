@@ -23,14 +23,29 @@ Document text:
 Respond with only valid JSON, no additional text.
 `);
 
-  const input = await prompt.format({
+  const formattedPrompt = await prompt.format({
     text: text.slice(0, 10000),
   });
 
-  const response = await model.invoke(input);
+  let responseContent: string;
 
   try {
-    return JSON.parse(response.content as string);
+    const { geminiModel } = await import("@/lib/gemini");
+    const result = await geminiModel.generateContent(formattedPrompt);
+    responseContent = result.response.text();
+  } catch (geminiErr: any) {
+    console.warn("Gemini entities extraction failed, falling back to Groq:", geminiErr.message);
+    const { groq } = await import("@/lib/groq");
+    const fallbackRes = await groq.chat.completions.create({
+        model: "llama-3.3-70b-versatile",
+        messages: [{ role: "user", content: formattedPrompt }],
+        temperature: 0,
+    });
+    responseContent = fallbackRes.choices[0]?.message?.content || "{}";
+  }
+
+  try {
+    return JSON.parse(responseContent);
   } catch (error) {
     loggers.upload.warn("Failed to parse entities JSON:", error);
     return {

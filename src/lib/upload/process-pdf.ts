@@ -3,6 +3,7 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
 import { db } from "@/lib/db";
 import { getPineconeClient } from "@/lib/pinecone";
+import { groq } from "@/lib/groq";
 import { extractMetadata } from "./extract-metadata";
 import { generateThumbnail } from "./generate-thumbnail";
 import { extractEntities } from "./extract-entities";
@@ -122,29 +123,51 @@ export async function processPdfFile({
 
     const [metadata, thumbnailUrl] = await Promise.all([
       withTimeout(extractMetadata(fileUrl), 30000),
-      withTimeout(generateThumbnail(fileUrl), 30000),
+      withTimeout(generateThumbnail(fileUrl), 30000).catch((err) => {
+        loggers.upload.warn("Thumbnail generation failed, skipping:", err.message);
+        return null;
+      }),
     ]);
+
+    loggers.upload.info(`Metadata extracted for ${fileName}. Page count: ${metadata.pageCount}`);
 
     const fullText = pageLevelDocs.map((d: Document) => d.pageContent).join("\n");
 
+    loggers.upload.info(`Starting entities extraction and summarization for ${fileName}`);
     const [entities, summary] = await Promise.all([
-      withTimeout(extractEntities(fullText), 30000),
-      withTimeout(summarizeDocument(fullText), 30000),
+      withTimeout(extractEntities(fullText), 30000).catch(err => {
+        loggers.upload.warn("Entities extraction failed:", err.message);
+        return { people: [], organizations: [], dates: [], locations: [], key_terms: [] };
+      }),
+      withTimeout(summarizeDocument(fullText), 30000).catch(err => {
+        loggers.upload.warn("Summarization failed:", err.message);
+        return "Summary generation failed.";
+      }),
     ]);
 
-    const pinecone = await getPineconeClient();
-    const pineconeIndex: PineconeIndex = pinecone.Index(PINECONE_INDEX_NAME);
-    const embeddings = new OpenAIEmbeddings({
-      modelName: "text-embedding-3-small",
-    });
+    loggers.upload.info(`Creating embeddings in Pinecone for ${fileName}`);
+    try {
+      const { GoogleGenerativeAIEmbeddings } = await import("@langchain/google-genai");
+      const pinecone = await getPineconeClient();
+      const pineconeIndex: PineconeIndex = pinecone.Index(PINECONE_INDEX_NAME);
+      
+      const embeddings = new GoogleGenerativeAIEmbeddings({
+        modelName: AI.GEMINI_EMBEDDING_MODEL,
+        apiKey: process.env.GOOGLE_API_KEY,
+      });
 
-    await withTimeout(
-      PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
-        pineconeIndex,
-        namespace: fileId,
-      }),
-      60000,
-    );
+      await withTimeout(
+        PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
+          pineconeIndex,
+          namespace: fileId,
+        }),
+        60000,
+      );
+      loggers.upload.info(`Gemini Embeddings created successfully for ${fileName}`);
+    } catch (pineconeErr: any) {
+      loggers.upload.error(`Pinecone embedding failed for ${fileName}:`, pineconeErr.message);
+      // We still mark as SUCCESS so the user can view the file, but chat might not work well
+    }
 
     uploadStatus = "SUCCESS";
     processedData = {
