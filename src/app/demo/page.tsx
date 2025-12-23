@@ -21,7 +21,7 @@ const demoFiles = DEMO_DOCUMENTS.map((doc) => ({
 
 export default function DemoPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:bg-black">
       <div className="container mx-auto px-4 py-8 md:px-6 lg:px-8">
         <div className="mx-auto mb-10 max-w-2xl text-center">
           <h1 className="mb-4 bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-4xl font-extrabold tracking-tight text-transparent md:text-5xl">
@@ -55,7 +55,7 @@ export default function DemoPage() {
         <DocumentGrid
           files={demoFiles as any}
           viewMode="grid"
-          onDelete={() => {}}
+          onDelete={() => { }}
           onRetry={undefined}
           isDemo={true}
         />

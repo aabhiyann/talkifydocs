@@ -151,7 +151,7 @@ export default function FeaturesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-primary-50/30 dark:from-secondary-900 dark:to-primary-950/30">
+    <div className="min-h-screen bg-gradient-to-b from-white to-primary-50/30 dark:bg-black dark:bg-none">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-24">
         <div className="absolute inset-0 -z-10">
@@ -163,7 +163,7 @@ export default function FeaturesPage() {
             <h1 className="text-display-lg mb-6 bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
               Powerful Features
             </h1>
-            <p className="text-body-lg mx-auto max-w-3xl leading-relaxed text-secondary-600 dark:text-secondary-300">
+            <p className="text-body-lg mx-auto max-w-3xl leading-relaxed text-secondary-600 dark:text-gray-300">
               Discover the comprehensive set of features that make TalkifyDocs the ultimate document
               analysis and conversation platform.
             </p>
@@ -175,17 +175,17 @@ export default function FeaturesPage() {
       <section className="py-16">
         <MaxWidthWrapper>
           <div className="mb-16 text-center">
-            <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
+            <h2 className="text-display-md mb-6 text-secondary-900 dark:text-white">
               Core Features
             </h2>
-            <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-secondary-300">
+            <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-gray-300">
               The essential features that power your document conversations
             </p>
           </div>
 
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             {mainFeatures.map((feature, index) => (
-              <ModernCard key={index} variant="glass" hover={true} className="h-full">
+              <ModernCard key={index} variant="glass" hover={true} className="flex flex-col h-full">
                 <ModernCardHeader>
                   <div className="flex items-start gap-4">
                     <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500">
@@ -195,18 +195,18 @@ export default function FeaturesPage() {
                       <ModernCardTitle size="lg" className="mb-2">
                         {feature.title}
                       </ModernCardTitle>
-                      <ModernCardDescription className="text-body-md">
+                      <ModernCardDescription className="text-body-md dark:text-gray-300">
                         {feature.description}
                       </ModernCardDescription>
                     </div>
                   </div>
                 </ModernCardHeader>
-                <ModernCardContent>
+                <ModernCardContent className="flex-1">
                   <ul className="space-y-2">
                     {feature.details.map((detail, detailIndex) => (
                       <li
                         key={detailIndex}
-                        className="text-body-sm flex items-center gap-2 text-secondary-600 dark:text-secondary-400"
+                        className="text-body-sm flex items-center gap-2 text-secondary-600 dark:text-gray-300"
                       >
                         <div className="h-1.5 w-1.5 rounded-full bg-primary-500" />
                         {detail}
@@ -221,21 +221,21 @@ export default function FeaturesPage() {
       </section>
 
       {/* Additional Features Section */}
-      <section className="bg-gradient-to-b from-primary-50/30 to-white py-16 dark:from-primary-950/30 dark:to-secondary-900">
+      <section className="bg-gradient-to-b from-primary-50/30 to-white py-16 dark:from-black dark:to-black dark:bg-none">
         <MaxWidthWrapper>
           <div className="mb-16 text-center">
-            <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
+            <h2 className="text-display-md mb-6 text-secondary-900 dark:text-white">
               Additional Features
             </h2>
-            <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-secondary-300">
+            <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-gray-300">
               Everything you need for a complete document management experience
             </p>
           </div>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {additionalFeatures.map((feature, index) => (
-              <ModernCard key={index} variant="glass" hover={true} className="text-center">
-                <ModernCardContent className="space-y-4">
+              <ModernCard key={index} variant="glass" hover={true} className="text-center flex flex-col h-full">
+                <ModernCardContent className="space-y-4 flex-1 flex flex-col justify-center">
                   <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500">
                     <feature.icon className="h-6 w-6 text-white" />
                   </div>
@@ -243,7 +243,7 @@ export default function FeaturesPage() {
                     <ModernCardTitle size="md" className="mb-2">
                       {feature.title}
                     </ModernCardTitle>
-                    <ModernCardDescription>{feature.description}</ModernCardDescription>
+                    <ModernCardDescription className="dark:text-gray-300">{feature.description}</ModernCardDescription>
                   </div>
                 </ModernCardContent>
               </ModernCard>
@@ -253,36 +253,36 @@ export default function FeaturesPage() {
       </section>
 
       {/* Feature Comparison */}
-      <section className="py-16">
+      <section className="py-16 dark:bg-black">
         <MaxWidthWrapper>
           <div className="mb-16 text-center">
-            <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
+            <h2 className="text-display-md mb-6 text-secondary-900 dark:text-white">
               Feature Comparison
             </h2>
-            <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-secondary-300">
+            <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-gray-300">
               See how TalkifyDocs compares to traditional document tools
             </p>
           </div>
 
-          <div className="glass rounded-3xl p-8">
+          <div className="glass rounded-3xl p-8 dark:bg-zinc-950/50 dark:border-zinc-800">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-secondary-200 dark:border-secondary-700">
-                    <th className="text-heading-sm px-6 py-4 text-left text-secondary-900 dark:text-secondary-100">
+                  <tr className="border-b border-secondary-200 dark:border-zinc-800">
+                    <th className="text-heading-sm px-6 py-4 text-left text-secondary-900 dark:text-white">
                       Feature
                     </th>
                     <th className="text-heading-sm px-6 py-4 text-center text-primary-600 dark:text-primary-400">
                       TalkifyDocs
                     </th>
-                    <th className="text-heading-sm px-6 py-4 text-center text-secondary-600 dark:text-secondary-400">
+                    <th className="text-heading-sm px-6 py-4 text-center text-secondary-600 dark:text-gray-300">
                       Traditional Tools
                     </th>
                   </tr>
                 </thead>
                 <tbody className="space-y-4">
-                  <tr className="border-b border-secondary-100 dark:border-secondary-800">
-                    <td className="text-body-md px-6 py-4 text-secondary-900 dark:text-secondary-100">
+                  <tr className="border-b border-secondary-100 dark:border-zinc-800/50">
+                    <td className="text-body-md px-6 py-4 text-secondary-900 dark:text-gray-200">
                       AI-Powered Analysis
                     </td>
                     <td className="px-6 py-4 text-center">
@@ -296,8 +296,8 @@ export default function FeaturesPage() {
                       </div>
                     </td>
                   </tr>
-                  <tr className="border-b border-secondary-100 dark:border-secondary-800">
-                    <td className="text-body-md px-6 py-4 text-secondary-900 dark:text-secondary-100">
+                  <tr className="border-b border-secondary-100 dark:border-secondary-300">
+                    <td className="text-body-md px-6 py-4 text-secondary-900 dark:text-gray-200">
                       Conversational Interface
                     </td>
                     <td className="px-6 py-4 text-center">
@@ -311,8 +311,8 @@ export default function FeaturesPage() {
                       </div>
                     </td>
                   </tr>
-                  <tr className="border-b border-secondary-100 dark:border-secondary-800">
-                    <td className="text-body-md px-6 py-4 text-secondary-900 dark:text-secondary-100">
+                  <tr className="border-b border-secondary-100 dark:border-secondary-300">
+                    <td className="text-body-md px-6 py-4 text-secondary-900 dark:text-gray-200">
                       Real-time Processing
                     </td>
                     <td className="px-6 py-4 text-center">
@@ -326,8 +326,8 @@ export default function FeaturesPage() {
                       </div>
                     </td>
                   </tr>
-                  <tr className="border-b border-secondary-100 dark:border-secondary-800">
-                    <td className="text-body-md px-6 py-4 text-secondary-900 dark:text-secondary-100">
+                  <tr className="border-b border-secondary-100 dark:border-secondary-300">
+                    <td className="text-body-md px-6 py-4 text-secondary-900 dark:text-gray-200">
                       Document Search
                     </td>
                     <td className="px-6 py-4 text-center">
@@ -342,7 +342,7 @@ export default function FeaturesPage() {
                     </td>
                   </tr>
                   <tr>
-                    <td className="text-body-md px-6 py-4 text-secondary-900 dark:text-secondary-100">
+                    <td className="text-body-md px-6 py-4 text-secondary-900 dark:text-gray-200">
                       Team Collaboration
                     </td>
                     <td className="px-6 py-4 text-center">
