@@ -101,7 +101,7 @@ export default function ContactPage() {
   ];
 
   return (
-    <div className="to-primary-50/30 dark:to-primary-950/30 min-h-screen bg-gradient-to-b from-white dark:from-secondary-900">
+    <div className="min-h-screen bg-gradient-to-b from-white to-primary-50/30 dark:from-secondary-900 dark:to-primary-950/30">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-24">
         <div className="absolute inset-0 -z-10">
@@ -168,7 +168,7 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Form & Info */}
-      <section className="from-primary-50/30 dark:from-primary-950/30 bg-gradient-to-b to-white py-16 dark:to-secondary-900">
+      <section className="bg-gradient-to-b from-primary-50/30 to-white py-16 dark:from-primary-950/30 dark:to-secondary-900">
         <MaxWidthWrapper>
           <div className="grid grid-cols-1 gap-16 lg:grid-cols-2">
             {/* Contact Form */}
