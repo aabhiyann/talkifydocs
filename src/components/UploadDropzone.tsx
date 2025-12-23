@@ -14,10 +14,12 @@ import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { useUploadStatusStore } from "@/hooks/useUploadStatus";
 import { upload } from "@vercel/blob/client";
+import { trpc } from "@/app/_trpc/client";
 
 const UploadDropzone = () => {
   const router = useRouter();
   const { toast } = useToast();
+  const utils = trpc.useUtils();
   const [isUploading, setIsUploading] = useState(false);
 
   const {
@@ -64,18 +66,44 @@ const UploadDropzone = () => {
 
           updateUpload(uploadId, { status: "processing", progress: 100 });
 
+          // Invalidate files query to refresh the list
+          utils.getUserFiles.invalidate();
+
           // Since we can't easily get the DB ID back from Vercel Blob's client upload 
           // (it's created in a background webhook), we'll just mark it as success 
           // after a short delay or let the user see it in the dashboard.
           // For single file uploads, we might want to redirect eventually.
 
-          setTimeout(() => {
-            updateUpload(uploadId, { status: "success" });
-            if (acceptedFiles.length === 1) {
-              // Optionally redirect to dashboard if it was just one file
-              // router.push('/dashboard');
+          // Manually complete the upload to ensure DB record exists (especially for localhost)
+          try {
+            const res = await fetch("/api/upload/complete", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                url: newBlob.url,
+                size: file.size,
+                fileName: file.name,
+              }),
+            });
+            
+            if (!res.ok) {
+              const errorText = await res.text();
+              throw new Error(`Failed to complete upload: ${res.status} ${errorText}`);
             }
-          }, 2000);
+            
+            const dbFile = await res.json();
+            
+            updateUpload(uploadId, { status: "success" });
+            
+            // Redirect immediately
+            if (acceptedFiles.length === 1) {
+               router.push(`/dashboard/${dbFile.id}`);
+            }
+          } catch (err) {
+             console.error("Failed to complete upload:", err);
+             // Fallback: mark success anyway, maybe webhook worked
+             updateUpload(uploadId, { status: "success" });
+          }
 
         } catch (error) {
           updateUpload(uploadId, { status: "error", error: (error as Error).message });

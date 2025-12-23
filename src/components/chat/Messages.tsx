@@ -44,7 +44,7 @@ export const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
   const combinedMessages = useMemo<MessageWithContext[]>(() => {
     const loadingMessage: MessageWithContext = {
       createdAt: new Date().toISOString(),
-      id: "loading-message",
+      id: `loading-message-${Date.now()}`,
       isUserMessage: false,
       text: (
         <div className="flex flex-col items-center space-y-3 py-4">
@@ -54,6 +54,7 @@ export const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
               alt="AI is thinking"
               fill
               className="object-contain"
+              sizes="96px"
             />
           </div>
           <span className="text-sm text-gray-500">AI is thinking...</span>
@@ -127,6 +128,7 @@ export const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
               alt="Start a conversation"
               fill
               className="object-contain"
+              sizes="128px"
             />
           </div>
           <h3 className="text-heading-md mb-2 font-semibold text-foreground">

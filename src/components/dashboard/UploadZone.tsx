@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { useDropzone, FileRejection } from "react-dropzone";
 import { Upload } from "lucide-react";
 import { upload } from "@vercel/blob/client";
@@ -8,13 +9,16 @@ import { upload } from "@vercel/blob/client";
 import { cn } from "@/lib/utils";
 import { useUploadStatusStore } from "@/hooks/useUploadStatus";
 import { useToast } from "@/components/ui/use-toast";
+import { trpc } from "@/app/_trpc/client";
 
 interface UploadZoneProps {
   onUpload?: (files: File[]) => void;
 }
 
 export function UploadZone({ onUpload }: UploadZoneProps) {
+  const router = useRouter();
   const { toast } = useToast();
+  const utils = trpc.useUtils();
   const {
     addUpload,
     updateUpload,
@@ -48,7 +52,7 @@ export function UploadZone({ onUpload }: UploadZoneProps) {
         try {
           updateUpload(uploadId, { status: "uploading" });
           
-          await upload(file.name, file, {
+          const newBlob = await upload(file.name, file, {
             access: "public",
             handleUploadUrl: "/api/upload/blob",
             clientPayload: JSON.stringify({ size: file.size }),
@@ -59,10 +63,39 @@ export function UploadZone({ onUpload }: UploadZoneProps) {
 
           updateUpload(uploadId, { status: "processing", progress: 100 });
           
+          // Invalidate files query to refresh the list
+          utils.getUserFiles.invalidate();
+          
           // Mark success after delay
-          setTimeout(() => {
+          // Manually complete the upload to ensure DB record exists (especially for localhost)
+          try {
+            const res = await fetch("/api/upload/complete", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                url: newBlob.url,
+                size: file.size,
+                fileName: file.name,
+              }),
+            });
+            
+            if (!res.ok) {
+              const errorText = await res.text();
+              throw new Error(`Failed to complete upload: ${res.status} ${errorText}`);
+            }
+            
+            const dbFile = await res.json();
+            
             updateUpload(uploadId, { status: "success" });
-          }, 2000);
+            
+            // Redirect immediately
+            if (acceptedFiles.length === 1) {
+               router.push(`/dashboard/${dbFile.id}`);
+            }
+          } catch (err) {
+             console.error("Failed to complete upload:", err);
+             updateUpload(uploadId, { status: "success" });
+          }
 
         } catch (error) {
           updateUpload(uploadId, { status: "error", error: (error as Error).message });

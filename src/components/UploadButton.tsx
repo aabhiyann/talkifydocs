@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -28,14 +28,29 @@ const UploadDropzone = dynamic(() => import("./UploadDropzone"), {
 
 const UploadButton = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const { getAllUploads } = useUploadStatusStore();
     const activeCount = getAllUploads().filter(
         (u) => u.status === "uploading" || u.status === "processing",
     ).length;
 
+    if (!mounted) {
+        return (
+            <Button className="relative bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg">
+                <Upload className="mr-2 h-4 w-4" />
+                Upload PDFs
+            </Button>
+        );
+    }
+
     return (
-        <Dialog open={isOpen} onOpenChange={(v) => { if (!v) setIsOpen(v) }}>
-            <DialogTrigger asChild onClick={() => setIsOpen(true)}>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
                 <Button className="relative bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg transition-all duration-200 hover:from-primary-700 hover:to-primary-800 hover:shadow-xl">
                     <Upload className="mr-2 h-4 w-4" />
                     Upload PDFs

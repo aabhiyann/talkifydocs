@@ -16,16 +16,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         pathname,
         clientPayload
       ) => {
+        console.log("Upload: onBeforeGenerateToken started");
         // 1. Authenticate user
         const user = await getCurrentUser();
         if (!user || !user.id) {
+          console.error("Upload: User unauthorized");
           throw new Error('Unauthorized');
         }
+        console.log("Upload: User authenticated", user.id);
 
         // 2. Check rate limit
         const clientIP = getClientIP(request);
         const rateLimit = await checkRateLimit(clientIP, "UPLOAD");
         if (!rateLimit.allowed) {
+          console.error("Upload: Rate limit exceeded for IP", clientIP);
           throw new Error("Upload rate limit exceeded");
         }
 
@@ -42,6 +46,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
         return {
           allowedContentTypes: ['application/pdf'],
+          addRandomSuffix: true,
           tokenPayload: JSON.stringify({
             userId: user.id,
             userPlan: isProUser ? "pro" : "free",
@@ -50,6 +55,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         };
       },
       onUploadCompleted: async ({ blob, tokenPayload }) => {
+        // ... (existing code)
         // 4. Save file to database
         const { userId, size } = JSON.parse(tokenPayload as string);
 
@@ -61,7 +67,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               userId: userId,
               url: blob.url,
               size: BigInt(size || 0),
-              pageCount: null,
+              pageCount: 0,
               uploadStatus: "PROCESSING",
             },
           });
@@ -84,6 +90,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json(jsonResponse);
   } catch (error) {
+    console.error("Upload: Error in POST handler", error);
     return NextResponse.json(
       { error: (error as Error).message },
       { status: 400 },
