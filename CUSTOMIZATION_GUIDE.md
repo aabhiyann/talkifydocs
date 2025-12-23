@@ -147,4 +147,3 @@ The following files now use the configuration:
 - `src/app/about/page.tsx` - Team section and statistics
 
 All changes are backward compatible - if you don't update the config, sections will be hidden by default (since most values are set to `null` or `false`).
-
