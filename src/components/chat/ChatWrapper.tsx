@@ -9,6 +9,7 @@ import {
   FileText,
   CheckCircle2,
   Clock,
+  RotateCw,
 } from "lucide-react";
 
 import { trpc } from "@/app/_trpc/client";
@@ -39,6 +40,7 @@ interface ChatWrapperProps {
 }
 
 export const ChatWrapper = memo(({ fileId, onCitationClick }: ChatWrapperProps) => {
+  const utils = trpc.useUtils();
   const { data, isLoading, error } = trpc.getFileUploadStatus.useQuery(
     {
       fileId,
@@ -48,6 +50,12 @@ export const ChatWrapper = memo(({ fileId, onCitationClick }: ChatWrapperProps) 
         data?.status === "SUCCESS" || data?.status === "FAILED" ? false : 500,
     },
   );
+
+  const { mutate: retryProcessing } = trpc.retryUploadProcessing.useMutation({
+    onSuccess: () => {
+      utils.getFileUploadStatus.invalidate({ fileId });
+    },
+  });
 
   if (isLoading)
     return (
@@ -112,17 +120,20 @@ export const ChatWrapper = memo(({ fileId, onCitationClick }: ChatWrapperProps) 
                 Processing failed
               </h3>
               <p className="mb-6 text-gray-600 dark:text-gray-400">
-                We couldn&apos;t process your PDF. Please try uploading again.
+                We couldn&apos;t process your PDF. This might be due to a complex file format or a temporary API issue.
               </p>
               <div className="space-y-3">
-                <Link href="/dashboard" className={buttonVariants({ className: "w-full" })}>
+                <Button 
+                  onClick={() => retryProcessing({ fileId })} 
+                  className="w-full"
+                >
+                  <RotateCw className="mr-2 h-4 w-4" />
+                  Retry Processing
+                </Button>
+                <Link href="/dashboard" className={buttonVariants({ variant: "outline", className: "w-full" })}>
                   <ChevronLeft className="mr-2 h-4 w-4" />
                   Back to Dashboard
                 </Link>
-                <Button variant="outline" className="w-full">
-                  <FileText className="mr-2 h-4 w-4" />
-                  Upload New Document
-                </Button>
               </div>
             </CardContent>
           </Card>

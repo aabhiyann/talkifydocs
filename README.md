@@ -64,7 +64,8 @@ AI-powered PDF assistant that lets you upload documents and chat with them using
 
 - **PostgreSQL** database (local or cloud like Neon/Supabase)
 - **Clerk** account for authentication
-- **OpenAI** API key for AI features
+- **Google Gemini** API key for primary AI features
+- **Groq** API key for high-speed fallback
 - **Pinecone** account for vector storage
 - **Vercel Blob** for file storage
 - **Stripe** account (for billing features)

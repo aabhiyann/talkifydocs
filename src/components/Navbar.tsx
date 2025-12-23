@@ -68,6 +68,7 @@ export const Navbar = () => {
                 fill
                 className="object-contain"
                 priority
+                sizes="32px"
               />
             </div>
             <span className="text-heading-lg bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text font-bold text-transparent">

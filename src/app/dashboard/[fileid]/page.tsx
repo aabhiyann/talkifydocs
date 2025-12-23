@@ -24,7 +24,7 @@ export const viewport: Viewport = {
 
 const Page = async ({ params }: PageProps) => {
   // retrieve file id
-  const { fileid } = params;
+  const { fileid } = await params;
 
   const user = await requireUser();
 

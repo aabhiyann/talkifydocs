@@ -26,11 +26,11 @@
 ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
 │  PostgreSQL  │  │   AI Stack   │  │   Storage    │
 │   (Prisma)   │  │              │  │              │
-│              │  │ - OpenAI API │  │ - Vercel     │
-│ - Users      │  │ - Pinecone   │  │   Blob       │
-│ - Files      │  │ - LangChain  │  │ - Cloudflare │
-│ - Messages   │  │ - Hybrid     │  │   R2 (alt)   │
-│ - Highlights │  │   Search     │  │              │
+│              │  │ - Gemini 3.0 │  │ - Vercel     │
+│ - Users      │  │ - Groq       │  │   Blob       │
+│ - Files      │  │ - Pinecone   │  │ - Cloudflare │
+│ - Messages   │  │ - LangChain  │  │   R2 (alt)   │
+│ - Highlights │  │              │  │              │
 └──────────────┘  └──────────────┘  └──────────────┘
 ```
 
@@ -325,7 +325,7 @@ src/
 #### 4.3 AI Stack Upgrades
 
 - **Current → New**:
-  - OpenAI GPT-3.5 → **GPT-4o** or **Claude 3.5 Sonnet**
+  - OpenAI GPT-4 → **Gemini 3.0 Flash** or **Llama 3.3 (Groq)**
   - Basic RAG → **Hybrid Search** (semantic + BM25)
   - Single document → **Multi-document conversations**
   - No re-ranking → **Cohere re-rank** for better precision

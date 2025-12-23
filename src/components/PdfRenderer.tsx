@@ -21,6 +21,8 @@ import PdfFullscreen from "./PdfFullscreen";
 import type * as Pdfjs from "pdfjs-dist";
 import type { PDFDocumentProxy } from "pdfjs-dist/types/src/display/api";
 import type { DocumentProps, PageProps } from "react-pdf";
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
 import { logger } from "@/lib/logger";
 
 interface PdfRendererProps {
@@ -45,6 +47,7 @@ export const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
   const [rotation, setRotation] = useState<number>(0);
   const [renderedScale, setRenderedScale] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [useFallback, setUseFallback] = useState<boolean>(false);
   const [pdfjsLib, setPdfjsLib] = useState<typeof Pdfjs | null>(null);
   const [DocumentComponent, setDocumentComponent] = useState<ComponentType<DocumentProps> | null>(
     null,
@@ -54,15 +57,23 @@ export const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
   const [loadTimeout, setLoadTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const isLoadingPdf =
-    renderedScale !== scale ||
-    !pdfjsLib ||
-    !DocumentComponent ||
-    !PageComponent ||
-    !mounted;
+    !useFallback && (
+      !pdfjsLib ||
+      !DocumentComponent ||
+      !PageComponent ||
+      !mounted);
 
   // Set mounted state to prevent hydration issues
   useEffect(() => {
     setMounted(true);
+
+    // Set a secondary timer to switch to iframe if standard loading hangs
+    const timer = setTimeout(() => {
+      setUseFallback(true);
+      setIsLoading(false);
+    }, 3000); // 3 seconds is ultra-snappy
+
+    return () => clearTimeout(timer);
   }, []);
 
   // Load PDF.js library and components on client side
@@ -73,37 +84,33 @@ export const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
       try {
         setIsLoading(true);
 
-        // Set a timeout to prevent infinite loading
-        const timeout = setTimeout(() => {
-          setIsLoading(false);
-          toast({
-            title: "PDF Loading Timeout",
-            description: "PDF viewer is taking too long to load. Please refresh the page.",
-            variant: "destructive",
-          });
-        }, 30000); // 30 second timeout
-
-        setLoadTimeout(timeout);
-
         // Import PDF.js library
         const pdfjs = await import("pdfjs-dist");
-        setPdfjsLib(pdfjs);
 
-        // Configure worker with multiple fallback options
+        // Use CDN worker to ensure version match
         if (typeof window !== "undefined") {
-          // Use the worker from the installed package
-          pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`;
+          pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+          console.log(`PdfRenderer: Using worker from unpkg for version ${pdfjs.version}`);
         }
 
-        // Import react-pdf components
-        const { Document, Page } = await import("react-pdf");
+        setPdfjsLib(pdfjs);
+
+        // Import react-pdf and sync worker explicitly
+        const reactPdf = await import("react-pdf");
+        const { Document, Page, pdfjs: reactPdfJs } = reactPdf;
+
+        if (typeof window !== "undefined") {
+          // Use the version required by react-pdf's internal pdfjs-dist
+          reactPdfJs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${reactPdfJs.version}/build/pdf.worker.min.mjs`;
+          console.log(`PdfRenderer: React-PDF synced to worker for version ${reactPdfJs.version}`);
+        }
+
         setDocumentComponent(() => Document);
         setPageComponent(() => Page);
 
         // Note: CSS imports are handled by Next.js automatically
 
         // Clear timeout and set loading to false
-        clearTimeout(timeout);
         setLoadTimeout(null);
         setIsLoading(false);
       } catch (error) {
@@ -129,7 +136,7 @@ export const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
         clearTimeout(loadTimeout);
       }
     };
-  }, [mounted, toast, loadTimeout]);
+  }, [mounted, toast]);
 
   const CustomPageValidator = z.object({
     page: z.string().refine((num) => Number(num) > 0 && Number(num) <= numPages!),
@@ -184,10 +191,12 @@ export const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
 
   const onDocumentLoadSuccess = (pdf: any) => {
     setNumPages(pdf.numPages);
+    setIsLoading(false); // Crucial: Stop loading state so Page can render
     setRenderedScale(scale);
   };
 
   const onDocumentLoadError = (error: Error) => {
+    setIsLoading(false);
     logger.error("PDF document load error:", error);
     logger.error("PDF URL:", url);
     logger.error("Error details:", {
@@ -276,7 +285,7 @@ export const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
   }
 
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex h-full w-full flex-col" suppressHydrationWarning>
       {/* PDF Controls */}
       <div className="flex items-center justify-between border-b border-border bg-background px-2 py-2">
         <div className="flex items-center gap-2">
@@ -348,61 +357,48 @@ export const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
       </div>
 
       {/* PDF Viewer */}
-      <div className="max-h-screen w-full flex-1">
-        <SimpleBar autoHide={false} className="max-h-[calc(100vh-10rem)]">
-          <div ref={ref}>
-            <DocumentComponent
-              loading={
-                <div className="flex flex-col items-center justify-center py-12">
-                  <Loader2 className="mb-4 h-8 w-8 animate-spin text-primary-600" />
-                  <p className="text-sm text-muted-foreground">Loading PDF...</p>
-                </div>
-              }
-              onLoadError={onDocumentLoadError}
-              onLoadSuccess={onDocumentLoadSuccess}
-              file={url}
-              className="max-h-full"
-              error={
-                <div className="flex flex-col items-center justify-center py-12">
-                  <div className="mb-4 text-destructive">
-                    <svg
-                      className="mx-auto h-12 w-12"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="mb-2 text-lg font-semibold text-foreground">Failed to load PDF</h3>
-                  <p className="mb-4 text-center text-sm text-muted-foreground">
-                    There was an error loading the PDF document. This might be due to a network
-                    issue or an unsupported file format.
-                  </p>
-                  <Button onClick={() => window.location.reload()} variant="outline" size="sm">
-                    Refresh Page
-                  </Button>
-                </div>
-              }
-            >
-              {isLoading && renderedScale ? (
-                <PageComponent
-                  width={width ? width : 1}
-                  pageNumber={currPage}
-                  scale={scale}
-                  rotate={rotation}
-                  key={`${currPage}-${scale}`}
-                  onLoadSuccess={onPageLoadSuccess}
-                />
-              ) : null}
-            </DocumentComponent>
+      <div className="w-full flex-1 min-h-0 overflow-hidden relative">
+        {useFallback ? (
+          <div className="h-full w-full flex flex-col">
+            <div className="bg-amber-50 dark:bg-amber-900/20 px-4 py-1 text-[10px] text-amber-700 dark:text-amber-400 border-b border-amber-200 dark:border-amber-800 flex items-center justify-between">
+              <span>Using browser native viewer (Fallback)</span>
+              <Button variant="ghost" size="sm" className="h-4 text-[9px] hover:bg-amber-200" onClick={() => window.location.reload()}>Retry Advanced Viewer</Button>
+            </div>
+            <iframe
+              src={`${url}#toolbar=0`}
+              className="w-full h-full border-none"
+              title="PDF Fallback Viewer"
+            />
           </div>
-        </SimpleBar>
+        ) : (
+          <SimpleBar autoHide={false} className="h-full w-full">
+            <div ref={ref} className="h-full">
+              <DocumentComponent
+                loading={
+                  <div className="flex flex-col items-center justify-center py-12">
+                    <Loader2 className="mb-4 h-8 w-8 animate-spin text-primary-600" />
+                    <p className="text-sm text-muted-foreground">Loading PDF...</p>
+                  </div>
+                }
+                onLoadError={onDocumentLoadError}
+                onLoadSuccess={onDocumentLoadSuccess}
+                file={url}
+                className="max-h-full"
+              >
+                {!isLoading && (
+                  <PageComponent
+                    width={width ? width : 1}
+                    pageNumber={currPage}
+                    scale={scale}
+                    rotate={rotation}
+                    key={`${currPage}-${scale}`}
+                    onLoadSuccess={onPageLoadSuccess}
+                  />
+                )}
+              </DocumentComponent>
+            </div>
+          </SimpleBar>
+        )}
       </div>
     </div>
   );
