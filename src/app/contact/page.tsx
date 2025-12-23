@@ -26,7 +26,7 @@ import { companyConfig } from "@/config/company";
 export default function ContactPage() {
   // Build contact methods array based on configured contact info
   const contactMethods = [];
-  
+
   if (companyConfig.contact.email) {
     contactMethods.push({
       icon: Mail,
@@ -37,7 +37,7 @@ export default function ContactPage() {
       href: `mailto:${companyConfig.contact.email}`,
     });
   }
-  
+
   // Live Chat - optional, can be removed if not needed
   // contactMethods.push({
   //   icon: MessageSquare,
@@ -46,7 +46,7 @@ export default function ContactPage() {
   //   contact: "Available 9 AM - 6 PM EST",
   //   action: "Start Chat",
   // });
-  
+
   if (companyConfig.contact.phone) {
     contactMethods.push({
       icon: Phone,
@@ -57,7 +57,7 @@ export default function ContactPage() {
       href: `tel:${companyConfig.contact.phone.replace(/\s/g, "")}`,
     });
   }
-  
+
   contactMethods.push({
     icon: HelpCircle,
     title: "Help Center",
@@ -101,7 +101,7 @@ export default function ContactPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-primary-50/30 dark:from-secondary-900 dark:to-primary-950/30">
+    <div className="min-h-screen bg-gradient-to-b from-white to-primary-50/30 dark:bg-black dark:bg-none">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-24">
         <div className="absolute inset-0 -z-10">
@@ -113,7 +113,7 @@ export default function ContactPage() {
             <h1 className="text-display-lg mb-6 bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
               Get in Touch
             </h1>
-            <p className="text-body-lg mx-auto max-w-3xl leading-relaxed text-secondary-600 dark:text-secondary-300">
+            <p className="text-body-lg mx-auto max-w-3xl leading-relaxed text-secondary-600">
               We&apos;re here to help! Reach out to our support team or explore our resources to get
               the most out of TalkifyDocs.
             </p>
@@ -125,40 +125,44 @@ export default function ContactPage() {
       <section className="py-16">
         <MaxWidthWrapper>
           <div className="mb-16 text-center">
-            <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
+            <h2 className="text-display-md mb-6 text-secondary-900">
               Contact Methods
             </h2>
-            <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-secondary-300">
+            <p className="text-body-lg mx-auto max-w-2xl text-secondary-600">
               Choose the way that works best for you
             </p>
           </div>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {contactMethods.map((method, index) => (
-              <ModernCard key={index} variant="glass" hover={true} className="text-center">
-                <ModernCardContent className="space-y-4">
+              <ModernCard key={index} variant="glass" hover={true} className="text-center flex flex-col h-full">
+                <ModernCardContent className="space-y-4 flex-1 flex flex-col">
                   <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500">
                     <method.icon className="h-6 w-6 text-white" />
                   </div>
-                  <div>
-                    <ModernCardTitle size="md" className="mb-2">
-                      {method.title}
-                    </ModernCardTitle>
-                    <ModernCardDescription className="mb-3">
-                      {method.description}
-                    </ModernCardDescription>
-                    <p className="text-body-sm mb-4 font-medium text-primary-600 dark:text-primary-400">
-                      {method.contact}
-                    </p>
-                    {method.href ? (
-                      <Button variant="outline" size="sm" className="w-full" asChild>
-                        <a href={method.href}>{method.action}</a>
-                      </Button>
-                    ) : (
-                      <Button variant="outline" size="sm" className="w-full">
-                        {method.action}
-                      </Button>
-                    )}
+                  <div className="flex-1 flex flex-col justify-between">
+                    <div>
+                      <ModernCardTitle size="md" className="mb-2">
+                        {method.title}
+                      </ModernCardTitle>
+                      <ModernCardDescription className="mb-3 dark:text-gray-300">
+                        {method.description}
+                      </ModernCardDescription>
+                    </div>
+                    <div>
+                      <p className="text-body-sm mb-4 font-medium text-primary-600 dark:text-primary-400">
+                        {method.contact}
+                      </p>
+                      {method.href ? (
+                        <Button variant="outline" size="sm" className="w-full" asChild>
+                          <a href={method.href}>{method.action}</a>
+                        </Button>
+                      ) : (
+                        <Button variant="outline" size="sm" className="w-full">
+                          {method.action}
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </ModernCardContent>
               </ModernCard>
@@ -168,25 +172,25 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Form & Info */}
-      <section className="bg-gradient-to-b from-primary-50/30 to-white py-16 dark:from-primary-950/30 dark:to-secondary-900">
+      <section className="bg-gradient-to-b from-primary-50/30 to-white py-16 dark:from-black dark:to-black dark:bg-none">
         <MaxWidthWrapper>
           <div className="grid grid-cols-1 gap-16 lg:grid-cols-2">
             {/* Contact Form */}
             <div>
-              <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
+              <h2 className="text-display-md mb-6 text-secondary-900 dark:text-white">
                 Send us a Message
               </h2>
-              <p className="text-body-lg mb-8 text-secondary-600 dark:text-secondary-300">
+              <p className="text-body-lg mb-8 text-secondary-600 dark:text-gray-300">
                 Have a question or need help? Fill out the form below and we&apos;ll get back to you
                 as soon as possible.
               </p>
 
-              <ModernCard variant="glass" className="p-8">
+              <ModernCard variant="default" className="p-8 shadow-xl border-secondary-200 dark:border-zinc-800">
                 {companyConfig.contact.email ? (
                   <>
-                    <div className="mb-6 rounded-lg border border-primary-200 bg-primary-50/50 p-4 dark:border-primary-800 dark:bg-primary-900/20">
-                      <p className="text-body-sm text-secondary-600 dark:text-secondary-400">
-                        <strong className="text-secondary-900 dark:text-secondary-100">Note:</strong> This is a portfolio project. For inquiries, please email directly at{" "}
+                    <div className="mb-6 rounded-lg border border-primary-200 bg-primary-50/50 p-4 dark:border-primary-800/50 dark:bg-primary-900/20">
+                      <p className="text-body-sm text-secondary-600 dark:text-gray-300">
+                        <strong className="text-secondary-900 dark:text-white">Note:</strong> This is a portfolio project. For inquiries, please email directly at{" "}
                         <a href={`mailto:${companyConfig.contact.email}`} className="text-primary-600 dark:text-primary-400 hover:underline">
                           {companyConfig.contact.email}
                         </a>
@@ -195,13 +199,13 @@ export default function ContactPage() {
                     <div className="space-y-6">
                       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div>
-                          <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
+                          <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-white">
                             First Name
                           </label>
                           <Input placeholder="Enter your first name" disabled />
                         </div>
                         <div>
-                          <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
+                          <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-white">
                             Last Name
                           </label>
                           <Input placeholder="Enter your last name" disabled />
@@ -209,27 +213,27 @@ export default function ContactPage() {
                       </div>
 
                       <div>
-                        <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
+                        <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-white">
                           Email Address
                         </label>
                         <Input type="email" placeholder="Enter your email address" disabled />
                       </div>
 
                       <div>
-                        <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
+                        <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-white">
                           Subject
                         </label>
                         <Input placeholder="What's this about?" disabled />
                       </div>
 
                       <div>
-                        <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-secondary-100">
+                        <label className="text-body-sm mb-2 block font-medium text-secondary-900 dark:text-white">
                           Message
                         </label>
                         <Textarea placeholder="Tell us how we can help you..." rows={6} disabled />
                       </div>
 
-                      <Button 
+                      <Button
                         className="w-full bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700"
                         asChild
                       >
@@ -242,7 +246,7 @@ export default function ContactPage() {
                   </>
                 ) : (
                   <div className="text-center py-8">
-                    <p className="text-body-md text-secondary-600 dark:text-secondary-400">
+                    <p className="text-body-md text-secondary-600">
                       Contact information is not configured. Please check the company config.
                     </p>
                   </div>
@@ -253,10 +257,10 @@ export default function ContactPage() {
             {/* Contact Info */}
             {(companyConfig.contact.address.street || companyConfig.contact.businessHours.enabled) && (
               <div>
-                <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
+                <h2 className="text-display-md mb-6 text-secondary-900 dark:text-gray-100">
                   Office Information
                 </h2>
-                <p className="text-body-lg mb-8 text-secondary-600 dark:text-secondary-300">
+                <p className="text-body-lg mb-8 text-secondary-600 dark:text-gray-300">
                   Visit us at our headquarters or reach out through any of these channels.
                 </p>
 
@@ -268,10 +272,10 @@ export default function ContactPage() {
                           <MapPin className="h-5 w-5 text-white" />
                         </div>
                         <div>
-                          <h3 className="text-heading-md mb-1 text-secondary-900 dark:text-secondary-100">
+                          <h3 className="text-heading-md mb-1 text-secondary-900 dark:text-white">
                             Address
                           </h3>
-                          <p className="text-body-md text-secondary-600 dark:text-secondary-400">
+                          <p className="text-body-md text-secondary-600 dark:text-gray-300">
                             {companyConfig.contact.address.street}
                             {companyConfig.contact.address.city && (
                               <>
@@ -300,10 +304,10 @@ export default function ContactPage() {
                           <Clock className="h-5 w-5 text-white" />
                         </div>
                         <div>
-                          <h3 className="text-heading-md mb-1 text-secondary-900 dark:text-secondary-100">
+                          <h3 className="text-heading-md mb-1 text-secondary-900 dark:text-white">
                             Business Hours
                           </h3>
-                          <p className="text-body-md text-secondary-600 dark:text-secondary-400">
+                          <p className="text-body-md text-secondary-600 dark:text-gray-300">
                             {companyConfig.contact.businessHours.weekdays}
                             <br />
                             {companyConfig.contact.businessHours.saturday}
@@ -325,10 +329,10 @@ export default function ContactPage() {
       <section className="py-16">
         <MaxWidthWrapper>
           <div className="mb-16 text-center">
-            <h2 className="text-display-md mb-6 text-secondary-900 dark:text-secondary-100">
+            <h2 className="text-display-md mb-6 text-secondary-900 dark:text-white">
               Frequently Asked Questions
             </h2>
-            <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-secondary-300">
+            <p className="text-body-lg mx-auto max-w-2xl text-secondary-600 dark:text-gray-300">
               Find answers to common questions about TalkifyDocs
             </p>
           </div>
@@ -338,7 +342,7 @@ export default function ContactPage() {
               <ModernCard key={index} variant="glass" className="p-6">
                 <details className="group">
                   <summary className="flex cursor-pointer list-none items-center justify-between">
-                    <h3 className="text-heading-md text-secondary-900 group-open:text-primary-600 dark:text-secondary-100 dark:group-open:text-primary-400">
+                    <h3 className="text-heading-md text-secondary-900 group-open:text-primary-600 dark:text-white dark:group-open:text-primary-400">
                       {faq.question}
                     </h3>
                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 transition-transform duration-200 group-open:rotate-180 dark:bg-primary-900">
@@ -346,7 +350,7 @@ export default function ContactPage() {
                     </div>
                   </summary>
                   <div className="mt-4 border-t border-secondary-200 pt-4 dark:border-secondary-700">
-                    <p className="text-body-md text-secondary-600 dark:text-secondary-400">
+                    <p className="text-body-md text-secondary-600 dark:text-gray-200">
                       {faq.answer}
                     </p>
                   </div>
