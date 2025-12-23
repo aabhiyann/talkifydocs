@@ -26,7 +26,7 @@ export function StatsCard({ title, value, change, trend, icon }: StatsCardProps)
             className={cn(
               "flex items-center text-sm font-medium",
               trend === "up"
-                ? "text-green-600 dark:text-green-400"
+                ? "text-success-600 dark:text-success-400"
                 : "text-red-600 dark:text-red-400",
             )}
           >

@@ -59,7 +59,7 @@ export function AdvancedProgress({ steps, currentStep, className }: AdvancedProg
                     <h3
                       className={cn(
                         "text-sm font-medium",
-                        status === "completed" && "text-green-700",
+                        status === "completed" && "text-success-700",
                         status === "error" && "text-red-700",
                         status === "in-progress" && "text-blue-700",
                         status === "pending" && "text-gray-500",

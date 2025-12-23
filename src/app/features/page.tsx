@@ -351,7 +351,7 @@ export default function FeaturesPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <div className="mx-auto flex h-6 w-6 items-center justify-center rounded-full bg-green-500">
+                      <div className="mx-auto flex h-6 w-6 items-center justify-center rounded-full bg-success-500">
                         <span className="text-sm text-white">✓</span>
                       </div>
                     </td>
