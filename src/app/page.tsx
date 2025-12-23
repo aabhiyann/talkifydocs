@@ -11,8 +11,8 @@ export default function Home() {
     <>
       <section className="relative min-h-screen flex items-center justify-center py-20 px-6">
         {/* Background pattern */}
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
-        
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff12_1px,transparent_1px),linear-gradient(to_bottom,#ffffff12_1px,transparent_1px)] bg-[size:24px_24px]" />
+
         <div className="container mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left: Text */}
@@ -39,7 +39,7 @@ export default function Home() {
 
               {/* Subheadline */}
               <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
-                Upload PDFs and have intelligent conversations. 
+                Upload PDFs and have intelligent conversations.
                 Get instant answers with accurate citations.
               </p>
 
@@ -48,7 +48,7 @@ export default function Home() {
                 <Link href="/dashboard" className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 rounded-xl font-medium shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-center">
                   Try Free →
                 </Link>
-                <Link href="/demo" className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 px-8 py-4 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 text-center">
+                <Link href="/demo" className="bg-white dark:bg-secondary-100 border border-gray-300 dark:border-secondary-700 text-gray-900 dark:text-white px-8 py-4 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-secondary-200 transition-all duration-200 text-center">
                   Watch Demo
                 </Link>
               </div>
@@ -78,7 +78,7 @@ export default function Home() {
             <h2 className="mb-6 font-serif text-4xl font-bold text-foreground">
               {marketing.home.previewTitle}
             </h2>
-            <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
+            <p className="mx-auto max-w-2xl text-xl text-muted-foreground dark:text-gray-400">
               {marketing.home.previewDesc}
             </p>
           </div>
@@ -100,13 +100,13 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="bg-secondary/50 py-24">
+      <section className="bg-secondary/50 dark:bg-black py-24">
         <MaxWidthWrapper>
           <div className="mb-16 text-center">
             <h2 className="mb-6 font-serif text-4xl font-bold text-foreground">
               {marketing.home.howTitle}
             </h2>
-            <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
+            <p className="mx-auto max-w-2xl text-xl text-muted-foreground dark:text-gray-400">
               {marketing.home.howDesc}
             </p>
           </div>
@@ -127,7 +127,7 @@ export default function Home() {
                   />
                 </div>
                 <h3 className="mb-4 text-xl font-semibold text-foreground">Create Account</h3>
-                <p className="mb-4 text-muted-foreground leading-relaxed">
+                <p className="mb-4 text-muted-foreground dark:text-gray-400 leading-relaxed">
                   Sign up for a free account and start analyzing documents immediately. Upgrade to
                   our{" "}
                   <Link href="/pricing" className="text-primary hover:underline">
@@ -152,7 +152,7 @@ export default function Home() {
                   />
                 </div>
                 <h3 className="mb-4 text-xl font-semibold text-foreground">Upload Document</h3>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground dark:text-gray-400 leading-relaxed">
                   Simply drag and drop your PDF document. Our advanced AI will instantly process and
                   understand your content for intelligent analysis.
                 </p>
@@ -173,7 +173,7 @@ export default function Home() {
                   />
                 </div>
                 <h3 className="mb-4 text-xl font-semibold text-foreground">Ask & Get Answers</h3>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground dark:text-gray-400 leading-relaxed">
                   Ask questions in natural language and get instant, accurate answers. Our AI
                   understands context and provides intelligent, relevant responses from your
                   documents.
@@ -209,7 +209,7 @@ export default function Home() {
             <h2 className="mb-6 font-serif text-4xl font-bold text-foreground md:text-5xl">
               Ready to Get Started?
             </h2>
-            <p className="mx-auto mb-8 max-w-2xl text-xl text-muted-foreground">
+            <p className="mx-auto mb-8 max-w-2xl text-xl text-muted-foreground dark:text-gray-400">
               Join users who are already transforming how they interact with documents. Start your free account today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
