@@ -39,7 +39,12 @@ describe("tRPC User Procedures", () => {
       ]);
       expect(db.file.findMany).toHaveBeenCalledWith({
         where: { userId: "user_123" },
-        include: { _count: { select: { messages: true } } },
+        select: expect.objectContaining({
+          id: true,
+          name: true,
+          size: true,
+        }),
+        orderBy: { createdAt: "desc" },
       });
     });
   });
