@@ -11,3 +11,11 @@ export const genAI = new GoogleGenerativeAI(env.GOOGLE_API_KEY);
 export const geminiModel = genAI.getGenerativeModel({
   model: AI.GEMINI_MODEL,
 });
+
+export const getGeminiEmbeddings = async () => {
+  const { GoogleGenerativeAIEmbeddings } = await import("@langchain/google-genai");
+  return new GoogleGenerativeAIEmbeddings({
+    modelName: AI.GEMINI_EMBEDDING_MODEL,
+    apiKey: env.GOOGLE_API_KEY,
+  });
+};

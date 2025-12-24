@@ -15,7 +15,6 @@ import { openai } from "@/lib/openai";
 import { ChatOpenAI } from "@langchain/openai";
 import { getPineconeClient } from "@/lib/pinecone";
 import { PINECONE_INDEX_NAME } from "@/config/pinecone";
-import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
 import { Document } from "@langchain/core/documents";
 import { AI } from "@/config/ai";
@@ -522,33 +521,33 @@ export const appRouter = router({
 ---
 
 ${conversation.messages
-  .map((msg) => {
-    const role = msg.isUserMessage ? "👤 You" : "🤖 Assistant";
-    const timestamp = format(new Date(msg.createdAt), "h:mm a");
-    const citations = Array.isArray(msg.citations)
-      ? (msg.citations as unknown as Citation[])
-      : msg.citations
-        ? [msg.citations as unknown as Citation]
-        : [];
+          .map((msg) => {
+            const role = msg.isUserMessage ? "👤 You" : "🤖 Assistant";
+            const timestamp = format(new Date(msg.createdAt), "h:mm a");
+            const citations = Array.isArray(msg.citations)
+              ? (msg.citations as unknown as Citation[])
+              : msg.citations
+                ? [msg.citations as unknown as Citation]
+                : [];
 
-    let citationText = "";
-    if (citations.length > 0) {
-      const citationList = citations
-        .map((c) => {
-          const page = c.pageNumber;
-          const filename = c.fileName || "Document";
-          return page ? `${filename} (p.${page})` : filename;
-        })
-        .join(", ");
-      citationText = `\n\n**Sources:** ${citationList}`;
-    }
+            let citationText = "";
+            if (citations.length > 0) {
+              const citationList = citations
+                .map((c) => {
+                  const page = c.pageNumber;
+                  const filename = c.fileName || "Document";
+                  return page ? `${filename} (p.${page})` : filename;
+                })
+                .join(", ");
+              citationText = `\n\n**Sources:** ${citationList}`;
+            }
 
-    return `### ${role}
+            return `### ${role}
 *${timestamp}*
 
 ${msg.text}${citationText}`;
-  })
-  .join("\n\n---\n\n")}
+          })
+          .join("\n\n---\n\n")}
 
 ---
 
@@ -851,167 +850,166 @@ ${msg.text}${citationText}`;
       return { success: true };
     }),
 
-    getSystemMetrics: adminProcedure.query(async () => {
-        const [
-            totalUsers,
-            totalFiles,
-            totalMessages,
-            proUsers,
-            failedUploads,
-            storageUsed,
-            activeUsers24h,
-        ] = await Promise.all([
-            db.user.count(),
-            db.file.count(),
-            db.message.count(),
-            db.user.count({ where: { tier: "PRO" } }),
-            db.file.count({
-                where: {
-                    uploadStatus: "FAILED",
-                    createdAt: {
-                        gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                    },
-                },
-            }),
-            db.file.aggregate({
-                _sum: { size: true },
-            }),
-            db.user.count({
-                where: {
-                    updatedAt: {
-                        gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                    },
-                },
-            }),
-        ]);
+  getSystemMetrics: adminProcedure.query(async () => {
+    const [
+      totalUsers,
+      totalFiles,
+      totalMessages,
+      proUsers,
+      failedUploads,
+      storageUsed,
+      activeUsers24h,
+    ] = await Promise.all([
+      db.user.count(),
+      db.file.count(),
+      db.message.count(),
+      db.user.count({ where: { tier: "PRO" } }),
+      db.file.count({
+        where: {
+          uploadStatus: "FAILED",
+          createdAt: {
+            gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
+          },
+        },
+      }),
+      db.file.aggregate({
+        _sum: { size: true },
+      }),
+      db.user.count({
+        where: {
+          updatedAt: {
+            gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
+          },
+        },
+      }),
+    ]);
 
-        const messagesPerUser = totalUsers > 0 ? totalMessages / totalUsers : 0;
+    const messagesPerUser = totalUsers > 0 ? totalMessages / totalUsers : 0;
 
-        return {
-            totalUsers,
-            totalFiles,
-            totalMessages,
-            proUsers,
-            failedUploads,
-            storageUsed: (storageUsed._sum.size || BigInt(0)).toString(),
-            avgMessagesPerUser: messagesPerUser,
-            activeUsers24h,
-            avgProcessingTime: undefined as number | undefined,
-            errorRate: undefined as number | undefined,
-        };
-    }),
+    return {
+      totalUsers,
+      totalFiles,
+      totalMessages,
+      proUsers,
+      failedUploads,
+      storageUsed: (storageUsed._sum.size || BigInt(0)).toString(),
+      avgMessagesPerUser: messagesPerUser,
+      activeUsers24h,
+      avgProcessingTime: undefined as number | undefined,
+      errorRate: undefined as number | undefined,
+    };
+  }),
 
-    onSendMessage: privateProcedure
-        .input(z.object({ fileId: z.string(), message: z.string() }))
-        .subscription(async ({ input, ctx }) => {
-            const { fileId, message } = input;
-            const { user } = ctx;
+  onSendMessage: privateProcedure
+    .input(z.object({ fileId: z.string(), message: z.string() }))
+    .subscription(async ({ input, ctx }) => {
+      const { fileId, message } = input;
+      const { user } = ctx;
 
-            if (!message.trim()) {
-              return observable((emit) => {
-                emit.complete();
-              });
-            }
+      if (!message.trim()) {
+        return observable((emit) => {
+          emit.complete();
+        });
+      }
 
-            const ee = new EventEmitter();
+      const ee = new EventEmitter();
 
-            const file = await db.file.findFirst({
-                where: {
-                    id: fileId,
-                    userId: user.id,
-                },
-                select: {
-                    id: true,
-                    name: true,
-                },
-            });
+      const file = await db.file.findFirst({
+        where: {
+          id: fileId,
+          userId: user.id,
+        },
+        select: {
+          id: true,
+          name: true,
+        },
+      });
 
-            if (!file) {
-                throw new TRPCError({ code: "NOT_FOUND", message: "File not found" });
-            }
+      if (!file) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "File not found" });
+      }
 
-            let conversation = await db.conversation.findFirst({
-                where: {
-                    userId: user.id,
-                    conversationFiles: {
-                        some: {
-                            fileId,
-                        },
-                    },
-                },
-                select: {
-                    id: true,
-                },
-                orderBy: {
-                    createdAt: "desc",
-                },
-            });
+      let conversation = await db.conversation.findFirst({
+        where: {
+          userId: user.id,
+          conversationFiles: {
+            some: {
+              fileId,
+            },
+          },
+        },
+        select: {
+          id: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
 
-            if (!conversation) {
-                conversation = await db.conversation.create({
-                    data: {
-                        title: file.name,
-                        userId: user.id,
-                        conversationFiles: {
-                            create: {
-                                fileId,
-                            },
-                        },
-                    },
-                });
-            }
+      if (!conversation) {
+        conversation = await db.conversation.create({
+          data: {
+            title: file.name,
+            userId: user.id,
+            conversationFiles: {
+              create: {
+                fileId,
+              },
+            },
+          },
+        });
+      }
 
-            await db.message.create({
-                data: {
-                    text: message,
-                    isUserMessage: true,
-                    userId: user.id,
-                    fileId,
-                    conversationId: conversation.id,
-                },
-            });
+      await db.message.create({
+        data: {
+          text: message,
+          isUserMessage: true,
+          userId: user.id,
+          fileId,
+          conversationId: conversation.id,
+        },
+      });
 
-            const embeddings = new OpenAIEmbeddings({
-                modelName: "text-embedding-3-small",
-            });
+      const { getGeminiEmbeddings } = await import("@/lib/gemini");
+      const embeddings = await getGeminiEmbeddings();
 
-            const pinecone = await getPineconeClient();
-            const pineconeIndex = pinecone.Index(PINECONE_INDEX_NAME);
+      const pinecone = await getPineconeClient();
+      const pineconeIndex = pinecone.Index(PINECONE_INDEX_NAME);
 
-            const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
-                pineconeIndex: pineconeIndex,
-                namespace: file.id,
-            });
+      const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
+        pineconeIndex: pineconeIndex,
+        namespace: file.id,
+      });
 
-            const results = (await vectorStore.similaritySearch(message, 4)) as Document[];
+      const results = (await vectorStore.similaritySearch(message, 4)) as Document[];
 
-            const prevMessages = await db.message.findMany({
-                where: {
-                    conversationId: conversation.id,
-                },
-                select: {
-                    isUserMessage: true,
-                    text: true,
-                },
-                orderBy: {
-                    createdAt: "asc",
-                },
-                take: 6,
-            });
+      const prevMessages = await db.message.findMany({
+        where: {
+          conversationId: conversation.id,
+        },
+        select: {
+          isUserMessage: true,
+          text: true,
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+        take: 6,
+      });
 
-            const formattedPrevMessages = prevMessages.map((msg) => ({
-                role: msg.isUserMessage ? ("user" as const) : ("assistant" as const),
-                content: msg.text,
-            }));
+      const formattedPrevMessages = prevMessages.map((msg) => ({
+        role: msg.isUserMessage ? ("user" as const) : ("assistant" as const),
+        content: msg.text,
+      }));
 
-            const formattedMessages = [
-                {
-                    role: "system" as const,
-                    content: "Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format.",
-                },
-                {
-                    role: "user" as const,
-                    content: `Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format. \nIf you don't know the answer, just say that you don't know, don't try to make up an answer.
+      const formattedMessages = [
+        {
+          role: "system" as const,
+          content: "Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format.",
+        },
+        {
+          role: "user" as const,
+          content: `Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format. \nIf you don't know the answer, just say that you don't know, don't try to make up an answer.
               
         \n----------------\n
         
@@ -1019,324 +1017,324 @@ ${msg.text}${citationText}`;
         ${formattedPrevMessages.map((message) => {
             if (message.role === "user") return `User: ${message.content}\n`;
             return `Assistant: ${message.content}\n`;
-        }).join("")}
+          }).join("")}
         
         \n----------------\n
         CONTEXT:
         ${results.map((r) => r.pageContent).join("\n\n")}
         
         USER INPUT: ${message}`,
-                },
-            ];
+        },
+      ];
 
-            let responseStream;
-            let providerUsed: "openai" | "groq" | "gemini" = AI.DEFAULT_PROVIDER;
+      let responseStream;
+      let providerUsed: "openai" | "groq" | "gemini" = AI.DEFAULT_PROVIDER;
 
-            try {
-                if (providerUsed === "gemini") {
-                    const { geminiModel } = await import("@/lib/gemini");
-                    const chat = geminiModel.startChat({
-                        history: formattedPrevMessages.map(m => ({
-                            role: m.role === "user" ? "user" : "model",
-                            parts: [{ text: m.content }],
-                        })),
-                    });
-                    const result = await chat.sendMessageStream(
-                        `Context: ${results.map((r) => r.pageContent).join("\n\n")}\n\nUser Input: ${message}`
-                    );
-                    responseStream = result.stream;
-                } else if (providerUsed === "groq") {
-                    const { groq } = await import("@/lib/groq");
-                    responseStream = await groq.chat.completions.create({
-                        model: AI.GROQ_MODEL,
-                        temperature: 0,
-                        stream: true,
-                        messages: formattedMessages as any,
-                    });
-                } else {
-                    responseStream = await openai.chat.completions.create({
-                        model: AI.OPENAI_MODEL,
-                        temperature: 0,
-                        stream: true,
-                        messages: formattedMessages,
-                    });
-                }
-            } catch (err: any) {
-                console.warn(`[TRPC Chat] ${providerUsed} failed, falling back to Groq:`, err.message);
-                providerUsed = "groq";
-                const { groq } = await import("@/lib/groq");
-                responseStream = await groq.chat.completions.create({
-                    model: AI.GROQ_MODEL,
-                    temperature: 0,
-                    stream: true,
-                    messages: formattedMessages as any,
-                });
-            }
-
-            let fullResponse = "";
-            (async () => {
-                if (providerUsed === "gemini") {
-                    for await (const chunk of responseStream as any) {
-                        const token = chunk.text() || "";
-                        fullResponse += token;
-                        ee.emit("chunk", token);
-                    }
-                } else {
-                    for await (const chunk of responseStream as any) {
-                        const token = chunk.choices[0]?.delta?.content || "";
-                        fullResponse += token;
-                        ee.emit("chunk", token);
-                    }
-                }
-                ee.emit("end");
-
-                await db.message.create({
-                    data: {
-                        text: fullResponse,
-                        isUserMessage: false,
-                        fileId,
-                        userId: user.id,
-                        conversationId: conversation!.id,
-                    },
-                });
-            })();
-
-
-            return observable<{ chunk: string; isDone?: boolean }>((emit) => {
-                const onChunk = (chunk: string) => emit.next({ chunk });
-                const onEnd = () => {
-                    emit.next({ chunk: "", isDone: true });
-                    emit.complete();
-                };
-
-                ee.on("chunk", onChunk);
-                ee.on("end", onEnd);
-
-                return () => {
-                    ee.off("chunk", onChunk);
-                    ee.off("end", onEnd);
-                };
-            });
-        }),
-
-    healthCheck: publicProcedure.query(async () => {
-        const startTime = Date.now();
-        const checks: Record<string, { status: string; latency?: number; error?: string }> = {};
-
-        // Check database
-        const dbStart = Date.now();
-        try {
-            await db.$queryRaw`SELECT 1`;
-            checks.database = {
-                status: "up",
-                latency: Date.now() - dbStart,
-            };
-        } catch (error) {
-            checks.database = {
-                status: "down",
-                error: error instanceof Error ? error.message : "Unknown error",
-            };
+      try {
+        if (providerUsed === "gemini") {
+          const { geminiModel } = await import("@/lib/gemini");
+          const chat = geminiModel.startChat({
+            history: formattedPrevMessages.map(m => ({
+              role: m.role === "user" ? "user" : "model",
+              parts: [{ text: m.content }],
+            })),
+          });
+          const result = await chat.sendMessageStream(
+            `Context: ${results.map((r) => r.pageContent).join("\n\n")}\n\nUser Input: ${message}`
+          );
+          responseStream = result.stream;
+        } else if (providerUsed === "groq") {
+          const { groq } = await import("@/lib/groq");
+          responseStream = await groq.chat.completions.create({
+            model: AI.GROQ_MODEL,
+            temperature: 0,
+            stream: true,
+            messages: formattedMessages as any,
+          });
+        } else {
+          responseStream = await openai.chat.completions.create({
+            model: AI.OPENAI_MODEL,
+            temperature: 0,
+            stream: true,
+            messages: formattedMessages,
+          });
         }
+      } catch (err: any) {
+        console.warn(`[TRPC Chat] ${providerUsed} failed, falling back to Groq:`, err.message);
+        providerUsed = "groq";
+        const { groq } = await import("@/lib/groq");
+        responseStream = await groq.chat.completions.create({
+          model: AI.GROQ_MODEL,
+          temperature: 0,
+          stream: true,
+          messages: formattedMessages as any,
+        });
+      }
 
-        // Check Pinecone
-        const pineconeStart = Date.now();
-        try {
-            const pinecone = await getPineconeClient();
-            await pinecone.listIndexes();
-            checks.pinecone = {
-                status: "up",
-                latency: Date.now() - pineconeStart,
-            };
-        } catch (error) {
-            checks.pinecone = {
-                status: "down",
-                error: error instanceof Error ? error.message : "Unknown error",
-            };
+      let fullResponse = "";
+      (async () => {
+        if (providerUsed === "gemini") {
+          for await (const chunk of responseStream as any) {
+            const token = chunk.text() || "";
+            fullResponse += token;
+            ee.emit("chunk", token);
+          }
+        } else {
+          for await (const chunk of responseStream as any) {
+            const token = chunk.choices[0]?.delta?.content || "";
+            fullResponse += token;
+            ee.emit("chunk", token);
+          }
         }
+        ee.emit("end");
 
-        // Check Redis/Cache (optional)
-        try {
-            const { cacheService } = await import("@/lib/cache");
-            const testKey = `health:check:${Date.now()}`;
-            await cacheService.set(testKey, { test: true }, 10);
-            const cached = await cacheService.get(testKey);
-            await cacheService.del(testKey);
-            checks.cache = {
-                status: cached ? "up" : "down",
-            };
-        } catch (error) {
-            checks.cache = {
-                status: "down",
-                error: error instanceof Error ? error.message : "Unknown error",
-            };
-        }
+        await db.message.create({
+          data: {
+            text: fullResponse,
+            isUserMessage: false,
+            fileId,
+            userId: user.id,
+            conversationId: conversation!.id,
+          },
+        });
+      })();
 
-        const allHealthy = Object.values(checks).every((check) => check.status === "up");
-        const totalLatency = Date.now() - startTime;
 
-        const health = {
-            status: allHealthy ? "healthy" : "unhealthy",
-            timestamp: new Date().toISOString(),
-            services: checks,
-            latency: totalLatency,
+      return observable<{ chunk: string; isDone?: boolean }>((emit) => {
+        const onChunk = (chunk: string) => emit.next({ chunk });
+        const onEnd = () => {
+          emit.next({ chunk: "", isDone: true });
+          emit.complete();
         };
 
-        loggers.api.info(
-            {
-                health: health.status,
-                checks: Object.keys(checks).length,
-                latency: totalLatency,
-            },
-            "Health check requested",
-        );
+        ee.on("chunk", onChunk);
+        ee.on("end", onEnd);
 
-        return health;
+        return () => {
+          ee.off("chunk", onChunk);
+          ee.off("end", onEnd);
+        };
+      });
     }),
 
-    checkAdminStatus: privateProcedure.query(({ ctx }) => {
-        return { isAdmin: ctx.user?.tier === "ADMIN" };
+  healthCheck: publicProcedure.query(async () => {
+    const startTime = Date.now();
+    const checks: Record<string, { status: string; latency?: number; error?: string }> = {};
+
+    // Check database
+    const dbStart = Date.now();
+    try {
+      await db.$queryRaw`SELECT 1`;
+      checks.database = {
+        status: "up",
+        latency: Date.now() - dbStart,
+      };
+    } catch (error) {
+      checks.database = {
+        status: "down",
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
+
+    // Check Pinecone
+    const pineconeStart = Date.now();
+    try {
+      const pinecone = await getPineconeClient();
+      await pinecone.listIndexes();
+      checks.pinecone = {
+        status: "up",
+        latency: Date.now() - pineconeStart,
+      };
+    } catch (error) {
+      checks.pinecone = {
+        status: "down",
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
+
+    // Check Redis/Cache (optional)
+    try {
+      const { cacheService } = await import("@/lib/cache");
+      const testKey = `health:check:${Date.now()}`;
+      await cacheService.set(testKey, { test: true }, 10);
+      const cached = await cacheService.get(testKey);
+      await cacheService.del(testKey);
+      checks.cache = {
+        status: cached ? "up" : "down",
+      };
+    } catch (error) {
+      checks.cache = {
+        status: "down",
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
+
+    const allHealthy = Object.values(checks).every((check) => check.status === "up");
+    const totalLatency = Date.now() - startTime;
+
+    const health = {
+      status: allHealthy ? "healthy" : "unhealthy",
+      timestamp: new Date().toISOString(),
+      services: checks,
+      latency: totalLatency,
+    };
+
+    loggers.api.info(
+      {
+        health: health.status,
+        checks: Object.keys(checks).length,
+        latency: totalLatency,
+      },
+      "Health check requested",
+    );
+
+    return health;
+  }),
+
+  checkAdminStatus: privateProcedure.query(({ ctx }) => {
+    return { isAdmin: ctx.user?.tier === "ADMIN" };
+  }),
+
+  getConversations: privateProcedure.query(async ({ ctx }) => {
+    const { userId } = ctx;
+    const conversations = await db.conversation.findMany({
+      where: { userId },
+      orderBy: { updatedAt: "desc" },
+      include: {
+        conversationFiles: {
+          include: {
+            file: true,
+          },
+        },
+      },
+    });
+
+    return conversations.map(conv => ({
+      ...conv,
+      conversationFiles: conv.conversationFiles.map(cf => ({
+        ...cf,
+        file: {
+          ...cf.file,
+          size: cf.file.size.toString()
+        }
+      }))
+    }));
+  }),
+
+  demoChat: publicProcedure
+    .input(z.object({ messages: z.array(z.object({ role: z.enum(["user", "assistant", "system"]), content: z.string() })) }))
+    .subscription(async ({ input }) => {
+      const { messages } = input;
+
+      const ee = new EventEmitter();
+
+      const model = new ChatOpenAI({
+        modelName: "gpt-4o-mini",
+        temperature: 0.4,
+        streaming: true,
+      });
+
+      const systemPrompt =
+        "You are the demo assistant for TalkifyDocs. Answer briefly and helpfully based only on the user's message. " +
+        "Mention occasionally that this is a demo and that real accounts can upload and chat with their own PDFs.";
+
+      (async () => {
+        const streamResponse = await model.stream([
+          { role: "system", content: systemPrompt },
+          ...messages,
+        ]);
+
+        for await (const chunk of streamResponse) {
+          ee.emit("chunk", chunk.content);
+        }
+        ee.emit("end");
+      })();
+
+      return observable<{ chunk: string }>((emit) => {
+        const onChunk = (chunk: string) => emit.next({ chunk });
+        const onEnd = () => emit.complete();
+
+        ee.on("chunk", onChunk);
+        ee.on("end", onEnd);
+
+        return () => {
+          ee.off("chunk", onChunk);
+          ee.off("end", onEnd);
+        };
+      });
     }),
 
-    getConversations: privateProcedure.query(async ({ ctx }) => {
-        const { userId } = ctx;
-        const conversations = await db.conversation.findMany({
-            where: { userId },
-            orderBy: { updatedAt: "desc" },
-            include: {
-                conversationFiles: {
-                    include: {
-                        file: true,
-                    },
-                },
-            },
+  getErrorLogs: adminProcedure.query(async () => {
+    const failedFiles = await db.file.findMany({
+      where: {
+        uploadStatus: "FAILED",
+      },
+      take: 10,
+      orderBy: {
+        updatedAt: "desc",
+      },
+      select: {
+        id: true,
+        name: true,
+        uploadStatus: true,
+        updatedAt: true,
+      },
+    });
+
+    const errorLogs = failedFiles.map((file) => ({
+      id: file.id,
+      message: `File upload failed: ${file.name}`,
+      level: "error" as const,
+      timestamp: file.updatedAt,
+      context: {
+        fileId: file.id,
+        fileName: file.name,
+      },
+    }));
+
+    return { logs: errorLogs };
+  }),
+
+  retryUploadProcessing: privateProcedure
+    .input(z.object({ fileId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const { fileId } = input;
+
+      const file = await db.file.findFirst({
+        where: {
+          id: fileId,
+          userId,
+        },
+        select: {
+          id: true,
+          url: true,
+          name: true,
+        },
+      });
+
+      if (!file) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "File not found" });
+      }
+
+      await db.file.update({
+        where: { id: file.id },
+        data: { uploadStatus: "PROCESSING" },
+      });
+
+      // Fire-and-forget re-processing
+      void import("@/lib/upload/process-pdf").then(({ processPdfFile }) => {
+        processPdfFile({
+          fileId: file.id,
+          fileUrl: file.url,
+          fileName: file.name,
+        }).catch((error) => {
+          loggers.api.error("Retry processing error:", error);
         });
+      });
 
-        return conversations.map(conv => ({
-            ...conv,
-            conversationFiles: conv.conversationFiles.map(cf => ({
-                ...cf,
-                file: {
-                    ...cf.file,
-                    size: cf.file.size.toString()
-                }
-            }))
-        }));
+      return { ok: true };
     }),
-
-    demoChat: publicProcedure
-        .input(z.object({ messages: z.array(z.object({ role: z.enum(["user", "assistant", "system"]), content: z.string() })) }))
-        .subscription(async ({ input }) => {
-            const { messages } = input;
-
-            const ee = new EventEmitter();
-
-            const model = new ChatOpenAI({
-                modelName: "gpt-4o-mini",
-                temperature: 0.4,
-                streaming: true,
-            });
-
-            const systemPrompt =
-                "You are the demo assistant for TalkifyDocs. Answer briefly and helpfully based only on the user's message. " +
-                "Mention occasionally that this is a demo and that real accounts can upload and chat with their own PDFs.";
-
-            (async () => {
-                const streamResponse = await model.stream([
-                    { role: "system", content: systemPrompt },
-                    ...messages,
-                ]);
-
-                for await (const chunk of streamResponse) {
-                    ee.emit("chunk", chunk.content);
-                }
-                ee.emit("end");
-            })();
-
-            return observable<{ chunk: string }>((emit) => {
-                const onChunk = (chunk: string) => emit.next({ chunk });
-                const onEnd = () => emit.complete();
-
-                ee.on("chunk", onChunk);
-                ee.on("end", onEnd);
-
-                return () => {
-                    ee.off("chunk", onChunk);
-                    ee.off("end", onEnd);
-                };
-            });
-        }),
-
-    getErrorLogs: adminProcedure.query(async () => {
-        const failedFiles = await db.file.findMany({
-            where: {
-                uploadStatus: "FAILED",
-            },
-            take: 10,
-            orderBy: {
-                updatedAt: "desc",
-            },
-            select: {
-                id: true,
-                name: true,
-                uploadStatus: true,
-                updatedAt: true,
-            },
-        });
-
-        const errorLogs = failedFiles.map((file) => ({
-            id: file.id,
-            message: `File upload failed: ${file.name}`,
-            level: "error" as const,
-            timestamp: file.updatedAt,
-            context: {
-                fileId: file.id,
-                fileName: file.name,
-            },
-        }));
-
-        return { logs: errorLogs };
-    }),
-
-    retryUploadProcessing: privateProcedure
-        .input(z.object({ fileId: z.string() }))
-        .mutation(async ({ ctx, input }) => {
-            const { userId } = ctx;
-            const { fileId } = input;
-
-            const file = await db.file.findFirst({
-                where: {
-                    id: fileId,
-                    userId,
-                },
-                select: {
-                    id: true,
-                    url: true,
-                    name: true,
-                },
-            });
-
-            if (!file) {
-                throw new TRPCError({ code: "NOT_FOUND", message: "File not found" });
-            }
-
-            await db.file.update({
-                where: { id: file.id },
-                data: { uploadStatus: "PROCESSING" },
-            });
-
-            // Fire-and-forget re-processing
-            void import("@/lib/upload/process-pdf").then(({ processPdfFile }) => {
-                processPdfFile({
-                    fileId: file.id,
-                    fileUrl: file.url,
-                    fileName: file.name,
-                }).catch((error) => {
-                    loggers.api.error("Retry processing error:", error);
-                });
-            });
-
-            return { ok: true };
-        }),
 });
 
 export type AppRouter = typeof appRouter;

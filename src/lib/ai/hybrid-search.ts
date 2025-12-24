@@ -1,4 +1,4 @@
-import { OpenAIEmbeddings } from "@langchain/openai";
+// import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
 import { Document } from "@langchain/core/documents";
 import { getPineconeIndex } from "./pinecone";
@@ -50,9 +50,8 @@ export async function hybridSearch(
     return [];
   }
 
-  const embeddings = new OpenAIEmbeddings({
-    modelName: "text-embedding-3-small",
-  });
+  const { getGeminiEmbeddings } = await import("@/lib/gemini");
+  const embeddings = await getGeminiEmbeddings();
 
   const pineconeIndex: PineconeIndex = getPineconeIndex();
 
@@ -99,9 +98,8 @@ export async function hybridSearch(
   const final: AnyDocument[] = [];
 
   function add(doc: AnyDocument) {
-    const key = `${doc.metadata?.fileId ?? ""}::${
-      doc.metadata?.page ?? ""
-    }::${doc.pageContent.slice(0, 50)}`;
+    const key = `${doc.metadata?.fileId ?? ""}::${doc.metadata?.page ?? ""
+      }::${doc.pageContent.slice(0, 50)}`;
     if (seen.has(key)) return;
     seen.add(key);
     final.push(doc);

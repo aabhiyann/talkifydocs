@@ -1,5 +1,5 @@
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
-import { OpenAIEmbeddings } from "@langchain/openai";
+// import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
 import { db } from "@/lib/db";
 import { getPineconeClient } from "@/lib/pinecone";
@@ -154,11 +154,11 @@ export async function processPdfFile({
       const { GoogleGenerativeAIEmbeddings } = await import("@langchain/google-genai");
       const pinecone = await getPineconeClient();
       const pineconeIndex: PineconeIndex = pinecone.Index(PINECONE_INDEX_NAME);
-      
-      const embeddings = new GoogleGenerativeAIEmbeddings({
-        modelName: AI.GEMINI_EMBEDDING_MODEL,
-        apiKey: env.GOOGLE_API_KEY,
-      });
+
+
+      // Use standardized Gemini Embeddings
+      const { getGeminiEmbeddings } = await import("@/lib/gemini");
+      const embeddings = await getGeminiEmbeddings();
 
       await withTimeout(
         PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
@@ -197,7 +197,7 @@ export async function processPdfFile({
         uploadStatus,
         pageCount: processedData.pageCount,
         summary: processedData.summary,
-        rawText: processedData.rawText,
+        // rawText: processedData.rawText, // Field not in schema
         entities: processedData.entities as any,
         metadata: processedData.metadata as any,
         thumbnailUrl: processedData.thumbnailUrl,
