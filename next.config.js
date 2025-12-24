@@ -74,6 +74,15 @@ const nextConfig = {
   },
 
   // Security headers
+  async rewrites() {
+    return [
+      {
+        source: "/pdf.worker.min.mjs",
+        destination: "/_next/static/worker/pdf.worker.min.mjs",
+      },
+    ];
+  },
+
   async headers() {
     return [
       {

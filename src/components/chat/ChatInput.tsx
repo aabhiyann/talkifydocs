@@ -30,50 +30,44 @@ export const ChatInput = memo(({ isDisabled }: ChatInputProps) => {
   }, [handleSubmit]);
 
   return (
-    <form 
-      onSubmit={handleSubmit} 
-      className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4"
-    >
-      <div className="mx-auto w-full max-w-4xl">
-        <div className="flex gap-2">
-          <Textarea
-            ref={textareaRef}
-            value={message}
-            onChange={handleInputChange}
-            placeholder="Ask anything about your documents..."
-            className={cn(
-              componentStyles.input.base,
-              componentStyles.input.focus,
-              'flex-1 min-h-[80px] max-h-[200px] resize-none'
-            )}
-            disabled={isLoading || isDisabled}
-            onKeyDown={handleKeyDown}
-          />
-          <button
-            type="submit"
-            disabled={isLoading || isDisabled || !message.trim()}
-            className={cn(
-              componentStyles.button.base,
-              componentStyles.button.variants.primary,
-              'px-4 self-end h-10', // Added h-10 to match design system base height but button is self-end
-              (isLoading || isDisabled || !message.trim()) && 'opacity-50 cursor-not-allowed'
-            )}
-          >
-            {isLoading ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : (
-              <Send className="w-5 h-5" />
-            )}
-          </button>
-        </div>
-        
-        {/* Helper Text */}
-        <div className="mt-2 flex items-center justify-between text-[10px] text-gray-500 dark:text-gray-400 opacity-70">
-          <span>Press Enter to send, Shift+Enter for new line</span>
-          <span>{message.length}/2000</span>
-        </div>
+    <div className="w-full">
+      <form 
+        onSubmit={handleSubmit} 
+        className="relative flex items-end gap-2 bg-white/30 dark:bg-zinc-900/30 backdrop-blur-2xl border border-white/30 dark:border-white/10 rounded-[24px] px-4 py-2 transition-all shadow-xl shadow-primary-500/5 focus-within:ring-1 focus-within:ring-primary-500/40"
+      >
+        <Textarea
+          ref={textareaRef}
+          value={message}
+          onChange={handleInputChange}
+          placeholder="Ask a question..."
+          rows={1}
+          className="flex-1 min-h-[36px] max-h-[150px] py-2 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 resize-none text-sm placeholder:text-gray-500 dark:placeholder:text-gray-400"
+          disabled={isLoading || isDisabled}
+          onKeyDown={handleKeyDown}
+        />
+        <button
+          type="submit"
+          disabled={isLoading || isDisabled || !message.trim()}
+          className={cn(
+            "flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300",
+            message.trim() && !isLoading 
+              ? "bg-primary-600 text-white shadow-md hover:scale-105 active:scale-95" 
+              : "bg-gray-300 dark:bg-zinc-800 text-white/50 cursor-not-allowed"
+          )}
+        >
+          {isLoading ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Send className="w-4 h-4" />
+          )}
+        </button>
+      </form>
+      <div className="mt-1.5 px-4 flex justify-end">
+        <span className="text-[10px] text-gray-400 dark:text-zinc-500 tabular-nums font-medium">
+          {message.length} / 2000
+        </span>
       </div>
-    </form>
+    </div>
   );
 });
 

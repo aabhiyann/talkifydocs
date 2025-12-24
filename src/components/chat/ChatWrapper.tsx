@@ -143,34 +143,29 @@ export const ChatWrapper = memo(({ fileId, onCitationClick }: ChatWrapperProps) 
 
   return (
     <ChatContextProvider fileId={fileId}>
-      <div className="relative flex min-h-screen flex-col bg-gradient-to-br from-background via-background to-background">
+      <div className="relative flex h-full flex-col bg-slate-50/50 dark:bg-zinc-950/50">
         {/* Header */}
-        <div className="bg-background/95 sticky top-0 z-10 border-b border-border backdrop-blur-md">
+        <div className="bg-white/40 dark:bg-zinc-900/40 sticky top-0 z-10 border-b border-white/20 dark:border-white/5 backdrop-blur-xl">
           <div className="px-4 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <Link
-                  href="/dashboard"
-                  className={buttonVariants({ variant: "ghost", size: "sm" })}
-                >
-                  <ChevronLeft className="mr-2 h-4 w-4" />
-                  Back
-                </Link>
                 <div className="flex items-center space-x-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary-500 to-primary-600">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 shadow-md shadow-primary-500/20">
                     <FileText className="h-4 w-4 text-white" />
                   </div>
                   <div>
-                    <h1 className="font-semibold text-foreground">Document</h1>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Ready to chat</p>
+                    <h1 className="text-sm font-bold text-foreground">Document Analysis</h1>
+                    <div className="flex items-center space-x-1.5">
+                      <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">AI Ready</p>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2">
-                <Badge variant="secondary" className="flex items-center space-x-1">
-                  <CheckCircle2 className="h-3 w-3" />
-                  <span>Processed</span>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="bg-white/50 dark:bg-zinc-800/50 backdrop-blur-sm border-white/20 text-[10px] font-semibold">
+                  AI Assistant
                 </Badge>
               </div>
             </div>
@@ -178,15 +173,13 @@ export const ChatWrapper = memo(({ fileId, onCitationClick }: ChatWrapperProps) 
         </div>
 
         {/* Messages Area */}
-        <div className="flex flex-1 flex-col">
-          <div className="flex-1 overflow-hidden">
-            <Messages fileId={fileId} onCitationClick={onCitationClick} />
-          </div>
+        <div className="flex flex-1 flex-col overflow-hidden min-h-0">
+          <Messages fileId={fileId} onCitationClick={onCitationClick} />
+        </div>
 
-          {/* Chat Input */}
-          <div className="bg-background/95 sticky bottom-0 border-t border-border p-4 backdrop-blur-md">
-            <ChatInput />
-          </div>
+        {/* Chat Input */}
+        <div className="p-4 bg-transparent backdrop-blur-sm">
+          <ChatInput />
         </div>
       </div>
     </ChatContextProvider>
@@ -194,5 +187,3 @@ export const ChatWrapper = memo(({ fileId, onCitationClick }: ChatWrapperProps) 
 });
 
 ChatWrapper.displayName = "ChatWrapper";
-
-export default ChatWrapper;

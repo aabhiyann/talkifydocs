@@ -1,9 +1,8 @@
-import { ChatWrapper } from "@/components/chat/ChatWrapper";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import { Metadata, Viewport } from "next";
-import AsyncPdfRenderer from "@/components/AsyncPdfRenderer";
+import { ResizableChatLayout } from "@/components/dashboard/ResizableChatLayout";
 
 interface PageProps {
   params: {
@@ -39,20 +38,8 @@ const Page = async ({ params }: PageProps) => {
   if (!file) notFound();
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] flex-1 flex-col justify-between">
-      <div className="max-w-8xl mx-auto w-full grow lg:flex xl:px-2">
-        {/* left side */}
-        <div className="flex-1 xl:flex">
-          <div className="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6">
-            <AsyncPdfRenderer url={file.url} />
-          </div>
-        </div>
-
-        {/* Right side */}
-        <div className="flex-[0.75] shrink-0 border-t border-gray-200 lg:w-96 lg:border-l lg:border-t-0">
-          <ChatWrapper fileId={file.id} />
-        </div>
-      </div>
+    <div className="flex h-[calc(100vh-4rem)] flex-col bg-background">
+      <ResizableChatLayout fileUrl={file.url} fileId={file.id} />
     </div>
   );
 };

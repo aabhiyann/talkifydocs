@@ -3,6 +3,8 @@ import { db } from "@/lib/db";
 import { UserManagementTable } from "@/components/admin/UserManagementTable";
 import { Metadata } from "next";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "User Management | Admin | TalkifyDocs",
   description: "Manage users, tiers, and permissions",
