@@ -31,6 +31,9 @@ export const config = {
      * - _next (static files)
      * - public assets
      */
-    "/((?!_next/static|_next/image|favicon.ico|robots.txt).*)",
+    // Skip Next.js internals and all static files, unless found in search params
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    '/(api|trpc)(.*)',
   ],
 };
