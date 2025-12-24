@@ -974,7 +974,7 @@ ${msg.text}${citationText}`;
       const embeddings = await getGeminiEmbeddings();
 
       const pinecone = await getPineconeClient();
-      const pineconeIndex = pinecone.Index(PINECONE_INDEX_NAME);
+      const pineconeIndex = pinecone.index(PINECONE_INDEX_NAME);
 
       const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
         pineconeIndex: pineconeIndex,

@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
         const file = await db.file.findFirst({
             where: { id: fileId, userId: user.id },
-            select: { id: true, name: true, summary: true, rawText: true, metadata: true }
+            select: { id: true, name: true, summary: true, metadata: true }
         });
         if (!file) return new NextResponse("File not found", { status: 404 });
 
@@ -51,20 +51,17 @@ export async function POST(req: NextRequest) {
         // Vector search using Gemini Embeddings
         let results: any[] = [];
         try {
-            const { GoogleGenerativeAIEmbeddings } = await import("@langchain/google-genai");
-            const embeddings = new GoogleGenerativeAIEmbeddings({
-                modelName: AI.GEMINI_EMBEDDING_MODEL,
-                apiKey: env.GOOGLE_API_KEY
-            });
+            const { getGeminiEmbeddings } = await import("@/lib/gemini");
+            const embeddings = await getGeminiEmbeddings();
             const pinecone = await getPineconeClient();
             const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
-                pineconeIndex: pinecone.Index(PINECONE_INDEX_NAME),
+                pineconeIndex: pinecone.index(PINECONE_INDEX_NAME),
                 namespace: file.id,
             });
             results = await vectorStore.similaritySearch(message, 4);
         } catch (e: any) {
             console.warn("[Chat] Context fallback active:", e.message);
-            results = [{ pageContent: file.rawText || file.summary || "No document context available." }];
+            results = [{ pageContent: file.summary || "No document context available." }];
         }
 
         // Context construction

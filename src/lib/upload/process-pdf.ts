@@ -153,7 +153,7 @@ export async function processPdfFile({
     try {
       const { GoogleGenerativeAIEmbeddings } = await import("@langchain/google-genai");
       const pinecone = await getPineconeClient();
-      const pineconeIndex: PineconeIndex = pinecone.Index(PINECONE_INDEX_NAME);
+      const pineconeIndex: PineconeIndex = pinecone.index(PINECONE_INDEX_NAME);
 
 
       // Use standardized Gemini Embeddings
