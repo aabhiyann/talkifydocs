@@ -29,8 +29,8 @@ jobs:
           NODE_ENV: production
           # Use dummy values for build (actual values needed only at runtime)
           DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_Y2xlcmsuY29tCg==
-          CLERK_SECRET_KEY: sk_test_Y2xlcmsuY29tCg==
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_Y2xlcms
+          CLERK_SECRET_KEY: sk_test_Y2xlcms
           OPENAI_API_KEY: sk-dummy
           PINECONE_API_KEY: dummy
           PINECONE_ENVIRONMENT: gcp-starter
