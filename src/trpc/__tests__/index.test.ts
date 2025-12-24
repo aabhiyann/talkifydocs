@@ -27,7 +27,7 @@ describe("tRPC User Procedures", () => {
       const caller = appRouter.createCaller(ctx as any);
 
       const mockFiles = [
-        { id: "file_1", name: "test.pdf", userId: "user_123" },
+        { id: "file_1", name: "test.pdf", userId: "user_123", size: 1024 },
       ];
 
       (db.file.findMany as jest.Mock).mockResolvedValue(mockFiles);
@@ -47,8 +47,8 @@ describe("tRPC User Procedures", () => {
       const caller = appRouter.createCaller(ctx as any);
       const fileId = "file_123";
 
-      (db.file.findFirst as jest.Mock).mockResolvedValue({ id: fileId, userId: "user_123" });
-      (db.file.delete as jest.Mock).mockResolvedValue({ id: fileId, userId: "user_123" });
+      (db.file.findFirst as jest.Mock).mockResolvedValue({ id: fileId, userId: "user_123", size: 2048 });
+      (db.file.delete as jest.Mock).mockResolvedValue({ id: fileId, userId: "user_123", size: 2048 });
 
       const result = await caller.deleteFile({ id: fileId });
 
