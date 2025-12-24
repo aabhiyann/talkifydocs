@@ -17,7 +17,7 @@ const HeroSection = () => {
           <div className="mb-8 inline-flex animate-in fade-in-50 slide-in-from-top-3 duration-500 items-center gap-2 rounded-full border border-primary-200 bg-primary-50 px-4 py-2 dark:border-primary-800 dark:bg-primary-900/20">
             <Sparkles className="h-4 w-4 text-primary-600" />
             <span className="text-sm font-medium text-primary-600 dark:text-primary-400">
-              Now with Gemini 3.0 and Llama 3.3
+              Next-Gen AI Analysis
             </span>
           </div>
 

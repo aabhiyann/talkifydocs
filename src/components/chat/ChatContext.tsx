@@ -112,7 +112,9 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to send message");
+        const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+        console.error("Chat API Error:", errorData);
+        throw new Error(errorData.error || "Failed to send message");
       }
 
       if (!response.body) {

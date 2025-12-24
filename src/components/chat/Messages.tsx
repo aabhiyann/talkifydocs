@@ -42,41 +42,19 @@ export const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
   const messages = data?.pages.flatMap((page) => page.messages);
 
   const combinedMessages = useMemo<MessageWithContext[]>(() => {
-    const loadingMessage: MessageWithContext = {
-      createdAt: new Date().toISOString(),
-      id: `loading-message-${Date.now()}`,
-      isUserMessage: false,
-      text: (
-        <div className="flex flex-col items-center space-y-3 py-4">
-          <div className="relative h-24 w-24 animate-pulse">
-            <Image
-              src="/brand/states/processing.png"
-              alt="AI is thinking"
-              fill
-              className="object-contain"
-              sizes="96px"
-            />
-          </div>
-          <span className="text-sm text-gray-500">AI is thinking...</span>
-        </div>
-      ),
-    };
-
-    const allMessages = [...(isAiThinking ? [loadingMessage] : []), ...(messages ?? [])];
+    // Reverse the infinite query pages so they are [oldest...newest]
+    const allMessages = messages ? [...messages].reverse() : [];
 
     // Pre-calculate previous user message for highlights
-    // Since allMessages is [newest...oldest], we iterate backwards
     let lastUserMsg = "";
-    const withContext = [...allMessages].reverse().map((msg) => {
+    return allMessages.map((msg) => {
       const prevUserMsg = !msg.isUserMessage ? lastUserMsg : undefined;
       if (msg.isUserMessage && typeof msg.text === "string") {
         lastUserMsg = msg.text;
       }
       return { ...msg, previousUserMessage: prevUserMsg } as MessageWithContext;
     });
-
-    return withContext.reverse();
-  }, [messages, isAiThinking]);
+  }, [messages]);
 
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
@@ -100,14 +78,13 @@ export const Messages = memo(({ fileId, onCitationClick }: MessagesProps) => {
       <div className="flex-1 space-y-4 overflow-y-auto p-4">
         <div className="mx-auto max-w-4xl space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i} className="animate-pulse">
+            <Card key={i} className="animate-pulse bg-white/30 dark:bg-zinc-900/30 backdrop-blur-sm border-white/20">
               <CardContent className="p-4">
                 <div className="flex items-start space-x-3">
-                  <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700" />
+                  <div className="h-8 w-8 rounded-full bg-gray-200/50 dark:bg-gray-700/50" />
                   <div className="flex-1 space-y-2">
-                    <div className="h-4 w-1/4 rounded bg-gray-200 dark:bg-gray-700" />
-                    <div className="h-4 w-3/4 rounded bg-gray-200 dark:bg-gray-700" />
-                    <div className="h-4 w-1/2 rounded bg-gray-200 dark:bg-gray-700" />
+                    <div className="h-4 w-1/4 rounded bg-gray-200/50 dark:bg-gray-700/50" />
+                    <div className="h-4 w-3/4 rounded bg-gray-200/50 dark:bg-gray-700/50" />
                   </div>
                 </div>
               </CardContent>

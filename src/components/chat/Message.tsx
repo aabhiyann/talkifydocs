@@ -71,25 +71,24 @@ const Message = memo(
         <div
           ref={ref}
           className={cn(
-            "flex flex-col",
+            "flex flex-col mb-4",
             isUser ? "items-end" : "items-start"
           )}
         >
           <div
             className={cn(
+              "max-w-[85%] px-4 py-2 relative group transition-all duration-300",
               isUser 
-                ? componentStyles.chatBubble.user 
-                : componentStyles.chatBubble.assistant,
-              "max-w-full group"
+                ? "bg-primary-600/90 backdrop-blur-md text-white rounded-[20px] rounded-br-[4px] shadow-md shadow-primary-500/10 border border-white/10" 
+                : "bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md text-foreground rounded-[20px] rounded-bl-[4px] shadow-sm border border-black/5 dark:border-white/5"
             )}
           >
-            <div className="prose prose-sm dark:prose-invert max-w-none">
+            <div className={cn(
+              "prose prose-sm max-w-none",
+              isUser ? "text-white prose-p:text-white" : "dark:prose-invert"
+            )}>
               {typeof message.text === "string" ? (
-                <ReactMarkdown
-                  className={cn({
-                    "text-white": isUser,
-                  })}
-                >
+                <ReactMarkdown>
                   {message.text}
                 </ReactMarkdown>
               ) : (
