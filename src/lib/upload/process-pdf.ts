@@ -4,6 +4,7 @@ import { PineconeStore } from "@langchain/pinecone";
 import { db } from "@/lib/db";
 import { getPineconeClient } from "@/lib/pinecone";
 import { groq } from "@/lib/groq";
+import { env } from "@/lib/env";
 import { extractMetadata } from "./extract-metadata";
 import { generateThumbnail } from "./generate-thumbnail";
 import { extractEntities } from "./extract-entities";
@@ -15,6 +16,8 @@ import { withTimeout } from "@/lib/utils";
 import { Document } from "@langchain/core/documents";
 import { JsonValue } from "@prisma/client/runtime/library";
 import { loggers } from "../logger";
+
+import { AI } from "@/config/ai";
 
 type ProcessPdfParams = {
   fileId: string;
@@ -60,6 +63,7 @@ export async function processPdfFile({
   let processedData: Partial<{
     pageCount: number;
     summary: string | null;
+    rawText: string | null;
     entities: JsonValue | null;
     metadata: JsonValue | null;
     thumbnailUrl: string | null;
@@ -153,7 +157,7 @@ export async function processPdfFile({
       
       const embeddings = new GoogleGenerativeAIEmbeddings({
         modelName: AI.GEMINI_EMBEDDING_MODEL,
-        apiKey: process.env.GOOGLE_API_KEY,
+        apiKey: env.GOOGLE_API_KEY,
       });
 
       await withTimeout(
@@ -176,6 +180,7 @@ export async function processPdfFile({
       entities: entities as any,
       metadata: metadata as any,
       thumbnailUrl,
+      rawText: fullText,
     };
 
     processedData.metadata = metadata as any;
@@ -192,6 +197,7 @@ export async function processPdfFile({
         uploadStatus,
         pageCount: processedData.pageCount,
         summary: processedData.summary,
+        rawText: processedData.rawText,
         entities: processedData.entities as any,
         metadata: processedData.metadata as any,
         thumbnailUrl: processedData.thumbnailUrl,
