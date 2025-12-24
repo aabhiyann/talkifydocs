@@ -1,10 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Skip static optimization in CI environments (no Clerk keys)
-  ...(process.env.SKIP_BUILD_STATIC_GENERATION === '1' && {
-    output: 'standalone',
-  }),
-
   // Performance optimizations
   compress: true,
   poweredByHeader: false,
