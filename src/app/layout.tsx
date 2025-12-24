@@ -38,11 +38,11 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://talkifydocs.com"),
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/brand/icons/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/favicon.ico?v=2", sizes: "any" },
+      { url: "/brand/icons/icon-192.png?v=2", type: "image/png", sizes: "192x192" },
     ],
-    shortcut: "/favicon.ico",
-    apple: "/brand/icons/apple-touch-icon.png",
+    shortcut: "/favicon.ico?v=2",
+    apple: "/brand/icons/apple-touch-icon.png?v=2",
   },
   openGraph: {
     title: "TalkifyDocs - AI-Powered Document Analysis",
