@@ -22,7 +22,7 @@
     "db:studio": "prisma studio",
     "test:smoke": "bash scripts/smoke-tests.sh",
     "test:performance": "bash scripts/performance-check.sh",
-    "db:pinecone-init": "ts-node scripts/pinecone-init.ts"
+    "db:pinecone-init": "tsx scripts/pinecone-init.ts"
   },
   "engines": {
     "node": ">=20.9.0"
