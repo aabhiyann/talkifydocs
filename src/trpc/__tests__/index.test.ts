@@ -34,7 +34,9 @@ describe("tRPC User Procedures", () => {
 
       const result = await caller.getUserFiles();
 
-      expect(result).toEqual(mockFiles);
+      expect(result).toEqual([
+        { id: "file_1", name: "test.pdf", userId: "user_123", size: "1024" },
+      ]);
       expect(db.file.findMany).toHaveBeenCalledWith({
         where: { userId: "user_123" },
         include: { _count: { select: { messages: true } } },
@@ -52,7 +54,7 @@ describe("tRPC User Procedures", () => {
 
       const result = await caller.deleteFile({ id: fileId });
 
-      expect(result).toEqual({ id: fileId, userId: "user_123" });
+      expect(result).toEqual({ id: fileId, userId: "user_123", size: "2048" });
       expect(db.file.delete).toHaveBeenCalledWith({
         where: { id: fileId },
       });

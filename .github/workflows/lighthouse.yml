@@ -27,6 +27,7 @@ jobs:
         run: npm run build
         env:
           NODE_ENV: production
+          NEXT_DISABLE_SSG: 1
           # Use dummy values for build (actual values needed only at runtime)
           DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_Y2xlcms
