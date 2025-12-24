@@ -8,7 +8,7 @@ import { Home, ArrowLeft, Search, HelpCircle } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-white to-primary-50/30 dark:bg-black">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-white to-primary-50/30 dark:bg-black dark:bg-none">
       <MaxWidthWrapper>
         <div className="text-center">
           {/* 404 Illustration */}
