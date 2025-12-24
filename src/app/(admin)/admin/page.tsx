@@ -7,6 +7,8 @@ import { ErrorLogViewer } from "@/components/admin/ErrorLogViewer";
 import { createServerClient } from "@/trpc/server";
 import { Users, FileText, MessageSquare, Crown } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminDashboard() {
   await requireAdmin();
 
