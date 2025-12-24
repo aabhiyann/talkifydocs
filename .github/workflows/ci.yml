@@ -48,7 +48,7 @@ jobs:
       - name: Build application
         run: npm run build
         env:
-          NEXT_DISABLE_SSG: 1
+          SKIP_BUILD_STATIC_GENERATION: 1
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
