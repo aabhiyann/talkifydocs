@@ -5,6 +5,8 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import { Bookmark } from "lucide-react";
 import { Metadata } from "next";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Highlights | TalkifyDocs",
   description: "Saved Q&A pairs from your document conversations",
