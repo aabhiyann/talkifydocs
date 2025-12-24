@@ -36,14 +36,7 @@ export const metadata: Metadata = {
   keywords: "PDF analysis, AI chat, document processing, PDF reader, document AI",
   authors: [{ name: "TalkifyDocs Team" }],
   metadataBase: new URL("https://talkifydocs.com"),
-  icons: {
-    icon: [
-      { url: "/favicon.ico?v=2", sizes: "any" },
-      { url: "/brand/icons/icon-192.png?v=2", type: "image/png", sizes: "192x192" },
-    ],
-    shortcut: "/favicon.ico?v=2",
-    apple: "/brand/icons/apple-touch-icon.png?v=2",
-  },
+  // icons object removed to let Next.js handle src/app/favicon.ico automatically
   openGraph: {
     title: "TalkifyDocs - AI-Powered Document Analysis",
     description: "Upload, analyze, and chat with your PDF documents using advanced AI technology.",
