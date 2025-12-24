@@ -11,6 +11,7 @@ const nextConfig = {
 
   // Image optimization
   images: {
+    unoptimized: true, // Disable optimization to fix Vercel deployment issues
     formats: ["image/webp", "image/avif"],
     minimumCacheTTL: 60,
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
