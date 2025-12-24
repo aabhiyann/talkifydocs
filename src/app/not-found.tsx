@@ -28,10 +28,10 @@ export default function NotFound() {
 
           {/* Error Message */}
           <div className="mb-8">
-            <h1 className="text-display-md mb-4 text-secondary-900 dark:text-secondary-100">
+            <h1 className="text-display-md mb-4 text-secondary-900 dark:text-white">
               Page Not Found
             </h1>
-            <p className="text-body-lg mx-auto max-w-2xl leading-relaxed text-secondary-600 dark:text-secondary-300">
+            <p className="text-body-lg mx-auto max-w-2xl leading-relaxed text-secondary-600 dark:text-gray-300">
               Even our turtle guide couldn&apos;t find this page! It might be taking a break or the
               page doesn&apos;t exist.
             </p>
@@ -56,7 +56,7 @@ export default function NotFound() {
 
           {/* Helpful Links */}
           <div className="glass mx-auto max-w-2xl rounded-2xl p-8">
-            <h2 className="text-heading-lg mb-6 text-secondary-900 dark:text-secondary-100">
+            <h2 className="text-heading-lg mb-6 text-secondary-900 dark:text-white">
               Maybe you were looking for:
             </h2>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -67,10 +67,10 @@ export default function NotFound() {
                       <Search className="h-4 w-4 text-white" />
                     </div>
                     <div className="text-left">
-                      <div className="text-heading-sm text-secondary-900 group-hover:text-primary-600 dark:text-secondary-100 dark:group-hover:text-primary-400">
+                      <div className="text-heading-sm text-secondary-900 group-hover:text-primary-600 dark:text-gray-100 dark:group-hover:text-primary-400">
                         Dashboard
                       </div>
-                      <div className="text-body-sm text-secondary-600 dark:text-secondary-400">
+                      <div className="text-body-sm text-secondary-600 dark:text-gray-400">
                         Manage your documents
                       </div>
                     </div>
@@ -85,10 +85,10 @@ export default function NotFound() {
                       <HelpCircle className="h-4 w-4 text-white" />
                     </div>
                     <div className="text-left">
-                      <div className="text-heading-sm text-secondary-900 group-hover:text-primary-600 dark:text-secondary-100 dark:group-hover:text-primary-400">
+                      <div className="text-heading-sm text-secondary-900 group-hover:text-primary-600 dark:text-gray-100 dark:group-hover:text-primary-400">
                         Features
                       </div>
-                      <div className="text-body-sm text-secondary-600 dark:text-secondary-400">
+                      <div className="text-body-sm text-secondary-600 dark:text-gray-400">
                         Explore our capabilities
                       </div>
                     </div>
@@ -103,10 +103,10 @@ export default function NotFound() {
                       <span className="text-sm font-bold text-white">$</span>
                     </div>
                     <div className="text-left">
-                      <div className="text-heading-sm text-secondary-900 group-hover:text-primary-600 dark:text-secondary-100 dark:group-hover:text-primary-400">
+                      <div className="text-heading-sm text-secondary-900 group-hover:text-primary-600 dark:text-gray-100 dark:group-hover:text-primary-400">
                         Pricing
                       </div>
-                      <div className="text-body-sm text-secondary-600 dark:text-secondary-400">
+                      <div className="text-body-sm text-secondary-600 dark:text-gray-400">
                         View our plans
                       </div>
                     </div>
@@ -121,10 +121,10 @@ export default function NotFound() {
                       <span className="text-sm font-bold text-white">?</span>
                     </div>
                     <div className="text-left">
-                      <div className="text-heading-sm text-secondary-900 group-hover:text-primary-600 dark:text-secondary-100 dark:group-hover:text-primary-400">
+                      <div className="text-heading-sm text-secondary-900 group-hover:text-primary-600 dark:text-gray-100 dark:group-hover:text-primary-400">
                         Contact
                       </div>
-                      <div className="text-body-sm text-secondary-600 dark:text-secondary-400">
+                      <div className="text-body-sm text-secondary-600 dark:text-gray-400">
                         Get help & support
                       </div>
                     </div>
@@ -136,7 +136,7 @@ export default function NotFound() {
 
           {/* Fun Message */}
           <div className="mt-8 text-center">
-            <p className="text-body-sm text-secondary-500 dark:text-secondary-500">
+            <p className="text-body-sm text-secondary-500 dark:text-gray-500">
               Even our AI couldn&apos;t find this page. Maybe it&apos;s taking a coffee break? ☕
             </p>
           </div>
