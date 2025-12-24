@@ -32,7 +32,7 @@ const envSchema = z.object({
 
   // Clerk Auth
   CLERK_SECRET_KEY: z.string().min(1, "Clerk secret key is required"),
-  CLERK_WEBHOOK_SECRET: z.string().min(1, "Clerk webhook secret is required for user sync"),
+  CLERK_WEBHOOK_SECRET: z.string().optional(), // Optional - only needed for webhooks
 
   // Clerk public configuration
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z
