@@ -13,7 +13,7 @@ async function main() {
       console.log(`Creating Pinecone index: ${INDEX_NAME}`);
       await pinecone.createIndex({
         name: INDEX_NAME,
-        dimension: 1536,
+        dimension: 768, // Gemini embedding dimension
         metric: "cosine",
         spec: {
           serverless: {
