@@ -20,6 +20,8 @@ import { Document } from "@langchain/core/documents";
 import { AI } from "@/config/ai";
 import { Citation } from "@/types/chat";
 
+import { highlightProcedures } from "./routers/highlights";
+
 const eventEmitter = new EventEmitter();
 
 export const appRouter = router({
@@ -648,104 +650,7 @@ ${msg.text}${citationText}`;
       return `${baseUrl}/share/${conversation.shareToken}`;
     }),
 
-  saveAsHighlight: privateProcedure
-    .input(
-      z.object({
-        question: z.string(),
-        answer: z.string(),
-        fileId: z.string(),
-        citations: z.array(citationSchema).optional(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { userId } = ctx;
-      const { question, answer, fileId, citations } = input;
-
-      const file = await db.file.findFirst({
-        where: {
-          id: fileId,
-          userId,
-        },
-        select: { id: true },
-      });
-
-      if (!file) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "File not found or unauthorized" });
-      }
-
-      const highlight = await db.highlight.create({
-        data: {
-          question,
-          answer,
-          citations,
-          userId,
-          fileId: file.id,
-        },
-        include: {
-          file: true,
-        },
-      });
-
-      revalidatePath("/highlights");
-      return highlight;
-    }),
-
-  getHighlights: privateProcedure
-    .input(
-      z.object({
-        fileId: z.string().optional(),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      const { userId } = ctx;
-      const { fileId } = input;
-
-      return db.highlight.findMany({
-        where: {
-          userId,
-          ...(fileId ? { fileId } : {}),
-        },
-        include: {
-          file: {
-            select: {
-              name: true,
-            },
-          },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
-    }),
-
-  deleteHighlight: privateProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const { userId } = ctx;
-      const { id } = input;
-
-      const highlight = await db.highlight.findUnique({
-        where: { id },
-        select: {
-          userId: true,
-        },
-      });
-
-      if (!highlight) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Highlight not found" });
-      }
-
-      if (highlight.userId !== userId) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
-      }
-
-      await db.highlight.delete({
-        where: { id },
-      });
-
-      revalidatePath("/highlights");
-      return { success: true };
-    }),
+  ...highlightProcedures,
 
   updateUserTier: adminProcedure
     .input(
