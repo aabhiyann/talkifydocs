@@ -24,9 +24,7 @@ export async function POST(request: Request) {
     );
   } catch (err) {
     loggers.api.error({ err }, "Stripe webhook signature verification failed");
-    return new Response(`Webhook Error: ${err instanceof Error ? err.message : "Unknown Error"}`, {
-      status: 400,
-    });
+    return new Response("Invalid signature", { status: 400 });
   }
 
   const session = event.data.object as Stripe.Checkout.Session;
