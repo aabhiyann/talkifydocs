@@ -77,7 +77,8 @@ export async function POST(req: NextRequest) {
         });
 
         // Vector search using Gemini Embeddings
-        let results: any[] = [];
+        type RetrievedChunk = { pageContent: string };
+        let results: RetrievedChunk[] = [];
         try {
             const { getGeminiEmbeddings } = await import("@/lib/gemini");
             const embeddings = await getGeminiEmbeddings();
@@ -86,9 +87,11 @@ export async function POST(req: NextRequest) {
                 pineconeIndex: pinecone.index(PINECONE_INDEX_NAME),
                 namespace: file.id,
             });
-            results = await vectorStore.similaritySearch(message, 4);
-        } catch (e: any) {
-            console.warn("[Chat] Context fallback active:", e.message);
+            const docs = await vectorStore.similaritySearch(message, 4);
+            results = docs.map((d) => ({ pageContent: d.pageContent }));
+        } catch (e: unknown) {
+            const reason = e instanceof Error ? e.message : "unknown";
+            console.warn("[Chat] Context fallback active:", reason);
             results = [{ pageContent: file.summary || "No document context available." }];
         }
 
@@ -99,7 +102,11 @@ export async function POST(req: NextRequest) {
             take: 6,
         });
 
-        let responseStream: any;
+        // Provider streams have different chunk shapes; this union narrows at use.
+        type GeminiChunk = { text: () => string };
+        type CompletionChunk = { choices?: Array<{ delta?: { content?: string | null } }> };
+        type ProviderChunk = GeminiChunk | CompletionChunk;
+        let responseStream: AsyncIterable<ProviderChunk> | undefined;
         let providerUsed: "openai" | "groq" | "gemini" = AI.DEFAULT_PROVIDER;
 
         try {
@@ -117,10 +124,10 @@ export async function POST(req: NextRequest) {
                 const contextText = results.map(r => r.pageContent).join("\n\n");
                 const fullPrompt = `Document Context:\n${contextText}\n\nQuestion: ${message}`;
                 const result = await chat.sendMessageStream(fullPrompt);
-                responseStream = result.stream;
+                responseStream = result.stream as AsyncIterable<ProviderChunk>;
             } else {
                 const { groq } = await import("@/lib/groq");
-                responseStream = await groq.chat.completions.create({
+                responseStream = (await groq.chat.completions.create({
                     model: AI.GROQ_MODEL,
                     temperature: 0,
                     stream: true,
@@ -133,11 +140,12 @@ export async function POST(req: NextRequest) {
                             role: "user",
                             content: `Context:\n${results.map(r => r.pageContent).join("\n\n")}\n\nQuestion: ${message}`,
                         },
-                    ] as any,
-                });
+                    ],
+                })) as unknown as AsyncIterable<ProviderChunk>;
             }
-        } catch (primaryErr: any) {
-            console.error(`[Chat] ${providerUsed} failed (Reason: ${primaryErr.message}), falling back to Groq`);
+        } catch (primaryErr: unknown) {
+            const primaryReason = primaryErr instanceof Error ? primaryErr.message : "unknown";
+            console.error(`[Chat] ${providerUsed} failed (Reason: ${primaryReason}), falling back to Groq`);
 
             // If it was already Groq that failed, OpenAI is the last hope
             const fallbackProvider = providerUsed === "groq" ? "openai" : "groq";
@@ -158,12 +166,12 @@ export async function POST(req: NextRequest) {
                             role: "user",
                             content: `Context:\n${results.map(r => r.pageContent).join("\n\n")}\n\nQuestion: ${message}`,
                         },
-                    ] as any,
+                    ],
                 });
-                responseStream = result;
+                responseStream = result as unknown as AsyncIterable<ProviderChunk>;
             } else {
                 const { openai } = await import("@/lib/openai");
-                responseStream = await openai.chat.completions.create({
+                responseStream = (await openai.chat.completions.create({
                     model: AI.OPENAI_MODEL,
                     temperature: 0,
                     stream: true,
@@ -176,8 +184,8 @@ export async function POST(req: NextRequest) {
                             role: "user",
                             content: `Context:\n${results.map(r => r.pageContent).join("\n\n")}\n\nQuestion: ${message}`,
                         },
-                    ] as any,
-                });
+                    ],
+                })) as unknown as AsyncIterable<ProviderChunk>;
             }
         }
 
@@ -187,12 +195,15 @@ export async function POST(req: NextRequest) {
                 let fullText = "";
                 try {
                     console.log("[Chat] Stream starting...");
+                    if (!responseStream) {
+                        throw new Error("No response stream initialized");
+                    }
                     for await (const chunk of responseStream) {
                         let text = "";
                         if (providerUsed === "gemini") {
-                            text = chunk.text();
+                            text = (chunk as GeminiChunk).text();
                         } else {
-                            text = chunk.choices?.[0]?.delta?.content || "";
+                            text = (chunk as CompletionChunk).choices?.[0]?.delta?.content || "";
                         }
 
                         if (text) {
@@ -205,8 +216,9 @@ export async function POST(req: NextRequest) {
                         data: { text: fullText, isUserMessage: false, fileId, userId: user.id, conversationId: conversation!.id },
                     });
                     controller.close();
-                } catch (e: any) {
-                    console.error("[Chat] Stream reading error:", e.message);
+                } catch (e: unknown) {
+                    const reason = e instanceof Error ? e.message : "unknown";
+                    console.error("[Chat] Stream reading error:", reason);
                     controller.error(e);
                 }
             },
