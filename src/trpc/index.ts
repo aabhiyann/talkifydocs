@@ -1119,7 +1119,7 @@ ${msg.text}${citationText}`;
 
   healthCheck: publicProcedure.query(async () => {
     const startTime = Date.now();
-    const checks: Record<string, { status: string; latency?: number; error?: string }> = {};
+    const checks: Record<string, { status: string; latency?: number }> = {};
 
     // Check database
     const dbStart = Date.now();
@@ -1130,10 +1130,8 @@ ${msg.text}${citationText}`;
         latency: Date.now() - dbStart,
       };
     } catch (error) {
-      checks.database = {
-        status: "down",
-        error: error instanceof Error ? error.message : "Unknown error",
-      };
+      loggers.api.error({ error }, "healthCheck: database probe failed");
+      checks.database = { status: "down" };
     }
 
     // Check Pinecone
@@ -1146,10 +1144,8 @@ ${msg.text}${citationText}`;
         latency: Date.now() - pineconeStart,
       };
     } catch (error) {
-      checks.pinecone = {
-        status: "down",
-        error: error instanceof Error ? error.message : "Unknown error",
-      };
+      loggers.api.error({ error }, "healthCheck: pinecone probe failed");
+      checks.pinecone = { status: "down" };
     }
 
     // Check Redis/Cache (optional)
@@ -1163,10 +1159,8 @@ ${msg.text}${citationText}`;
         status: cached ? "up" : "down",
       };
     } catch (error) {
-      checks.cache = {
-        status: "down",
-        error: error instanceof Error ? error.message : "Unknown error",
-      };
+      loggers.api.error({ error }, "healthCheck: cache probe failed");
+      checks.cache = { status: "down" };
     }
 
     const allHealthy = Object.values(checks).every((check) => check.status === "up");
