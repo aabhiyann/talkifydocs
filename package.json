@@ -23,6 +23,8 @@
     "db:studio": "prisma studio",
     "test:smoke": "bash scripts/smoke-tests.sh",
     "test:performance": "bash scripts/performance-check.sh",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "db:pinecone-init": "tsx scripts/pinecone-init.ts"
   },
   "engines": {
@@ -94,6 +96,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",
+    "@playwright/test": "^1.59.1",
     "@tailwindcss/typography": "^0.5.19",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
