@@ -6,6 +6,7 @@ import { PineconeStore } from "@langchain/pinecone";
 import { PINECONE_INDEX_NAME } from "@/config/pinecone";
 import { AI } from "@/config/ai";
 import { env } from "@/lib/env";
+import { messageSchema, validateRequest } from "@/lib/validation";
 
 export async function POST(req: NextRequest) {
     console.log("[Chat] API called with Gemini 3");
@@ -16,8 +17,15 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        const body = await req.json();
-        const { fileId, message } = body;
+        const rawBody = await req.json();
+        const validated = validateRequest(messageSchema)(rawBody);
+        if (!validated.success) {
+            return new NextResponse(
+                JSON.stringify({ error: "Invalid request body", details: validated.error }),
+                { status: 400, headers: { "Content-Type": "application/json" } }
+            );
+        }
+        const { fileId, message } = validated.data;
 
         const user = await getCurrentUser();
         if (!user || !user.id) return new NextResponse("Unauthorized", { status: 401 });
