@@ -4,7 +4,6 @@ import { format } from "date-fns";
 import { TRPCError } from "@trpc/server";
 import { db } from "@/lib/db";
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
-import { absoluteUrl } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { loggers } from "@/lib/logger";
 import { citationSchema } from "@/lib/validation";
@@ -20,6 +19,7 @@ import { AI } from "@/config/ai";
 import { Citation } from "@/types/chat";
 
 import { adminProcedures } from "./routers/admin";
+import { billingProcedures } from "./routers/billing";
 import { highlightProcedures } from "./routers/highlights";
 import { sharingProcedures } from "./routers/sharing";
 
@@ -68,65 +68,7 @@ export const appRouter = router({
     }));
   }),
 
-  createStripeSession: privateProcedure.mutation(async ({ ctx }) => {
-    const { userId } = ctx;
-
-    const billingUrl = absoluteUrl("/dashboard/billing");
-
-    if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
-
-    const dbUser = await db.user.findUnique({
-      where: {
-        id: userId,
-      },
-      select: {
-        stripeCustomerId: true,
-      }
-    });
-
-    if (!dbUser) throw new TRPCError({ code: "UNAUTHORIZED" });
-
-    // Dynamic import to avoid webpack bundling issues
-    const { getUserSubscriptionPlan, stripe } = await import("@/lib/stripe");
-    const { PLANS } = await import("@/config/stripe");
-
-    const subscriptionPlan = await getUserSubscriptionPlan();
-
-    if (!stripe) {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Stripe not configured",
-      });
-    }
-
-    if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
-      const stripeSession = await stripe.billingPortal.sessions.create({
-        customer: dbUser.stripeCustomerId,
-        return_url: billingUrl,
-      });
-
-      return { url: stripeSession.url };
-    }
-
-    const stripeSession = await stripe.checkout.sessions.create({
-      success_url: billingUrl,
-      cancel_url: billingUrl,
-      payment_method_types: ["card"],
-      mode: "subscription",
-      billing_address_collection: "auto",
-      line_items: [
-        {
-          price: PLANS.find((plan) => plan.name === "Pro")?.price.priceIds.test,
-          quantity: 1,
-        },
-      ],
-      metadata: {
-        userId: userId,
-      },
-    });
-
-    return { url: stripeSession.url };
-  }),
+  ...billingProcedures,
 
   getFileMessages: privateProcedure
     .input(
