@@ -1,5 +1,7 @@
 import { ChatOpenAI } from "@langchain/openai";
 
+import { loggers } from "../logger";
+
 export async function summarizeDocument(text: string): Promise<string> {
   const model = new ChatOpenAI({
     modelName: "gpt-4o",
@@ -18,7 +20,7 @@ Summary:`;
     const result = await geminiModel.generateContent(prompt);
     return result.response.text() ?? "";
   } catch (geminiErr: any) {
-    console.warn("Gemini summarization failed, falling back to Groq:", geminiErr.message);
+    loggers.upload.warn("Gemini summarization failed, falling back to Groq", { reason: geminiErr.message });
     const { groq } = await import("@/lib/groq");
     const fallbackRes = await groq.chat.completions.create({
         model: "llama-3.3-70b-versatile",

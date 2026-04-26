@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 
 import { trpc } from "@/app/_trpc/client";
-import { UploadZone } from "./dashboard/UploadZone";
 import UploadButton from "./UploadButton";
 import { DocumentGrid } from "./dashboard/DocumentGrid";
 import { MultiDocSelector } from "./chat/MultiDocSelector";
@@ -86,7 +85,12 @@ export const Dashboard = memo(() => {
   const filteredAndSortedFiles = useMemo<FileSummary[]>(() => {
     if (!files) return [];
 
-    let filtered: FileSummary[] = [...(files as any)];
+    // tRPC's deep inference for Prisma narrow `select` queries causes a TS2589
+    // ("excessively deep") here when assigning directly to FileSummary[]. The
+    // server-side code already normalizes BigInt size -> string and returns
+    // Date objects (FileSummary accepts string | Date / bigint | number | string),
+    // so an `unknown` bridge cast is sound and replaces the previous `any`.
+    let filtered: FileSummary[] = [...(files as unknown as FileSummary[])];
 
     // Apply search filter
     if (searchQuery) {
@@ -269,7 +273,7 @@ export const Dashboard = memo(() => {
               description={
                 searchQuery
                   ? `No documents match "${searchQuery}". Try adjusting your search.`
-                  : "Upload your first PDF document to get started with AI-powered analysis."
+                  : "Upload your first PDF document to get started with AI-powered analysis. Use the Upload PDFs button above to get started."
               }
               action={
                 searchQuery
@@ -280,11 +284,6 @@ export const Dashboard = memo(() => {
                   : undefined
               }
             />
-            {!searchQuery && (
-              <div className="mt-4 flex justify-center">
-                <UploadZone />
-              </div>
-            )}
           </div>
         )}
       </div>

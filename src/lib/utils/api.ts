@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
+import { loggers } from "@/lib/logger";
+
 type ApiResponseOptions = {
   status?: number;
   headers?: Record<string, string>;
@@ -14,7 +16,7 @@ export function successResponse<T>(data: T, options: ApiResponseOptions = {}) {
 }
 
 export function errorResponse(error: unknown, options: ApiResponseOptions = {}) {
-  console.error(error);
+  loggers.api.error(error);
 
   if (error instanceof ZodError) {
     return NextResponse.json(

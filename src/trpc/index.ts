@@ -1,11 +1,9 @@
-import { privateProcedure, publicProcedure, router, adminProcedure } from "./trpc";
+import { privateProcedure, publicProcedure, router } from "./trpc";
 import { z } from "zod";
-import { randomUUID } from "crypto";
 import { format } from "date-fns";
 import { TRPCError } from "@trpc/server";
 import { db } from "@/lib/db";
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
-import { absoluteUrl } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { loggers } from "@/lib/logger";
 import { citationSchema } from "@/lib/validation";
@@ -19,6 +17,11 @@ import { PineconeStore } from "@langchain/pinecone";
 import { Document } from "@langchain/core/documents";
 import { AI } from "@/config/ai";
 import { Citation } from "@/types/chat";
+
+import { adminProcedures } from "./routers/admin";
+import { billingProcedures } from "./routers/billing";
+import { highlightProcedures } from "./routers/highlights";
+import { sharingProcedures } from "./routers/sharing";
 
 const eventEmitter = new EventEmitter();
 
@@ -65,65 +68,7 @@ export const appRouter = router({
     }));
   }),
 
-  createStripeSession: privateProcedure.mutation(async ({ ctx }) => {
-    const { userId } = ctx;
-
-    const billingUrl = absoluteUrl("/dashboard/billing");
-
-    if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
-
-    const dbUser = await db.user.findUnique({
-      where: {
-        id: userId,
-      },
-      select: {
-        stripeCustomerId: true,
-      }
-    });
-
-    if (!dbUser) throw new TRPCError({ code: "UNAUTHORIZED" });
-
-    // Dynamic import to avoid webpack bundling issues
-    const { getUserSubscriptionPlan, stripe } = await import("@/lib/stripe");
-    const { PLANS } = await import("@/config/stripe");
-
-    const subscriptionPlan = await getUserSubscriptionPlan();
-
-    if (!stripe) {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Stripe not configured",
-      });
-    }
-
-    if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
-      const stripeSession = await stripe.billingPortal.sessions.create({
-        customer: dbUser.stripeCustomerId,
-        return_url: billingUrl,
-      });
-
-      return { url: stripeSession.url };
-    }
-
-    const stripeSession = await stripe.checkout.sessions.create({
-      success_url: billingUrl,
-      cancel_url: billingUrl,
-      payment_method_types: ["card"],
-      mode: "subscription",
-      billing_address_collection: "auto",
-      line_items: [
-        {
-          price: PLANS.find((plan) => plan.name === "Pro")?.price.priceIds.test,
-          quantity: 1,
-        },
-      ],
-      metadata: {
-        userId: userId,
-      },
-    });
-
-    return { url: stripeSession.url };
-  }),
+  ...billingProcedures,
 
   getFileMessages: privateProcedure
     .input(
@@ -557,348 +502,11 @@ ${msg.text}${citationText}`;
       return markdown;
     }),
 
-  createShareableLink: privateProcedure
-    .input(z.object({ conversationId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const { userId } = ctx;
-      const { conversationId } = input;
+  ...sharingProcedures,
 
-      const conversation = await db.conversation.findUnique({
-        where: { id: conversationId },
-        select: {
-          userId: true,
-        },
-      });
+  ...highlightProcedures,
 
-      if (!conversation || conversation.userId !== userId) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
-      }
-
-      const shareToken = randomUUID();
-
-      await db.conversation.update({
-        where: { id: conversationId },
-        data: { shareToken, isPublic: true },
-      });
-
-      const baseUrl =
-        process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : "http://localhost:3000";
-
-      const shareUrl = `${baseUrl}/share/${shareToken}`;
-      revalidatePath(`/chat/${conversationId}`);
-      return shareUrl;
-    }),
-
-  revokeShareableLink: privateProcedure
-    .input(z.object({ conversationId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const { userId } = ctx;
-      const { conversationId } = input;
-
-      const conversation = await db.conversation.findUnique({
-        where: { id: conversationId },
-        select: {
-          userId: true,
-        },
-      });
-
-      if (!conversation || conversation.userId !== userId) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
-      }
-
-      await db.conversation.update({
-        where: { id: conversationId },
-        data: { shareToken: null, isPublic: false },
-      });
-
-      revalidatePath(`/chat/${conversationId}`);
-      return { success: true };
-    }),
-
-  getShareableLink: privateProcedure
-    .input(z.object({ conversationId: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const { userId } = ctx;
-      const { conversationId } = input;
-
-      const conversation = await db.conversation.findUnique({
-        where: { id: conversationId },
-        select: {
-          userId: true,
-          shareToken: true,
-          isPublic: true,
-        },
-      });
-
-      if (!conversation || conversation.userId !== userId) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
-      }
-
-      if (!conversation.shareToken || !conversation.isPublic) {
-        return null;
-      }
-
-      const baseUrl =
-        process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : "http://localhost:3000";
-
-      return `${baseUrl}/share/${conversation.shareToken}`;
-    }),
-
-  saveAsHighlight: privateProcedure
-    .input(
-      z.object({
-        question: z.string(),
-        answer: z.string(),
-        fileId: z.string(),
-        citations: z.array(citationSchema).optional(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { userId } = ctx;
-      const { question, answer, fileId, citations } = input;
-
-      const file = await db.file.findFirst({
-        where: {
-          id: fileId,
-          userId,
-        },
-        select: { id: true },
-      });
-
-      if (!file) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "File not found or unauthorized" });
-      }
-
-      const highlight = await db.highlight.create({
-        data: {
-          question,
-          answer,
-          citations,
-          userId,
-          fileId: file.id,
-        },
-        include: {
-          file: true,
-        },
-      });
-
-      revalidatePath("/highlights");
-      return highlight;
-    }),
-
-  getHighlights: privateProcedure
-    .input(
-      z.object({
-        fileId: z.string().optional(),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      const { userId } = ctx;
-      const { fileId } = input;
-
-      return db.highlight.findMany({
-        where: {
-          userId,
-          ...(fileId ? { fileId } : {}),
-        },
-        include: {
-          file: {
-            select: {
-              name: true,
-            },
-          },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
-    }),
-
-  deleteHighlight: privateProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const { userId } = ctx;
-      const { id } = input;
-
-      const highlight = await db.highlight.findUnique({
-        where: { id },
-        select: {
-          userId: true,
-        },
-      });
-
-      if (!highlight) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Highlight not found" });
-      }
-
-      if (highlight.userId !== userId) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
-      }
-
-      await db.highlight.delete({
-        where: { id },
-      });
-
-      revalidatePath("/highlights");
-      return { success: true };
-    }),
-
-  updateUserTier: adminProcedure
-    .input(
-      z.object({
-        userId: z.string(),
-        tier: z.enum(["FREE", "PRO", "ADMIN"]),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { userId, tier } = input;
-      const admin = ctx.user;
-
-      const user = await db.user.findUnique({
-        where: { id: userId },
-        select: {
-          tier: true,
-        },
-      });
-
-      if (!user) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
-      }
-
-      await db.user.update({
-        where: { id: userId },
-        data: { tier },
-      });
-
-      loggers.api.info(
-        {
-          operation: "admin_update_user_tier",
-          adminId: admin?.id || "unknown",
-          targetUserId: userId,
-          oldTier: user.tier,
-          newTier: tier,
-        },
-        "Admin updated user tier",
-      );
-
-      revalidatePath("/admin/users");
-      revalidatePath("/admin");
-      return { success: true };
-    }),
-
-  deleteUser: adminProcedure
-    .input(z.object({ userId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const { userId } = input;
-      const admin = ctx.user;
-
-      if (!admin) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
-      }
-
-      const user = await db.user.findUnique({
-        where: { id: userId },
-        select: {
-          id: true,
-          email: true,
-          tier: true,
-          _count: {
-            select: {
-              files: true,
-              messages: true,
-              conversations: true,
-            },
-          },
-        },
-      });
-
-      if (!user) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
-      }
-
-      if (user.id === admin.id) {
-        throw new TRPCError({ code: "FORBIDDEN", message: "Cannot delete your own account" });
-      }
-
-      if (user.tier === "ADMIN" && user.id !== admin.id) {
-        throw new TRPCError({ code: "FORBIDDEN", message: "Cannot delete other admin accounts" });
-      }
-
-      await db.user.delete({
-        where: { id: userId },
-      });
-
-      loggers.api.warn(
-        {
-          operation: "admin_delete_user",
-          adminId: admin.id,
-          deletedUserId: userId,
-          deletedUserEmail: user.email,
-          deletedFiles: user._count.files,
-          deletedMessages: user._count.messages,
-          deletedConversations: user._count.conversations,
-        },
-        "Admin deleted user account",
-      );
-
-      revalidatePath("/admin/users");
-      revalidatePath("/admin");
-      return { success: true };
-    }),
-
-  getSystemMetrics: adminProcedure.query(async () => {
-    const [
-      totalUsers,
-      totalFiles,
-      totalMessages,
-      proUsers,
-      failedUploads,
-      storageUsed,
-      activeUsers24h,
-    ] = await Promise.all([
-      db.user.count(),
-      db.file.count(),
-      db.message.count(),
-      db.user.count({ where: { tier: "PRO" } }),
-      db.file.count({
-        where: {
-          uploadStatus: "FAILED",
-          createdAt: {
-            gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
-          },
-        },
-      }),
-      db.file.aggregate({
-        _sum: { size: true },
-      }),
-      db.user.count({
-        where: {
-          updatedAt: {
-            gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
-          },
-        },
-      }),
-    ]);
-
-    const messagesPerUser = totalUsers > 0 ? totalMessages / totalUsers : 0;
-
-    return {
-      totalUsers,
-      totalFiles,
-      totalMessages,
-      proUsers,
-      failedUploads,
-      storageUsed: (storageUsed._sum.size || BigInt(0)).toString(),
-      avgMessagesPerUser: messagesPerUser,
-      activeUsers24h,
-      avgProcessingTime: undefined as number | undefined,
-      errorRate: undefined as number | undefined,
-    };
-  }),
+  ...adminProcedures,
 
   onSendMessage: privateProcedure
     .input(z.object({ fileId: z.string(), message: z.string() }))
@@ -1027,7 +635,12 @@ ${msg.text}${citationText}`;
         },
       ];
 
-      let responseStream;
+      // Provider streams have different chunk shapes; this discriminated
+      // union narrows safely at the consumer.
+      type GeminiChunk = { text: () => string };
+      type CompletionChunk = { choices?: Array<{ delta?: { content?: string | null } }> };
+      type ProviderChunk = GeminiChunk | CompletionChunk;
+      let responseStream: AsyncIterable<ProviderChunk> | undefined;
       let providerUsed: "openai" | "groq" | "gemini" = AI.DEFAULT_PROVIDER;
 
       try {
@@ -1042,46 +655,54 @@ ${msg.text}${citationText}`;
           const result = await chat.sendMessageStream(
             `Context: ${results.map((r) => r.pageContent).join("\n\n")}\n\nUser Input: ${message}`
           );
-          responseStream = result.stream;
+          responseStream = result.stream as AsyncIterable<ProviderChunk>;
         } else if (providerUsed === "groq") {
           const { groq } = await import("@/lib/groq");
-          responseStream = await groq.chat.completions.create({
+          responseStream = (await groq.chat.completions.create({
             model: AI.GROQ_MODEL,
             temperature: 0,
             stream: true,
-            messages: formattedMessages as any,
-          });
+            messages: formattedMessages,
+          })) as unknown as AsyncIterable<ProviderChunk>;
         } else {
-          responseStream = await openai.chat.completions.create({
+          responseStream = (await openai.chat.completions.create({
             model: AI.OPENAI_MODEL,
             temperature: 0,
             stream: true,
             messages: formattedMessages,
-          });
+          })) as unknown as AsyncIterable<ProviderChunk>;
         }
-      } catch (err: any) {
-        console.warn(`[TRPC Chat] ${providerUsed} failed, falling back to Groq:`, err.message);
+      } catch (err: unknown) {
+        const reason = err instanceof Error ? err.message : "unknown";
+        loggers.chat.warn("trpc.onSendMessage: provider failed, falling back to Groq", {
+          provider: providerUsed,
+          reason,
+        });
         providerUsed = "groq";
         const { groq } = await import("@/lib/groq");
-        responseStream = await groq.chat.completions.create({
+        responseStream = (await groq.chat.completions.create({
           model: AI.GROQ_MODEL,
           temperature: 0,
           stream: true,
-          messages: formattedMessages as any,
-        });
+          messages: formattedMessages,
+        })) as unknown as AsyncIterable<ProviderChunk>;
       }
 
       let fullResponse = "";
       (async () => {
+        if (!responseStream) {
+          ee.emit("end");
+          return;
+        }
         if (providerUsed === "gemini") {
-          for await (const chunk of responseStream as any) {
-            const token = chunk.text() || "";
+          for await (const chunk of responseStream) {
+            const token = (chunk as GeminiChunk).text() || "";
             fullResponse += token;
             ee.emit("chunk", token);
           }
         } else {
-          for await (const chunk of responseStream as any) {
-            const token = chunk.choices[0]?.delta?.content || "";
+          for await (const chunk of responseStream) {
+            const token = (chunk as CompletionChunk).choices?.[0]?.delta?.content || "";
             fullResponse += token;
             ee.emit("chunk", token);
           }
@@ -1119,7 +740,7 @@ ${msg.text}${citationText}`;
 
   healthCheck: publicProcedure.query(async () => {
     const startTime = Date.now();
-    const checks: Record<string, { status: string; latency?: number; error?: string }> = {};
+    const checks: Record<string, { status: string; latency?: number }> = {};
 
     // Check database
     const dbStart = Date.now();
@@ -1130,10 +751,8 @@ ${msg.text}${citationText}`;
         latency: Date.now() - dbStart,
       };
     } catch (error) {
-      checks.database = {
-        status: "down",
-        error: error instanceof Error ? error.message : "Unknown error",
-      };
+      loggers.api.error({ error }, "healthCheck: database probe failed");
+      checks.database = { status: "down" };
     }
 
     // Check Pinecone
@@ -1146,10 +765,8 @@ ${msg.text}${citationText}`;
         latency: Date.now() - pineconeStart,
       };
     } catch (error) {
-      checks.pinecone = {
-        status: "down",
-        error: error instanceof Error ? error.message : "Unknown error",
-      };
+      loggers.api.error({ error }, "healthCheck: pinecone probe failed");
+      checks.pinecone = { status: "down" };
     }
 
     // Check Redis/Cache (optional)
@@ -1163,10 +780,8 @@ ${msg.text}${citationText}`;
         status: cached ? "up" : "down",
       };
     } catch (error) {
-      checks.cache = {
-        status: "down",
-        error: error instanceof Error ? error.message : "Unknown error",
-      };
+      loggers.api.error({ error }, "healthCheck: cache probe failed");
+      checks.cache = { status: "down" };
     }
 
     const allHealthy = Object.values(checks).every((check) => check.status === "up");
@@ -1263,37 +878,6 @@ ${msg.text}${citationText}`;
         };
       });
     }),
-
-  getErrorLogs: adminProcedure.query(async () => {
-    const failedFiles = await db.file.findMany({
-      where: {
-        uploadStatus: "FAILED",
-      },
-      take: 10,
-      orderBy: {
-        updatedAt: "desc",
-      },
-      select: {
-        id: true,
-        name: true,
-        uploadStatus: true,
-        updatedAt: true,
-      },
-    });
-
-    const errorLogs = failedFiles.map((file) => ({
-      id: file.id,
-      message: `File upload failed: ${file.name}`,
-      level: "error" as const,
-      timestamp: file.updatedAt,
-      context: {
-        fileId: file.id,
-        fileName: file.name,
-      },
-    }));
-
-    return { logs: errorLogs };
-  }),
 
   retryUploadProcessing: privateProcedure
     .input(z.object({ fileId: z.string() }))

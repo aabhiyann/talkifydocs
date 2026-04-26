@@ -18,7 +18,6 @@ export async function GET(req: NextRequest) {
         status: "unhealthy",
         message: "Health check failed",
         timestamp: new Date().toISOString(),
-        error: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 },
     );

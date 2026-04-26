@@ -1,10 +1,12 @@
 import * as Sentry from "@sentry/nextjs";
 
+import { logger } from "./logger";
+
 // Note: Sentry is initialized via sentry.client.config.ts and sentry.server.config.ts
 // so we don't need manual initialization here.
 
 export function captureException(error: Error, context?: Record<string, any>) {
-  console.error(error);
+  logger.error(error);
   if (process.env.SENTRY_DSN) {
     Sentry.captureException(error, {
       extra: context,

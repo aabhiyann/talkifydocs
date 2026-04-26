@@ -5,7 +5,6 @@ import { dark } from "@clerk/themes";
 import { Navbar } from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
-import ClientThemeProvider from "@/components/ClientThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
@@ -87,7 +86,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             )}
             suppressHydrationWarning={true}
           >
-            <ClientThemeProvider />
             <Toaster />
             <ErrorBoundary>
               <Navbar />
