@@ -31,6 +31,11 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# transient build / lint / test artifacts
+build-test.log
+*-report.txt
+typescript-errors.txt
+
 # local env files
 .env*.local
 .env
