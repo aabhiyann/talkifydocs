@@ -20,6 +20,13 @@ const eslintConfig = [
   ...nextCoreWebVitals,
   ...nextTypescript,
   {
+    rules: {
+      // Temporary: existing codebase has ~80 explicit-any sites; will be
+      // removed type-by-type in p1-12 and promoted back to "error" then.
+      "@typescript-eslint/no-explicit-any": "warn",
+    },
+  },
+  {
     files: [
       "next.config.js",
       "jest.config.js",
