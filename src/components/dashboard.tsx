@@ -86,7 +86,12 @@ export const Dashboard = memo(() => {
   const filteredAndSortedFiles = useMemo<FileSummary[]>(() => {
     if (!files) return [];
 
-    let filtered: FileSummary[] = [...(files as any)];
+    // tRPC's deep inference for Prisma narrow `select` queries causes a TS2589
+    // ("excessively deep") here when assigning directly to FileSummary[]. The
+    // server-side code already normalizes BigInt size -> string and returns
+    // Date objects (FileSummary accepts string | Date / bigint | number | string),
+    // so an `unknown` bridge cast is sound and replaces the previous `any`.
+    let filtered: FileSummary[] = [...(files as unknown as FileSummary[])];
 
     // Apply search filter
     if (searchQuery) {
