@@ -7,6 +7,7 @@ import { PINECONE_INDEX_NAME } from "@/config/pinecone";
 import { AI } from "@/config/ai";
 import { env } from "@/lib/env";
 import { messageSchema, validateRequest } from "@/lib/validation";
+import { checkRateLimit } from "@/lib/security";
 
 export async function POST(req: NextRequest) {
     console.log("[Chat] API called with Gemini 3");
@@ -29,6 +30,22 @@ export async function POST(req: NextRequest) {
 
         const user = await getCurrentUser();
         if (!user || !user.id) return new NextResponse("Unauthorized", { status: 401 });
+
+        const rate = await checkRateLimit(user.id, "MESSAGE");
+        if (!rate.allowed) {
+            return new NextResponse(
+                JSON.stringify({ error: "Too many messages, please slow down." }),
+                {
+                    status: 429,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Retry-After": Math.max(1, Math.ceil((rate.resetTime - Date.now()) / 1000)).toString(),
+                        "X-RateLimit-Remaining": rate.remaining.toString(),
+                        "X-RateLimit-Reset": Math.floor(rate.resetTime / 1000).toString(),
+                    },
+                }
+            );
+        }
 
         const file = await db.file.findFirst({
             where: { id: fileId, userId: user.id },
