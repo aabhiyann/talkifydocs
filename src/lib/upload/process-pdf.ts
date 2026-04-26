@@ -14,7 +14,7 @@ import { PINECONE_INDEX_NAME } from "@/config/pinecone";
 import { Index as PineconeIndex } from "@pinecone-database/pinecone";
 import { withTimeout } from "@/lib/utils";
 import { Document } from "@langchain/core/documents";
-import { JsonValue } from "@prisma/client/runtime/library";
+import { Prisma } from "@prisma/client";
 import { loggers } from "../logger";
 
 import { AI } from "@/config/ai";
@@ -60,12 +60,15 @@ export async function processPdfFile({
   fileName,
 }: ProcessPdfParams): Promise<void> {
   let uploadStatus: "SUCCESS" | "FAILED" = "FAILED";
+  // Prisma's JSON column is declared as Json? in the schema; the safe write
+  // type for object literals coming from external extractors is unknown, then
+  // cast to Prisma.InputJsonValue at the .update() call site.
   let processedData: Partial<{
     pageCount: number;
     summary: string | null;
     rawText: string | null;
-    entities: JsonValue | null;
-    metadata: JsonValue | null;
+    entities: unknown;
+    metadata: unknown;
     thumbnailUrl: string | null;
   }> = {};
 
@@ -168,8 +171,9 @@ export async function processPdfFile({
         60000,
       );
       loggers.upload.info(`Gemini Embeddings created successfully for ${fileName}`);
-    } catch (pineconeErr: any) {
-      loggers.upload.error(`Pinecone embedding failed for ${fileName}:`, pineconeErr.message);
+    } catch (pineconeErr: unknown) {
+      const reason = pineconeErr instanceof Error ? pineconeErr.message : "unknown";
+      loggers.upload.error(`Pinecone embedding failed for ${fileName}:`, reason);
       // We still mark as SUCCESS so the user can view the file, but chat might not work well
     }
 
@@ -177,14 +181,11 @@ export async function processPdfFile({
     processedData = {
       pageCount: metadata.pageCount ?? pageLevelDocs.length,
       summary,
-      entities: entities as any,
-      metadata: metadata as any,
+      entities,
+      metadata,
       thumbnailUrl,
       rawText: fullText,
     };
-
-    processedData.metadata = metadata as any;
-    processedData.thumbnailUrl = thumbnailUrl;
 
     loggers.upload.info(`Processing finished successfully for ${fileName}`);
   } catch (error) {
@@ -198,8 +199,8 @@ export async function processPdfFile({
         pageCount: processedData.pageCount,
         summary: processedData.summary,
         // rawText: processedData.rawText, // Field not in schema
-        entities: processedData.entities as any,
-        metadata: processedData.metadata as any,
+        entities: (processedData.entities ?? Prisma.JsonNull) as Prisma.InputJsonValue,
+        metadata: (processedData.metadata ?? Prisma.JsonNull) as Prisma.InputJsonValue,
         thumbnailUrl: processedData.thumbnailUrl,
       },
     });

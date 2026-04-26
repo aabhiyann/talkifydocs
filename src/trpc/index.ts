@@ -1027,7 +1027,12 @@ ${msg.text}${citationText}`;
         },
       ];
 
-      let responseStream;
+      // Provider streams have different chunk shapes; this discriminated
+      // union narrows safely at the consumer.
+      type GeminiChunk = { text: () => string };
+      type CompletionChunk = { choices?: Array<{ delta?: { content?: string | null } }> };
+      type ProviderChunk = GeminiChunk | CompletionChunk;
+      let responseStream: AsyncIterable<ProviderChunk> | undefined;
       let providerUsed: "openai" | "groq" | "gemini" = AI.DEFAULT_PROVIDER;
 
       try {
@@ -1042,46 +1047,51 @@ ${msg.text}${citationText}`;
           const result = await chat.sendMessageStream(
             `Context: ${results.map((r) => r.pageContent).join("\n\n")}\n\nUser Input: ${message}`
           );
-          responseStream = result.stream;
+          responseStream = result.stream as AsyncIterable<ProviderChunk>;
         } else if (providerUsed === "groq") {
           const { groq } = await import("@/lib/groq");
-          responseStream = await groq.chat.completions.create({
+          responseStream = (await groq.chat.completions.create({
             model: AI.GROQ_MODEL,
             temperature: 0,
             stream: true,
-            messages: formattedMessages as any,
-          });
+            messages: formattedMessages,
+          })) as unknown as AsyncIterable<ProviderChunk>;
         } else {
-          responseStream = await openai.chat.completions.create({
+          responseStream = (await openai.chat.completions.create({
             model: AI.OPENAI_MODEL,
             temperature: 0,
             stream: true,
             messages: formattedMessages,
-          });
+          })) as unknown as AsyncIterable<ProviderChunk>;
         }
-      } catch (err: any) {
-        console.warn(`[TRPC Chat] ${providerUsed} failed, falling back to Groq:`, err.message);
+      } catch (err: unknown) {
+        const reason = err instanceof Error ? err.message : "unknown";
+        console.warn(`[TRPC Chat] ${providerUsed} failed, falling back to Groq:`, reason);
         providerUsed = "groq";
         const { groq } = await import("@/lib/groq");
-        responseStream = await groq.chat.completions.create({
+        responseStream = (await groq.chat.completions.create({
           model: AI.GROQ_MODEL,
           temperature: 0,
           stream: true,
-          messages: formattedMessages as any,
-        });
+          messages: formattedMessages,
+        })) as unknown as AsyncIterable<ProviderChunk>;
       }
 
       let fullResponse = "";
       (async () => {
+        if (!responseStream) {
+          ee.emit("end");
+          return;
+        }
         if (providerUsed === "gemini") {
-          for await (const chunk of responseStream as any) {
-            const token = chunk.text() || "";
+          for await (const chunk of responseStream) {
+            const token = (chunk as GeminiChunk).text() || "";
             fullResponse += token;
             ee.emit("chunk", token);
           }
         } else {
-          for await (const chunk of responseStream as any) {
-            const token = chunk.choices[0]?.delta?.content || "";
+          for await (const chunk of responseStream) {
+            const token = (chunk as CompletionChunk).choices?.[0]?.delta?.content || "";
             fullResponse += token;
             ee.emit("chunk", token);
           }
