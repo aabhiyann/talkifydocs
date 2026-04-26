@@ -35,6 +35,32 @@ const eslintConfig = [
       "react-hooks/set-state-in-effect": "warn",
       "react-hooks/immutability": "warn",
       "react-hooks/purity": "warn",
+
+      // p2-26: Steer callers away from raw console use in favor of the
+      // centralized logger in src/lib/logger.ts. The logger module itself
+      // is allowed to use console (overridden below).
+      "no-console": "warn",
+
+      // p2-26: Catch dead variables / parameters / catch bindings, but
+      // permit the conventional `_` / `_foo` opt-out for intentional
+      // placeholders (e.g. `(_req, res) => ...`, `} catch (_err) {`).
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
+      ],
+    },
+  },
+  {
+    // The logger itself is the one place where console.* is the *correct*
+    // implementation, not a smell. Suppress the rule here only.
+    files: ["src/lib/logger.ts"],
+    rules: {
+      "no-console": "off",
     },
   },
   {
