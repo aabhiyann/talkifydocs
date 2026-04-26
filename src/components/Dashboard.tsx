@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 
 import { trpc } from "@/app/_trpc/client";
-import { UploadZone } from "./dashboard/UploadZone";
 import UploadButton from "./UploadButton";
 import { DocumentGrid } from "./dashboard/DocumentGrid";
 import { MultiDocSelector } from "./chat/MultiDocSelector";
@@ -274,7 +273,7 @@ export const Dashboard = memo(() => {
               description={
                 searchQuery
                   ? `No documents match "${searchQuery}". Try adjusting your search.`
-                  : "Upload your first PDF document to get started with AI-powered analysis."
+                  : "Upload your first PDF document to get started with AI-powered analysis. Use the Upload PDFs button above to get started."
               }
               action={
                 searchQuery
@@ -285,11 +284,6 @@ export const Dashboard = memo(() => {
                   : undefined
               }
             />
-            {!searchQuery && (
-              <div className="mt-4 flex justify-center">
-                <UploadZone />
-              </div>
-            )}
           </div>
         )}
       </div>
