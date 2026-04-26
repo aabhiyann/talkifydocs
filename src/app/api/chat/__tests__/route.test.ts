@@ -13,7 +13,19 @@
  */
 
 // IMPORTANT: env is imported at module load time, so set GOOGLE_API_KEY first.
+// We snapshot the original value (if any) so afterAll() can restore it; this
+// keeps the test hermetic and prevents leakage into other suites that import
+// the same env module.
+const ORIGINAL_GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 process.env.GOOGLE_API_KEY = "test-google-key";
+
+afterAll(() => {
+  if (ORIGINAL_GOOGLE_API_KEY === undefined) {
+    delete process.env.GOOGLE_API_KEY;
+  } else {
+    process.env.GOOGLE_API_KEY = ORIGINAL_GOOGLE_API_KEY;
+  }
+});
 
 const mockGetCurrentUser = jest.fn();
 const mockCheckRateLimit = jest.fn();
