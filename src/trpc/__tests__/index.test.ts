@@ -1,8 +1,10 @@
 /**
  * @jest-environment node
  */
+import { TRPCError } from "@trpc/server";
 import { appRouter } from "../index";
 import { db } from "@/lib/db";
+import type { AuthenticatedUser } from "@/lib/auth";
 
 jest.mock("@/lib/db", () => ({
   db: {
@@ -14,9 +16,18 @@ jest.mock("@/lib/db", () => ({
   },
 }));
 
+type TestContext = { user: AuthenticatedUser | null };
+
 describe("tRPC User Procedures", () => {
-  const mockUser = { id: "user_123", email: "test@example.com", tier: "FREE" };
-  const ctx = { user: mockUser };
+  const mockUser: AuthenticatedUser = {
+    id: "user_123",
+    clerkId: "clerk_123",
+    email: "test@example.com",
+    name: "Test User",
+    imageUrl: null,
+    tier: "FREE",
+  };
+  const ctx: TestContext = { user: mockUser };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -24,7 +35,7 @@ describe("tRPC User Procedures", () => {
 
   describe("getUserFiles", () => {
     it("should return user files", async () => {
-      const caller = appRouter.createCaller(ctx as any);
+      const caller = appRouter.createCaller(ctx);
 
       const mockFiles = [
         { id: "file_1", name: "test.pdf", userId: "user_123", size: 1024 },
@@ -51,7 +62,7 @@ describe("tRPC User Procedures", () => {
 
   describe("deleteFile", () => {
     it("should delete a file if it belongs to the user", async () => {
-      const caller = appRouter.createCaller(ctx as any);
+      const caller = appRouter.createCaller(ctx);
       const fileId = "file_123";
 
       (db.file.findFirst as jest.Mock).mockResolvedValue({ id: fileId, userId: "user_123", size: 2048 });
@@ -65,11 +76,19 @@ describe("tRPC User Procedures", () => {
       });
     });
 
-    it("should throw NOT_FOUND if file doesn't exist or belongs to another user", async () => {
-      const caller = appRouter.createCaller(ctx as any);
+    it("should throw a TRPCError with code NOT_FOUND if the file is missing or owned by someone else", async () => {
+      const caller = appRouter.createCaller(ctx);
       (db.file.findFirst as jest.Mock).mockResolvedValue(null);
 
-      await expect(caller.deleteFile({ id: "wrong_id" })).rejects.toThrow();
+      // We assert structurally (TRPCError + code) AND prove no delete attempt
+      // was made — both are critical for IDOR/authz invariants.
+      await expect(caller.deleteFile({ id: "wrong_id" })).rejects.toBeInstanceOf(
+        TRPCError,
+      );
+      await expect(caller.deleteFile({ id: "wrong_id" })).rejects.toMatchObject({
+        code: "NOT_FOUND",
+      });
+      expect(db.file.delete).not.toHaveBeenCalled();
     });
   });
 });

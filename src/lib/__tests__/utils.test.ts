@@ -1,3 +1,11 @@
+/**
+ * @jest-environment node
+ *
+ * absoluteUrl branches on `typeof window !== "undefined"`, so these tests
+ * MUST run in a Node environment. We previously hacked around the default
+ * jsdom env by `delete (global as any).window`, which is unsafe (it leaks
+ * into other tests). Forcing node here is the right knob.
+ */
 import { cn, absoluteUrl } from "../utils";
 
 describe("Utils", () => {
@@ -16,33 +24,61 @@ describe("Utils", () => {
   });
 
   describe("absoluteUrl", () => {
-    // Mock window to be undefined for server-side tests
-    const originalWindow = global.window;
+    // Snapshot the env keys we touch so we can restore them in a finally
+    // block. Anything we mutate during a test MUST be restored even if the
+    // test throws — otherwise we contaminate sibling tests.
+    const ENV_KEYS = ["VERCEL_URL", "PORT"] as const;
+    const originalEnv: Record<string, string | undefined> = {};
 
     beforeEach(() => {
-      delete (global as any).window;
+      for (const k of ENV_KEYS) originalEnv[k] = process.env[k];
+      delete process.env.VERCEL_URL;
+      delete process.env.PORT;
     });
 
     afterEach(() => {
-      global.window = originalWindow;
+      for (const k of ENV_KEYS) {
+        if (originalEnv[k] === undefined) {
+          delete process.env[k];
+        } else {
+          process.env[k] = originalEnv[k];
+        }
+      }
     });
 
-    it("should return path when window is undefined", () => {
-      expect(absoluteUrl("/test")).toBe("/test");
+    it("uses VERCEL_URL with https scheme when defined", () => {
+      try {
+        process.env.VERCEL_URL = "test.vercel.app";
+        expect(absoluteUrl("/test")).toBe("https://test.vercel.app/test");
+      } finally {
+        delete process.env.VERCEL_URL;
+      }
     });
 
-    it.skip("should use VERCEL_URL when available", () => {
-      const originalEnv = process.env.VERCEL_URL;
-      process.env.VERCEL_URL = "test.vercel.app";
-      expect(absoluteUrl("/test")).toBe("https://test.vercel.app/test");
-      process.env.VERCEL_URL = originalEnv;
+    it("falls back to localhost on the default port when VERCEL_URL is unset", () => {
+      // PORT is also unset by beforeEach, so the implementation should
+      // use its hard-coded default of 3000.
+      expect(absoluteUrl("/test")).toBe("http://localhost:3000/test");
     });
 
-    it.skip("should use localhost when VERCEL_URL is not available", () => {
-      const originalEnv = process.env.PORT;
-      process.env.PORT = "3001";
-      expect(absoluteUrl("/test")).toBe("http://localhost:3001/test");
-      process.env.PORT = originalEnv;
+    it("respects a custom PORT when VERCEL_URL is unset", () => {
+      try {
+        process.env.PORT = "3001";
+        expect(absoluteUrl("/test")).toBe("http://localhost:3001/test");
+      } finally {
+        delete process.env.PORT;
+      }
+    });
+
+    it("prefers VERCEL_URL over PORT when both are set", () => {
+      try {
+        process.env.VERCEL_URL = "preview.vercel.app";
+        process.env.PORT = "9999";
+        expect(absoluteUrl("/path")).toBe("https://preview.vercel.app/path");
+      } finally {
+        delete process.env.VERCEL_URL;
+        delete process.env.PORT;
+      }
     });
   });
 });
