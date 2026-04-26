@@ -12,7 +12,7 @@ async function main() {
 
     if (existingIndex) {
       console.log(`Index exists. Checking compatibility...`);
-      // @ts-ignore
+      // @ts-expect-error pinecone IndexModel.dimension typing not exposed
       if (existingIndex.dimension !== 768) {
         console.warn(`Dimension mismatch: Found ${existingIndex.dimension}, expected 768.`);
         console.warn(`Deleting incompatible index... (This may take a moment)`);
