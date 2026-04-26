@@ -8,12 +8,13 @@ import { AI } from "@/config/ai";
 import { env } from "@/lib/env";
 import { messageSchema, validateRequest } from "@/lib/validation";
 import { checkRateLimit } from "@/lib/security";
+import { loggers } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
-    console.log("[Chat] API called with Gemini 3");
+    loggers.chat.info("API called with Gemini 3");
 
     if (!env.GOOGLE_API_KEY || env.GOOGLE_API_KEY === "") {
-        console.error("[Chat] GOOGLE_API_KEY is missing in env");
+        loggers.chat.error("GOOGLE_API_KEY is missing in env");
         return new NextResponse(
             JSON.stringify({ error: "AI provider not configured." }),
             { status: 500, headers: { "Content-Type": "application/json" } }
@@ -91,7 +92,7 @@ export async function POST(req: NextRequest) {
             results = docs.map((d) => ({ pageContent: d.pageContent }));
         } catch (e: unknown) {
             const reason = e instanceof Error ? e.message : "unknown";
-            console.warn("[Chat] Context fallback active:", reason);
+            loggers.chat.warn("Context fallback active", { reason });
             results = [{ pageContent: file.summary || "No document context available." }];
         }
 
@@ -110,7 +111,7 @@ export async function POST(req: NextRequest) {
         let providerUsed: "openai" | "groq" | "gemini" = AI.DEFAULT_PROVIDER;
 
         try {
-            console.log(`[Chat] Attempting ${providerUsed}`);
+            loggers.chat.info("Attempting provider", { provider: providerUsed });
             if (providerUsed === "gemini") {
                 const { genAI } = await import("@/lib/gemini");
                 // Ensure model is initialized inside try block
@@ -145,7 +146,10 @@ export async function POST(req: NextRequest) {
             }
         } catch (primaryErr: unknown) {
             const primaryReason = primaryErr instanceof Error ? primaryErr.message : "unknown";
-            console.error(`[Chat] ${providerUsed} failed (Reason: ${primaryReason}), falling back to Groq`);
+            loggers.chat.error("Primary provider failed; falling back", {
+                provider: providerUsed,
+                reason: primaryReason,
+            });
 
             // If it was already Groq that failed, OpenAI is the last hope
             const fallbackProvider = providerUsed === "groq" ? "openai" : "groq";
@@ -194,7 +198,7 @@ export async function POST(req: NextRequest) {
                 const encoder = new TextEncoder();
                 let fullText = "";
                 try {
-                    console.log("[Chat] Stream starting...");
+                    loggers.chat.debug("Stream starting");
                     if (!responseStream) {
                         throw new Error("No response stream initialized");
                     }
@@ -211,14 +215,14 @@ export async function POST(req: NextRequest) {
                             controller.enqueue(encoder.encode(text));
                         }
                     }
-                    console.log("[Chat] Stream complete, saving message to DB");
+                    loggers.chat.debug("Stream complete, saving message to DB");
                     await db.message.create({
                         data: { text: fullText, isUserMessage: false, fileId, userId: user.id, conversationId: conversation!.id },
                     });
                     controller.close();
                 } catch (e: unknown) {
                     const reason = e instanceof Error ? e.message : "unknown";
-                    console.error("[Chat] Stream reading error:", reason);
+                    loggers.chat.error("Stream reading error", { reason });
                     controller.error(e);
                 }
             },
@@ -229,7 +233,7 @@ export async function POST(req: NextRequest) {
     } catch (error: unknown) {
         // Log full detail server-side; never echo provider/internal errors back
         // to the client (they can leak stack traces, paths, model names, env state).
-        console.error("[Chat] Fatal error:", error);
+        loggers.chat.error("Fatal error", error);
         return new NextResponse(
             JSON.stringify({ error: "Something went wrong while processing your message." }),
             {

@@ -674,7 +674,10 @@ ${msg.text}${citationText}`;
         }
       } catch (err: unknown) {
         const reason = err instanceof Error ? err.message : "unknown";
-        console.warn(`[TRPC Chat] ${providerUsed} failed, falling back to Groq:`, reason);
+        loggers.chat.warn("trpc.onSendMessage: provider failed, falling back to Groq", {
+          provider: providerUsed,
+          reason,
+        });
         providerUsed = "groq";
         const { groq } = await import("@/lib/groq");
         responseStream = (await groq.chat.completions.create({

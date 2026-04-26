@@ -34,7 +34,7 @@ Respond with only valid JSON, no additional text.
     const result = await geminiModel.generateContent(formattedPrompt);
     responseContent = result.response.text();
   } catch (geminiErr: any) {
-    console.warn("Gemini entities extraction failed, falling back to Groq:", geminiErr.message);
+    loggers.upload.warn("Gemini entities extraction failed, falling back to Groq", { reason: geminiErr.message });
     const { groq } = await import("@/lib/groq");
     const fallbackRes = await groq.chat.completions.create({
         model: "llama-3.3-70b-versatile",

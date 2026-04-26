@@ -2,6 +2,7 @@ import { ReactNode, createContext, useState, useCallback, useMemo } from "react"
 import { useToast } from "../ui/use-toast";
 import { trpc } from "@/app/_trpc/client";
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
+import { loggers } from "@/lib/logger";
 
 type StreamResponse = {
   addMessage: () => void;
@@ -113,7 +114,7 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
-        console.error("Chat API Error:", errorData);
+        loggers.chat.error("Chat API error", errorData);
         throw new Error(errorData.error || "Failed to send message");
       }
 

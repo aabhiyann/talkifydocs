@@ -1,4 +1,4 @@
-import { logError } from "./logger";
+import { logError, logger } from "./logger";
 
 export class AppError extends Error {
   public readonly code: string;
@@ -101,7 +101,7 @@ export async function handleError(
       captureException(err, { extra: context });
     } catch (sentryError) {
       // Sentry not available, continue without it
-      console.error("Failed to capture error in Sentry:", sentryError);
+      logger.error("Failed to capture error in Sentry", sentryError);
     }
   }
 

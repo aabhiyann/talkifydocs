@@ -16,20 +16,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         pathname,
         clientPayload
       ) => {
-        console.log("Upload: onBeforeGenerateToken started");
-        // 1. Authenticate user
+        loggers.upload.debug("blob: onBeforeGenerateToken started");
         const user = await getCurrentUser();
         if (!user || !user.id) {
-          console.error("Upload: User unauthorized");
+          loggers.upload.warn("blob: user unauthorized");
           throw new Error('Unauthorized');
         }
-        console.log("Upload: User authenticated", user.id);
+        loggers.upload.debug("blob: user authenticated", { userId: user.id });
 
-        // 2. Check rate limit
         const clientIP = getClientIP(request);
         const rateLimit = await checkRateLimit(clientIP, "UPLOAD");
         if (!rateLimit.allowed) {
-          console.error("Upload: Rate limit exceeded for IP", clientIP);
+          loggers.upload.warn("blob: rate limit exceeded", { clientIP });
           throw new Error("Upload rate limit exceeded");
         }
 
@@ -90,7 +88,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json(jsonResponse);
   } catch (error) {
-    console.error("Upload: Error in POST handler", error);
+    loggers.upload.error("blob: error in POST handler", error);
     return NextResponse.json(
       { error: (error as Error).message },
       { status: 400 },

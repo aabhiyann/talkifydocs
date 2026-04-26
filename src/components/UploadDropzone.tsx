@@ -15,6 +15,7 @@ import { Badge } from "./ui/badge";
 import { useUploadStatusStore } from "@/hooks/useUploadStatus";
 import { upload } from "@vercel/blob/client";
 import { trpc } from "@/app/_trpc/client";
+import { loggers } from "@/lib/logger";
 
 const UploadDropzone = () => {
   const router = useRouter();
@@ -100,7 +101,7 @@ const UploadDropzone = () => {
                router.push(`/dashboard/${dbFile.id}`);
             }
           } catch (err) {
-             console.error("Failed to complete upload:", err);
+             loggers.upload.error("Failed to complete upload", err);
              // Fallback: mark success anyway, maybe webhook worked
              updateUpload(uploadId, { status: "success" });
           }
