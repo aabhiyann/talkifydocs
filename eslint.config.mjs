@@ -13,6 +13,8 @@ const eslintConfig = [
       "next-env.d.ts",
       "src/generated/**",
       "**/*.min.js",
+      "**/*.min.mjs",
+      "public/pdf.worker.min.mjs",
     ],
   },
   ...nextCoreWebVitals,
