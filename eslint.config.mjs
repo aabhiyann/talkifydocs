@@ -19,6 +19,18 @@ const eslintConfig = [
   },
   ...nextCoreWebVitals,
   ...nextTypescript,
+  {
+    files: [
+      "next.config.js",
+      "jest.config.js",
+      "tailwind.config.ts",
+      "scripts/**/*.js",
+      "scripts/**/*.cjs",
+    ],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
 ];
 
 export default eslintConfig;
