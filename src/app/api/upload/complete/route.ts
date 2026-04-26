@@ -21,13 +21,15 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Missing fields", { status: 400 });
     }
 
-    // Check if file already exists
-    const existingFile = await db.file.findUnique({
-      where: { key: url },
+    // Only return an existing record if it belongs to the current user.
+    // Looking up by `key: url` alone would leak another user's file metadata
+    // (id, name, userId, size, etc.) if they happened to share the same key.
+    const existingFile = await db.file.findFirst({
+      where: { key: url, userId: user.id },
     });
 
     if (existingFile) {
-      console.log("[Upload Complete] File already exists, returning existing record:", existingFile.id);
+      console.log("[Upload Complete] File already exists for user, returning existing record:", existingFile.id);
       return NextResponse.json({
         ...existingFile,
         size: existingFile.size.toString(),
