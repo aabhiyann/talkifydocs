@@ -90,7 +90,7 @@ export const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
         // Use CDN worker to ensure version match
         if (typeof window !== "undefined") {
           pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
-          console.log(`PdfRenderer: Using worker from unpkg for version ${pdfjs.version}`);
+          logger.debug("PdfRenderer: using worker from unpkg", { version: pdfjs.version });
         }
 
         setPdfjsLib(pdfjs);
@@ -102,7 +102,7 @@ export const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
         if (typeof window !== "undefined") {
           // Use the version required by react-pdf's internal pdfjs-dist
           reactPdfJs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${reactPdfJs.version}/build/pdf.worker.min.mjs`;
-          console.log(`PdfRenderer: React-PDF synced to worker for version ${reactPdfJs.version}`);
+          logger.debug("PdfRenderer: React-PDF synced to worker", { version: reactPdfJs.version });
         }
 
         setDocumentComponent(() => Document);
@@ -114,7 +114,7 @@ export const PdfRenderer = ({ url, page, onPageChange }: PdfRendererProps) => {
         setLoadTimeout(null);
         setIsLoading(false);
       } catch (error) {
-        console.error("Failed to load PDF components:", error);
+        logger.error("Failed to load PDF components", error);
         if (loadTimeout) {
           clearTimeout(loadTimeout);
           setLoadTimeout(null);
