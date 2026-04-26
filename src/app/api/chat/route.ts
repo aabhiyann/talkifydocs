@@ -14,7 +14,10 @@ export async function POST(req: NextRequest) {
 
     if (!env.GOOGLE_API_KEY || env.GOOGLE_API_KEY === "") {
         console.error("[Chat] GOOGLE_API_KEY is missing in env");
-        return new NextResponse(JSON.stringify({ error: "Google API Key is not configured on the server." }), { status: 500 });
+        return new NextResponse(
+            JSON.stringify({ error: "AI provider not configured." }),
+            { status: 500, headers: { "Content-Type": "application/json" } }
+        );
     }
 
     try {
@@ -211,12 +214,16 @@ export async function POST(req: NextRequest) {
 
         return new NextResponse(stream);
 
-    } catch (error: any) {
+    } catch (error: unknown) {
+        // Log full detail server-side; never echo provider/internal errors back
+        // to the client (they can leak stack traces, paths, model names, env state).
         console.error("[Chat] Fatal error:", error);
-        const detail = error.message || "Unknown internal error";
-        return new NextResponse(JSON.stringify({ error: detail }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        });
+        return new NextResponse(
+            JSON.stringify({ error: "Something went wrong while processing your message." }),
+            {
+                status: 500,
+                headers: { "Content-Type": "application/json" },
+            }
+        );
     }
 }
