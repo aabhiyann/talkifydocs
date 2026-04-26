@@ -1,6 +1,5 @@
 import { privateProcedure, publicProcedure, router } from "./trpc";
 import { z } from "zod";
-import { randomUUID } from "crypto";
 import { format } from "date-fns";
 import { TRPCError } from "@trpc/server";
 import { db } from "@/lib/db";
@@ -22,6 +21,7 @@ import { Citation } from "@/types/chat";
 
 import { adminProcedures } from "./routers/admin";
 import { highlightProcedures } from "./routers/highlights";
+import { sharingProcedures } from "./routers/sharing";
 
 const eventEmitter = new EventEmitter();
 
@@ -560,96 +560,7 @@ ${msg.text}${citationText}`;
       return markdown;
     }),
 
-  createShareableLink: privateProcedure
-    .input(z.object({ conversationId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const { userId } = ctx;
-      const { conversationId } = input;
-
-      const conversation = await db.conversation.findUnique({
-        where: { id: conversationId },
-        select: {
-          userId: true,
-        },
-      });
-
-      if (!conversation || conversation.userId !== userId) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
-      }
-
-      const shareToken = randomUUID();
-
-      await db.conversation.update({
-        where: { id: conversationId },
-        data: { shareToken, isPublic: true },
-      });
-
-      const baseUrl =
-        process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : "http://localhost:3000";
-
-      const shareUrl = `${baseUrl}/share/${shareToken}`;
-      revalidatePath(`/chat/${conversationId}`);
-      return shareUrl;
-    }),
-
-  revokeShareableLink: privateProcedure
-    .input(z.object({ conversationId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const { userId } = ctx;
-      const { conversationId } = input;
-
-      const conversation = await db.conversation.findUnique({
-        where: { id: conversationId },
-        select: {
-          userId: true,
-        },
-      });
-
-      if (!conversation || conversation.userId !== userId) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
-      }
-
-      await db.conversation.update({
-        where: { id: conversationId },
-        data: { shareToken: null, isPublic: false },
-      });
-
-      revalidatePath(`/chat/${conversationId}`);
-      return { success: true };
-    }),
-
-  getShareableLink: privateProcedure
-    .input(z.object({ conversationId: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const { userId } = ctx;
-      const { conversationId } = input;
-
-      const conversation = await db.conversation.findUnique({
-        where: { id: conversationId },
-        select: {
-          userId: true,
-          shareToken: true,
-          isPublic: true,
-        },
-      });
-
-      if (!conversation || conversation.userId !== userId) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
-      }
-
-      if (!conversation.shareToken || !conversation.isPublic) {
-        return null;
-      }
-
-      const baseUrl =
-        process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : "http://localhost:3000";
-
-      return `${baseUrl}/share/${conversation.shareToken}`;
-    }),
+  ...sharingProcedures,
 
   ...highlightProcedures,
 
